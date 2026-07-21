@@ -35,63 +35,12 @@ NAIROBI-SPECIFIC ASSUMPTIONS
 
 CONSUMPTION TIER DEFINITIONS
 ----------------------------
-Tier is derived by the researcher AFTER Monte Carlo simulation by
-assign_tier(). It is based on simulated median daily energy.
+Tier is assigned by the simulation after the Monte Carlo ensemble runs,
+based on simulated median daily energy across both day types.
 
     low    : simulated median daily consumption < 5 kWh/day
     medium : simulated median daily consumption 5–15 kWh/day
     high   : simulated median daily consumption > 15 kWh/day
-
-COOKING MODULE NOTE
--------------------
-Cooking is modelled in a dedicated BLOCK 4b ("cooking") separate from
-the standard appliance framework. This is because:
-
-  1. Cooking energy scales with the number of people fed — a household
-     cooking for 6 people uses significantly more energy than one
-     cooking for 2. The generic appliance tou_hourly framework has no
-     mechanism for this.
-
-  2. The load profile has a physically distinct shape: a high-power
-     pre-heat phase followed by lower-power on/off cycling. This cannot
-     be captured by mean_duration_min alone.
-
-  3. Meal times are structured and household-specific. The survey
-     captures actual meal windows directly — this is more accurate
-     than probabilistic activity profiles derived from UK time-use
-     survey data (which do not apply to Nairobi households).
-
-  4. Fuel stacking is per-meal, not per-household. The same household
-     may use charcoal for lunch and electric for dinner.
-
-Cooking appliances (hotplate, EPC, rice cooker, etc.) remain in BLOCK 4a
-(appliances list) so that their rated_power_w — read from the label
-during the survey visit — is available to the cooking module. However
-they carry the flag:
-
-    "controlled_by_cooking_module": True
-
-When this flag is True, the model IGNORES the appliance's tou_hourly and
-mean_duration_min. The cooking module drives all load events for that
-appliance. The tou_hourly values are kept in the appliance record for
-documentation purposes only.
-
-PHYSICS CONSTANTS IN THE COOKING MODULE
-----------------------------------------
-Two fields in each meal record are literature-derived physics constants
-that are NEVER collected in the survey:
-
-    energy_per_capita_kwh : kWh consumed per person fed per meal.
-                            Source: MECS Kenya Cooking Diary Study
-                            (Leary et al., 2019). Breakfast ≈ 0.04,
-                            lunch ≈ 0.08, dinner ≈ 0.12 kWh/person.
-
-    preheat_fraction      : fraction of total meal energy consumed
-                            during the initial pre-heat phase.
-                            Source: Leach et al. (2020). ≈ 0.75.
-
-These are hardcoded here as authoritative constants. Do NOT survey them.
-Do NOT allow the model to modify them at runtime.
 
 FIELD CONVENTIONS
 -----------------
@@ -103,7 +52,6 @@ FIELD CONVENTIONS
 - All minute arrays have exactly 1440 elements (index = minute 0–1439)
 - Boolean fields use Python True/False
 - String identifiers are lowercase with underscores
-- Meal times in minutes from midnight (e.g. 06:00 = 360, 19:30 = 1170)
 
 OCCUPANCY NOTE
 --------------
@@ -122,14 +70,12 @@ The model divides by 60 internally to convert to per-minute.
 A value of 1.0 means maximum likelihood of a switch-on event
 in that hour. A value of 0.0 means the appliance is NEVER
 switched on in that hour.
-For appliances with controlled_by_cooking_module = True, these
-values are IGNORED by the model — they are retained for reference only.
 """
 
 # =============================================================================
 # SECTION 1: REFERENCE HOUSEHOLD
 # =============================================================================
-# This is a complete, realistic, validated example of a medium-tier
+# This is a complete, realistic, validated example of a high-tier
 # Nairobi household. It is used for:
 #   - Testing the model before survey data arrives
 #   - Verifying the validator
@@ -147,13 +93,6 @@ REFERENCE_HOUSEHOLD = {
     # Format: H + zero-padded integer. H001, H002, ... H999.
     # Never assigned by the respondent.
 
-    "tier":           None,
-    # Set to None at survey intake — not known yet.
-    # Populated after Monte Carlo simulation by assign_tier().
-    # Final values: "low" / "medium" / "high"
-    # Based on simulated median daily energy from the ensemble.
-    # Never ask the household directly.
-    # Never derive from KPLC bill.
 
     "survey_date":    "2026-06-06",
     # String. ISO 8601 date (YYYY-MM-DD).
@@ -171,17 +110,18 @@ REFERENCE_HOUSEHOLD = {
     # BLOCK 2: HOUSEHOLD COMPOSITION
     # =========================================================================
 
-    "n_residents": 4,
+    "n_residents": 8,
     # Integer. Total number of people who live in this household.
     # Range: 1–10. Hard upper bound for all occupancy values.
 
     "resident_breakdown": {
         # Must sum to n_residents.
         "adults_working":     2,
-        "adults_non_working": 0,
+        "adults_non_working": 1,
+        "household_helpers":  1,
         "school_children":    2,
-        "young_children":     0,
-        "elderly":            0
+        "young_children":     1,
+        "elderly":            1
     },
 
     # =========================================================================
@@ -194,33 +134,48 @@ REFERENCE_HOUSEHOLD = {
 
     "occupancy_weekday": [
     #   Hr:  00   01   02   03   04   05
-             0,   0,   0,   0,   0,   0,
+             0,   0,   0,   0,   0,   2,
     #   Hr:  06   07   08   09   10   11
-             2,   1,   0,   0,   0,   0,
+             5,   5,   4,   4,   4,   4,
     #   Hr:  12   13   14   15   16   17
-             0,   0,   0,   0,   1,   2,
+             4,   4,   4,   6,   6,   7,
     #   Hr:  18   19   20   21   22   23
-             3,   4,   4,   4,   3,   1
+             8,   8,   8,   7,   6,   4
     ],
-    # 00–05: Household asleep — occupancy = 0 for model purposes
+    # 00–04: Household asleep — occupancy = 0 for model purposes
     #        (fridge, router, security lights still run via needs_occupancy=False)
-    # 06:    Two people up (parents preparing for work/school)
-    # 07:    One still home (staggered departure)
-    # 08–15: House empty
-    # 16–17: Children returning, first parent home
-    # 18–21: Full house
+    # 05:    First working adult + helper up early (2); second adult still asleep
+    # 06:    Working adults + school children + helper getting ready (5);
+    #        young child, non-working adult, and elderly still asleep
+    # 07:    School children depart, one working adult departs; remaining:
+    #        1 working adult (staggered) + non-working adult + helper +
+    #        young child + elderly (5)
+    # 08–14: Both working adults at work, school children at school;
+    #        non-working adult + helper + young child + elderly home (4)
+    # 15–16: School children return (6)
+    # 17:    First working adult returns (7)
+    # 18–20: Full house (8)
+    # 21:    Elderly to bed (7)
     # 22–23: Winding down
 
     "occupancy_weekend": [
     #   Hr:  00   01   02   03   04   05
              0,   0,   0,   0,   0,   0,
     #   Hr:  06   07   08   09   10   11
-             0,   1,   2,   3,   4,   4,
+             0,   3,   4,   6,   8,   8,
     #   Hr:  12   13   14   15   16   17
-             4,   3,   3,   4,   4,   4,
+             8,   7,   6,   6,   8,   8,
     #   Hr:  18   19   20   21   22   23
-             4,   4,   4,   3,   2,   1
+             8,   8,   8,   7,   5,   3
     ],
+    # 00–06: Asleep / slow weekend morning
+    # 07:    Early risers — elderly + helper + one adult (3)
+    # 08–09: Household gradually wakes up
+    # 10–12: Full house (8); possibly church
+    # 13:    Some go out in the afternoon (7)
+    # 14–15: Mix of home/out (6)
+    # 16–20: Full house for evening (8)
+    # 21–23: Winding down
 
     # =========================================================================
     # BLOCK 4a: APPLIANCE INVENTORY
@@ -228,13 +183,6 @@ REFERENCE_HOUSEHOLD = {
     # Each appliance is a dict with exactly the fields shown below.
     # Appliances with count = 0 are included for completeness but
     # contribute zero load. Do not omit appliances — set count = 0.
-    #
-    # IMPORTANT — controlled_by_cooking_module FLAG:
-    #   If True, this appliance's load is driven entirely by the
-    #   cooking module (BLOCK 4b). The model ignores tou_hourly and
-    #   mean_duration_min for this appliance. Only rated_power_w
-    #   and count are used from this record.
-    #   If False (default), normal tou_hourly switch-on logic applies.
     #
     # rated_power_w SURVEY NOTE:
     #   For ALL appliances with count > 0, the surveyor must read the
@@ -246,7 +194,7 @@ REFERENCE_HOUSEHOLD = {
     # APPLIANCE GROUPS:
     #   Group A: Always-on baseline (fridge, router, standby)
     #   Group B: Morning-peak (kettle, iron, pump, water heater)
-    #   Group C: Cooking (controlled_by_cooking_module = True)
+    #   Group C: Cooking (standard tou_hourly-driven, same as other appliances)
     #   Group D: Entertainment and information
     #   Group E: Phone and device charging
     #   Group F: Laundry and cleaning
@@ -261,7 +209,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "refrigerator",
             "category":                     "always_on",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                150,
             # Read from label. Typical Nairobi fridge: 100–200W running draw.
@@ -281,7 +228,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "chest_freezer",
             "category":                     "always_on",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                120,
             "tou_hourly":       [1.0]*24,
@@ -289,13 +235,12 @@ REFERENCE_HOUSEHOLD = {
             "std_duration_min":     5,
             "needs_occupancy":  False,
             "standby_power_w":  0,
-            "notes": "Chest freezer. Less common in medium-tier households."
+            "notes": "Chest freezer. Less common in households."
         },
 
         {
             "name":                         "wifi_router",
             "category":                     "always_on",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                12,
             # Read from label. Typical home router: 8–15W.
@@ -314,8 +259,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "electric_fence_energiser",
             "category":                     "always_on",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                25,
             "tou_hourly":       [1.0]*24,
             "mean_duration_min":    1440,
@@ -328,8 +272,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "cctv_system",
             "category":                     "always_on",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                30,
             # Read from label. 4-camera system with DVR: ~25–40W total.
             "tou_hourly":       [1.0]*24,
@@ -340,39 +283,12 @@ REFERENCE_HOUSEHOLD = {
             "notes": "CCTV DVR plus cameras. Runs 24/7."
         },
 
-        {
-            "name":                         "set_top_box_standby",
-            "category":                     "always_on",
-            "controlled_by_cooking_module": False,
-            "count":                        1,
-            "rated_power_w":                8,
-            # DSTV/Zuku decoder phantom load in standby mode.
-            "tou_hourly":       [1.0]*24,
-            "mean_duration_min":    1440,
-            "std_duration_min":     0,
-            "needs_occupancy":  False,
-            "standby_power_w":  8,
-            "notes": (
-                "DSTV/Zuku decoder phantom load in standby. "
-                "Active draw captured separately in dstv_decoder. "
-                "Many households leave decoders plugged in 24/7."
-            )
-        },
 
         # ── GROUP B: MORNING-PEAK APPLIANCES ──────────────────────────────
 
         {
             "name":                         "electric_kettle",
             "category":                     "morning_peak",
-            "controlled_by_cooking_module": False,
-            # Kettle is NOT controlled by the cooking module.
-            # It is used for tea/coffee/uji preparation, not main meal cooking.
-            # It does appear as an appliance_used in a cooking meal record
-            # (breakfast), but the cooking module handles THAT instance.
-            # This record covers additional non-meal kettle uses (mid-morning
-            # tea, evening tea) via the standard tou_hourly mechanism.
-            # The cooking module will NOT double-count: it only fires during
-            # the meal window and uses the rated_power_w from this record.
             "count":                        1,
             "rated_power_w":                2000,
             # Read from label. Typical Kenyan kettle: 1800–2200W.
@@ -386,25 +302,23 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.2,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
-            # These tou_hourly values represent NON-MEAL kettle uses only
-            # (mid-morning tea, evening tea). The breakfast use is handled
-            # by the cooking module — do not include that in these weights.
+            # tou_hourly represents ALL kettle uses across the day —
+            # morning peak (breakfast tea/porridge water), plus smaller
+            # mid-morning and evening tea use.
             "mean_duration_min":    4,
             "std_duration_min":     1,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
-                "Electric kettle. Primary use is breakfast (cooking module). "
-                "tou_hourly here covers non-meal uses: mid-morning and "
-                "evening tea. Do not set tou_hourly high at meal times "
-                "or energy will be double-counted."
+                "Electric kettle. Used for tea/coffee/porridge water at "
+                "breakfast, plus smaller mid-morning and evening tea uses. "
+                "All usage is captured by tou_hourly — standard mechanism."
             )
         },
 
         {
             "name":                         "electric_kettle_2",
             "category":                     "morning_peak",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                2000,
             "tou_hourly":       [
@@ -423,7 +337,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "iron_box",
             "category":                     "morning_peak",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                1200,
             # Read from label. Typical iron: 1000–1500W.
@@ -450,7 +363,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "water_pump",
             "category":                     "morning_peak",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                750,
             # Read from label. Typical single-phase pump: 500–1000W.
@@ -479,7 +391,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "immersion_water_heater",
             "category":                     "morning_peak",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                3000,
             # Read from label. Typical 50L element: 2000–3500W.
@@ -503,7 +414,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "solar_water_heater_pump",
             "category":                     "morning_peak",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                50,
             "tou_hourly":       [
@@ -520,16 +430,13 @@ REFERENCE_HOUSEHOLD = {
         },
 
         # ── GROUP C: COOKING APPLIANCES ───────────────────────────────────
-        # These appliances carry controlled_by_cooking_module = True.
-        # Their load events are ENTIRELY driven by BLOCK 4b (cooking).
-        # The model ignores tou_hourly and mean_duration_min for these.
-        # tou_hourly is kept here for documentation only.
+        # Cooking appliances use the SAME standard tou_hourly /
+        # mean_duration_min mechanism as every other appliance.
         # rated_power_w MUST be read from the appliance label on site.
 
         {
             "name":                         "electric_hotplate",
             "category":                     "cooking",
-            "controlled_by_cooking_module": True,
             "count":                        1,
             "rated_power_w":                1500,
             # READ FROM LABEL — this value will differ per household.
@@ -537,134 +444,121 @@ REFERENCE_HOUSEHOLD = {
             # If multi-plate cooker, record the TOTAL rated draw when
             # all plates in use, or per-plate if used independently.
             "tou_hourly":       [
-            # IGNORED by model. Retained for documentation only.
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.3,  0.4,  0.1,  0.0,  0.0,  0.0,
                      0.1,  0.2,  0.1,  0.0,  0.0,  0.2,
                      0.6,  0.5,  0.1,  0.0,  0.0,  0.0
             ],
-            "mean_duration_min":    0,
-            # IGNORED by model. Duration is calculated from cooking module:
-            # preheat_duration = (energy_per_capita * n_people *
-            #                     preheat_fraction) / rated_power_w * 60
-            "std_duration_min":     0,
+            "mean_duration_min":    40,
+            # Approximate full main-meal cook cycle (preheat + simmer/cycle).
+            "std_duration_min":     10,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
-                "Electric hotplate / resistance cooker. Load is driven "
-                "entirely by the cooking module (BLOCK 4b). "
-                "rated_power_w MUST be read from the appliance label "
-                "during the survey visit — do not use the default."
+                "Electric hotplate / resistance cooker. Uses the standard "
+                "tou_hourly switch-on mechanism, same as any other "
+                "appliance. rated_power_w MUST be read from the appliance "
+                "label during the survey visit — do not use the default."
             )
         },
 
         {
             "name":                         "induction_cooker",
             "category":                     "cooking",
-            "controlled_by_cooking_module": True,
             "count":                        0,
             "rated_power_w":                2000,
             # READ FROM LABEL. Typical induction hob: 1200–2200W.
             "tou_hourly":       [
-            # IGNORED by model.
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.3,  0.4,  0.1,  0.0,  0.0,  0.0,
                      0.1,  0.2,  0.1,  0.0,  0.0,  0.2,
                      0.6,  0.5,  0.1,  0.0,  0.0,  0.0
             ],
-            "mean_duration_min":    0,
-            "std_duration_min":     0,
+            "mean_duration_min":    35,
+            "std_duration_min":     10,
             "needs_occupancy":  True,
             "standby_power_w":  2,
             "notes": (
                 "Induction cooker. More efficient than resistance hotplate. "
-                "Controlled by cooking module. "
-                "rated_power_w from label."
+                "Uses standard tou_hourly mechanism. rated_power_w from label."
             )
         },
 
         {
             "name":                         "electric_pressure_cooker",
             "category":                     "cooking",
-            "controlled_by_cooking_module": True,
             "count":                        0,
             "rated_power_w":                800,
             # READ FROM LABEL. Typical EPC: 600–1200W.
             "tou_hourly":       [
-            # IGNORED by model.
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
                      0.3,  0.1,  0.0,  0.0,  0.0,  0.1,
                      0.5,  0.3,  0.0,  0.0,  0.0,  0.0
             ],
-            "mean_duration_min":    0,
-            "std_duration_min":     0,
+            "mean_duration_min":    25,
+            "std_duration_min":     8,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": (
                 "Electric pressure cooker (EPC/Instant Pot style). "
-                "Controlled by cooking module. "
-                "rated_power_w from label."
+                "Uses standard tou_hourly mechanism. rated_power_w from label."
             )
         },
 
         {
             "name":                         "rice_cooker",
             "category":                     "cooking",
-            "controlled_by_cooking_module": True,
             "count":                        0,
             "rated_power_w":                500,
             # READ FROM LABEL. Typical rice cooker: 300–700W.
             "tou_hourly":       [
-            # IGNORED by model.
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
                      0.3,  0.1,  0.0,  0.0,  0.0,  0.1,
                      0.4,  0.2,  0.0,  0.0,  0.0,  0.0
             ],
-            "mean_duration_min":    0,
-            "std_duration_min":     0,
+            "mean_duration_min":    30,
+            "std_duration_min":     8,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": (
-                "Rice cooker. Controlled by cooking module. "
+                "Rice cooker. Uses standard tou_hourly mechanism. "
                 "rated_power_w from label."
             )
         },
 
         {
-            "name":                         "microwave_oven",
+            "name":                         "microwave",
             "category":                     "cooking",
-            "controlled_by_cooking_module": False,
-            # Microwave is NOT controlled by the cooking module.
-            # It is used for reheating — short, standalone events
+            # Microwave is used for reheating — short, standalone events
             # not tied to a primary cooking appliance for a meal.
             # It may be present in a household that also cooks with
             # a hotplate. The two are independent.
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                900,
             # READ FROM LABEL. Typical microwave: 700–1200W.
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.2,  0.3,  0.1,  0.0,  0.0,  0.0,
-                     0.1,  0.2,  0.0,  0.0,  0.0,  0.1,
-                     0.3,  0.2,  0.1,  0.0,  0.0,  0.0
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.2,  0.2,  0.1,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            # Shifted to lunchtime (12-14h) 
+            # dinner peak (18-19h). ~3x/week.
             "mean_duration_min":    5,
             "std_duration_min":     2,
             "needs_occupancy":  True,
             "standby_power_w":  3,
             "notes": (
-                "Microwave. Used for reheating — not primary cooking. "
-                "Uses standard tou_hourly mechanism. "
-                "Set controlled_by_cooking_module = False deliberately."
+                "Microwave. Lunchtime reheating only — avoids hotplate dinner peak. "
+                "Uses standard tou_hourly mechanism."
             )
         },
 
         {
             "name":                         "blender",
             "category":                     "cooking",
-            "controlled_by_cooking_module": False,
             # Blender is a food prep tool — short, activity-linked events.
             # Not a primary cooking appliance for a meal.
             "count":                        1,
@@ -672,10 +566,11 @@ REFERENCE_HOUSEHOLD = {
             # READ FROM LABEL. Typical blender: 250–500W.
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.3,  0.4,  0.1,  0.0,  0.0,  0.0,
-                     0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
-                     0.2,  0.1,  0.0,  0.0,  0.0,  0.0
+                     0.0,  0.3,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.2,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            # ~3x/week: not a daily appliance.
             "mean_duration_min":    3,
             "std_duration_min":     1,
             "needs_occupancy":  True,
@@ -686,16 +581,16 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "toaster",
             "category":                     "cooking",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                800,
             # READ FROM LABEL.
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.3,  0.5,  0.2,  0.0,  0.0,  0.0,
+                     0.0,  0.2,  0.1,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.1,  0.0,  0.0,  0.0,  0.0,  0.0
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            # ~2x/week: occasional breakfast use, not daily.
             "mean_duration_min":    4,
             "std_duration_min":     1,
             "needs_occupancy":  True,
@@ -703,12 +598,35 @@ REFERENCE_HOUSEHOLD = {
             "notes": "Pop-up toaster. Short breakfast use. Not a primary cooker."
         },
 
+        {
+            "name":                         "electric_oven",
+            "category":                     "cooking",
+            "count":                        1,
+            "rated_power_w":                2000,
+            # READ FROM LABEL. Typical electric oven: 1500–3000W.
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.1,  0.1,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # ~1x/week: occasional baking only.
+            "mean_duration_min":    50,
+            "std_duration_min":     15,
+            "needs_occupancy":  True,
+            "standby_power_w":  0,
+            "notes": (
+                "Electric oven. Weekend baking use dominant. "
+                "One of the highest instantaneous loads — important for "
+                "inverter sizing. rated_power_w MUST be read from label."
+            )
+        },
+
         # ── GROUP D: ENTERTAINMENT AND INFORMATION ─────────────────────────
 
         {
             "name":                         "television",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                80,
             # READ FROM LABEL. LED TV 32–43 inch: 50–120W.
@@ -735,8 +653,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "television_2",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                60,
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -754,7 +671,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "dstv_decoder",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                18,
             # READ FROM LABEL. DSTV active: 15–22W.
@@ -768,13 +684,12 @@ REFERENCE_HOUSEHOLD = {
             "std_duration_min":     40,
             "needs_occupancy":  True,
             "standby_power_w":  8,
-            "notes": "DSTV/Zuku decoder. Active power only — standby in set_top_box_standby."
+            "notes": "DSTV/Zuku decoder. Switched off at the wall when not in use — no standby draw."
         },
 
         {
             "name":                         "laptop",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                45,
             # READ FROM LABEL (adapter brick).
@@ -794,8 +709,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "laptop_2",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                45,
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -813,46 +727,46 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "desktop_computer",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                150,
             # READ FROM LABEL. Desktop + monitor: 100–250W.
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.0,  0.0,  0.0,  0.0,  0.2,  0.4,
-                     0.5,  0.5,  0.3,  0.1,  0.0,  0.0
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.3,  0.3,  0.2,  0.0,  0.0,  0.0
             ],
+            # ~4-5x/week: regular but not guaranteed daily.
             "mean_duration_min":    120,
             "std_duration_min":     60,
             "needs_occupancy":  True,
             "standby_power_w":  5,
-            "notes": "Desktop PC with monitor."
+            "notes": "Desktop PC with monitor. Evening use. 4-5x per week."
         },
 
         {
             "name":                         "gaming_console",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                150,
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.0,  0.0,  0.0,  0.1,  0.2,  0.3,
-                     0.5,  0.6,  0.5,  0.3,  0.1,  0.0
+                     0.0,  0.0,  0.0,  0.2,  0.2,  0.1,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            # Shifted to afternoon (15-17h) to avoid overlap with peak TV/decoder
+            # hours (18-22h). ~3x/week.
             "mean_duration_min":    90,
             "std_duration_min":     45,
             "needs_occupancy":  True,
             "standby_power_w":  2,
-            "notes": "Gaming console. Afternoon/evening use."
+            "notes": "Gaming console. Afternoon use before peak TV hours. 3x per week."
         },
 
         {
             "name":                         "bluetooth_speaker",
             "category":                     "entertainment",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                10,
             "tou_hourly":       [
@@ -873,9 +787,10 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "smartphone_charger",
             "category":                     "charging",
-            "controlled_by_cooking_module": False,
-            "count":                        4,
+            "count":                        6,
             # One per phone-owning member of household. Each simulated independently.
+            # 2 working adults + 1 non-working adult + 1 helper + 1 elderly + 1 school child.
+            # Young child and second school child excluded. Confirm count at survey.
             "rated_power_w":                10,
             # READ FROM LABEL on charger brick. Varies: 5W–25W.
             "tou_hourly":       [
@@ -902,7 +817,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "tablet_charger",
             "category":                     "charging",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                18,
             "tou_hourly":       [
@@ -919,29 +833,8 @@ REFERENCE_HOUSEHOLD = {
         },
 
         {
-            "name":                         "laptop_charger_overnight",
-            "category":                     "charging",
-            "controlled_by_cooking_module": False,
-            "count":                        1,
-            "rated_power_w":                20,
-            # Laptop in maintenance/trickle mode: 15–25W.
-            "tou_hourly":       [
-                     0.7,  0.7,  0.7,  0.7,  0.6,  0.5,
-                     0.2,  0.1,  0.0,  0.0,  0.0,  0.0,
-                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.0,  0.1,  0.2,  0.4,  0.6,  0.7
-            ],
-            "mean_duration_min":    240,
-            "std_duration_min":     60,
-            "needs_occupancy":  False,
-            "standby_power_w":  5,
-            "notes": "Laptop left plugged in overnight. Trickle draw."
-        },
-
-        {
             "name":                         "power_bank_charging",
             "category":                     "charging",
-            "controlled_by_cooking_module": False,
             "count":                        2,
             "rated_power_w":                10,
             "tou_hourly":       [
@@ -962,22 +855,22 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "washing_machine",
             "category":                     "laundry",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                500,
             # READ FROM LABEL. Front-loader cold-wash: 300–500W.
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.0,  0.2,  0.4,  0.3,  0.2,  0.1,
-                     0.0,  0.0,  0.0,  0.1,  0.1,  0.0,
+                     0.0,  0.1,  0.2,  0.1,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            # ~2-3x/week: laundry is not a daily activity.
             "mean_duration_min":    45,
             "std_duration_min":     10,
             "needs_occupancy":  True,
             "standby_power_w":  3,
             "notes": (
-                "Automatic washing machine. Morning weekend use dominant. "
+                "Automatic washing machine. Morning use dominant. "
                 "Many Nairobi households hand-wash or use laundry services."
             )
         },
@@ -985,20 +878,20 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "vacuum_cleaner",
             "category":                     "laundry",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                1000,
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
-                     0.0,  0.0,  0.3,  0.4,  0.3,  0.0,
-                     0.0,  0.0,  0.0,  0.1,  0.1,  0.0,
+                     0.0,  0.0,  0.0,  0.2,  0.2,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            # ~2-3x/week: cleaning is not a daily activity.
             "mean_duration_min":    20,
             "std_duration_min":     8,
             "needs_occupancy":  True,
             "standby_power_w":  0,
-            "notes": "Vacuum cleaner. Morning cleaning. Rare in medium-tier."
+            "notes": "Vacuum cleaner. Morning cleaning. 2-3x per week."
         },
 
         # ── GROUP G: COMFORT APPLIANCES ───────────────────────────────────
@@ -1006,8 +899,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "ceiling_fan",
             "category":                     "comfort",
-            "controlled_by_cooking_module": False,
-            "count":                        2,
+            "count":                        0,
             "rated_power_w":                60,
             # READ FROM LABEL. Typical ceiling fan: 40–75W at high speed.
             "tou_hourly":       [
@@ -1023,10 +915,12 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    180,
             "std_duration_min":     60,
-            "needs_occupancy":  True,
+            "needs_occupancy":  False,
+            # Fans run while people sleep — left on overnight in warm weather.
             "standby_power_w":  0,
             "notes": (
                 "Ceiling fan. Nairobi 18–26°C so fans are for circulation. "
+                "needs_occupancy=False — fans run while people sleep. "
                 "Count = number of fans in household."
             )
         },
@@ -1034,7 +928,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "standing_fan",
             "category":                     "comfort",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                50,
             "tou_hourly":       [
@@ -1053,7 +946,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "air_conditioner",
             "category":                     "comfort",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                1500,
             # READ FROM LABEL. 1-ton split unit: 1000–1800W.
@@ -1075,8 +967,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "gate_motor",
             "category":                     "outdoor",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                200,
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1094,7 +985,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "borehole_pump",
             "category":                     "outdoor",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                1500,
             # READ FROM LABEL. Submersible borehole: 750–3000W.
@@ -1116,7 +1006,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "hair_dryer",
             "category":                     "personal_care",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                1500,
             # READ FROM LABEL. Typical: 1200–2000W.
@@ -1136,7 +1025,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "electric_shaver",
             "category":                     "personal_care",
-            "controlled_by_cooking_module": False,
             "count":                        1,
             "rated_power_w":                15,
             "tou_hourly":       [
@@ -1155,7 +1043,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "sewing_machine",
             "category":                     "other",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                100,
             "tou_hourly":       [
@@ -1174,8 +1061,7 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "printer",
             "category":                     "other",
-            "controlled_by_cooking_module": False,
-            "count":                        0,
+            "count":                        1,
             "rated_power_w":                15,
             "tou_hourly":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1193,7 +1079,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "other_appliance_1",
             "category":                     "other",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                0,
             "tou_hourly":       [0.0]*24,
@@ -1211,7 +1096,6 @@ REFERENCE_HOUSEHOLD = {
         {
             "name":                         "other_appliance_2",
             "category":                     "other",
-            "controlled_by_cooking_module": False,
             "count":                        0,
             "rated_power_w":                0,
             "tou_hourly":       [0.0]*24,
@@ -1225,273 +1109,6 @@ REFERENCE_HOUSEHOLD = {
     ],  # end of appliances list
 
     # =========================================================================
-    # BLOCK 4b: COOKING MODULE
-    # =========================================================================
-    # Cooking is modelled separately from the appliance framework.
-    # See the module docstring at the top of this file for the full
-    # rationale. This block is the authoritative source of all cooking
-    # load generation.
-    #
-    # HOW THE MODEL USES THIS BLOCK:
-    #   For each meal where cooked_at_home = True and electric_fraction > 0:
-    #
-    #   1. Draw a random start time uniformly from:
-    #         [earliest_start_min, latest_start_min]
-    #
-    #   2. Calculate meal energy needed:
-    #         energy_kwh = energy_per_capita_kwh * n_people_fed
-    #                      * proportionality_factor
-    #
-    #   3. Calculate pre-heat duration:
-    #         preheat_energy_kwh = energy_kwh * preheat_fraction
-    #         appliance_power_w  = rated_power_w of appliance_used
-    #         preheat_min = (preheat_energy_kwh * 1000 / appliance_power_w) * 60
-    #
-    #   4. Model the pre-heat phase: appliance runs at rated_power_w
-    #      for preheat_min minutes.
-    #
-    #   5. Model the cycling phase: the cooking module's physics constants
-    #      (reheat_on_min, reheat_off_min, n_reheat_cycles from cook_type)
-    #      drive on/off cycling for the remaining energy.
-    #
-    #   6. Occupancy check: if occupancy is zero at the scheduled meal start
-    #      time, the meal start is delayed or skipped. This links the cooking
-    #      module to the Markov occupancy chain.
-    #
-    # PHYSICS CONSTANTS (literature-derived, do NOT survey):
-    #   energy_per_capita_kwh  Source: MECS Kenya Cooking Diary (Leary 2019)
-    #   preheat_fraction       Source: Leach et al. (2020) ≈ 0.75
-    #   proportionality_factor Source: Leach et al. (2020)
-    #                          Accounts for the fact that cooking for more
-    #                          people does not scale perfectly linearly —
-    #                          you heat the pot regardless. Typically 0.7–0.9.
-    #
-    # CYCLING PHYSICS CONSTANTS (hardcoded in cooking_model.py):
-    #   quick cook: reheat_on_min = 3, reheat_off_min = 7, n_cycles = 3
-    #   long cook:  reheat_on_min = 5, reheat_off_min = 10, n_cycles = 6
-    #   These are derived from appliance characterisation in Leach et al.
-    #   and are not household-specific.
-
-    "cooking": {
-
-        # Global cooking context for this household.
-        # These inform the cooking module about this household's
-        # general cooking practices.
-
-        "primary_cooking_fuel": "mixed",
-        # Overall primary fuel for this household.
-        # "electric" / "charcoal" / "lpg_gas" / "kerosene" / "mixed"
-        # "mixed" means the household uses more than one fuel type.
-        # Per-meal fuel is specified in each meal record below.
-        # Collected at survey: "What is your main cooking fuel at home?"
-
-        "has_dedicated_cooking_space": True,
-        # Boolean. True if the household has a separate kitchen.
-        # False if cooking happens in the main living area.
-        # Informational — may be used in future thermal modelling.
-
-        "meals": [
-
-            # ── MEAL 1: BREAKFAST ─────────────────────────────────────────
-
-            {
-                "meal_id":          "breakfast",
-
-                "cooked_at_home":   True,
-                # Boolean. If False, model skips this meal entirely.
-                # Collected at survey: "Do you cook breakfast at home
-                # on a typical weekday / weekend?"
-
-                "cooked_at_home_weekday": True,
-                # Boolean. Can differ from weekend.
-                "cooked_at_home_weekend": True,
-
-                "earliest_start_min": 360,
-                # Minutes from midnight. 06:00 = 360.
-                # "What is the earliest time you start preparing breakfast?"
-                # Collected at survey — household-specific.
-
-                "latest_start_min": 450,
-                # Minutes from midnight. 07:30 = 450.
-                # "What is the latest time you start preparing breakfast?"
-                # Collected at survey — household-specific.
-                # Model draws start time uniformly from [earliest, latest].
-
-                "n_people_fed":     4,
-                # Integer. Number of people cooked for at this meal.
-                # "How many people do you cook breakfast for on a typical day?"
-                # Collected at survey. Critical for energy calculation.
-                # May differ from n_residents (guests, workers, etc.)
-
-                "primary_fuel":     "electric",
-                # Fuel used for THIS meal specifically.
-                # "electric" / "charcoal" / "lpg_gas" / "kerosene" / "mixed"
-                # Collected at survey per meal — not assumed household-wide.
-
-                "electric_fraction": 1.0,
-                # Float [0.0–1.0].
-                # Fraction of this meal's cooking energy from electricity.
-                # 1.0 = fully electric.
-                # 0.0 = fully non-electric (model generates no electrical load).
-                # 0.5 = half electric, half other fuel.
-                # For "mixed" primary_fuel, surveyor estimates this fraction.
-
-                "appliance_used":   "electric_kettle",
-                # Name matching an appliance in the appliances list above.
-                # The cooking module reads rated_power_w from that record.
-                # Only one primary appliance per meal. If multiple appliances
-                # are used, record the dominant one here and add the secondary
-                # as other_appliance_used below.
-                # Collected at survey: "Which electric appliance do you use
-                # to prepare breakfast?"
-
-                "other_appliance_used": None,
-                # Optional secondary appliance name, or None.
-                # e.g. kettle boils water while hotplate cooks porridge.
-                # If not None, both appliances run during the pre-heat phase.
-
-                "cook_type":        "quick",
-                # "quick" or "long".
-                # quick: tea, porridge, simple reheating — short pre-heat,
-                #        few or no re-heat cycles.
-                # long:  full meal, stew, ugali with accompaniment — longer
-                #        pre-heat, multiple cycling phases.
-                # Collected at survey: "Is breakfast a quick or long cook?"
-
-                # ── PHYSICS CONSTANTS (do NOT survey) ─────────────────────
-
-                "energy_per_capita_kwh": 0.04,
-                # kWh per person fed per meal.
-                # Source: MECS Kenya Cooking Diary Study (Leary et al. 2019).
-                # Breakfast is typically lighter — lower energy per person.
-                # DO NOT change without a literature justification.
-
-                "preheat_fraction": 0.75,
-                # Fraction of meal energy in the pre-heat phase.
-                # Source: Leach et al. (2020).
-                # DO NOT survey this field.
-
-                "proportionality_factor": 0.85,
-                # Energy scaling factor for additional people.
-                # Accounts for non-linear scaling (pot heating is fixed cost).
-                # Source: Leach et al. (2020).
-                # DO NOT survey this field.
-            },
-
-            # ── MEAL 2: LUNCH ─────────────────────────────────────────────
-
-            {
-                "meal_id":          "lunch",
-
-                "cooked_at_home":   False,
-                # Many working households do not cook lunch at home.
-                # If False, model generates zero cooking load for lunch.
-
-                "cooked_at_home_weekday": False,
-                # Working adults and school children are away on weekdays.
-                "cooked_at_home_weekend": True,
-                # Family is home on weekends — lunch may be cooked.
-
-                "earliest_start_min": 720,
-                # 12:00
-                "latest_start_min":   810,
-                # 13:30
-
-                "n_people_fed":       4,
-                # On weekends when lunch is cooked, whole family is home.
-
-                "primary_fuel":       "charcoal",
-                "electric_fraction":  0.0,
-                # This household uses charcoal for lunch — no electric load.
-
-                "appliance_used":     None,
-                # None if electric_fraction = 0.0.
-
-                "other_appliance_used": None,
-
-                "cook_type":          "long",
-
-                # ── PHYSICS CONSTANTS ──────────────────────────────────────
-                "energy_per_capita_kwh": 0.08,
-                # Lunch is a fuller meal than breakfast.
-                "preheat_fraction":   0.75,
-                "proportionality_factor": 0.80,
-            },
-
-            # ── MEAL 3: DINNER ────────────────────────────────────────────
-
-            {
-                "meal_id":          "dinner",
-
-                "cooked_at_home":   True,
-                "cooked_at_home_weekday": True,
-                "cooked_at_home_weekend": True,
-
-                "earliest_start_min": 1020,
-                # 17:00 — earliest dinner prep starts
-                "latest_start_min":   1140,
-                # 19:00 — latest dinner prep starts
-                # Model draws uniformly from this window per day.
-
-                "n_people_fed":       4,
-
-                "primary_fuel":       "electric",
-                "electric_fraction":  1.0,
-
-                "appliance_used":     "electric_hotplate",
-                # Primary cooking appliance for dinner.
-                # rated_power_w is read from the appliance record above.
-
-                "other_appliance_used": None,
-                # Could be set to "electric_kettle" if boiling water
-                # simultaneously, but keep None unless confirmed at survey.
-
-                "cook_type":          "long",
-                # Dinner is the main meal — full cooking cycle.
-
-                # ── PHYSICS CONSTANTS ──────────────────────────────────────
-                "energy_per_capita_kwh": 0.12,
-                # Dinner consumes the most energy — full meal preparation.
-                # Source: MECS Kenya Cooking Diary (Leary et al. 2019).
-                "preheat_fraction":   0.75,
-                "proportionality_factor": 0.80,
-            },
-
-            # ── MEAL 4: OPTIONAL ADDITIONAL MEAL ─────────────────────────
-            # Some households have a fourth eating event (afternoon snack,
-            # second breakfast, supper etc.). Add here if applicable.
-            # Set cooked_at_home = False if not applicable to this household.
-
-            {
-                "meal_id":          "afternoon_snack",
-
-                "cooked_at_home":   False,
-                "cooked_at_home_weekday": False,
-                "cooked_at_home_weekend": False,
-
-                "earliest_start_min": 900,   # 15:00
-                "latest_start_min":   960,   # 16:00
-
-                "n_people_fed":       2,
-
-                "primary_fuel":       "electric",
-                "electric_fraction":  1.0,
-
-                "appliance_used":     "electric_kettle",
-                "other_appliance_used": None,
-
-                "cook_type":          "quick",
-
-                "energy_per_capita_kwh": 0.03,
-                "preheat_fraction":   0.75,
-                "proportionality_factor": 0.90,
-            }
-
-        ]  # end of meals list
-
-    },  # end of cooking block
-
-    # =========================================================================
     # BLOCK 5: LIGHTING INVENTORY
     # =========================================================================
     # Lighting is modelled separately from appliances because it depends
@@ -1503,18 +1120,16 @@ REFERENCE_HOUSEHOLD = {
     #   count           : number of bulbs in this room/zone
     #   wattage_w       : rated power per bulb in watts
     #   bulb_type       : "LED" / "CFL" / "incandescent" / "fluorescent"
-    #   usage_start_hour: hour at which lights are typically switched ON
-    #   usage_end_hour  : hour at which lights are typically switched OFF
-    #                     If end < start, lights run through midnight
-    #                     e.g. start=18, end=6 → 18:00 to 06:00
-    #   p_on_occupied   : probability lights are on when room is occupied
-    #                     and it is dark enough (effective_light < threshold)
-    #   p_on_daylight   : probability lights are on when room is occupied
-    #                     but there is sufficient daylight
-    #                     (captures lights left on during daytime)
-    #   controls_separately: True if this room's lights are switched
-    #                        independently (most rooms), False if they
-    #                        are on one switch with another room
+    #   tou_hourly      : 24-element array (same as appliances).
+    #                     Value = probability the light is on in that hour.
+    #                     0.0 = never on; 1.0 = always on.
+    #                     Interior rooms (bathroom, kitchen, store) may have
+    #                     non-zero daytime values — they need light regardless
+    #                     of natural daylight.
+    #   needs_occupancy : False for security lights — they switch on
+    #                     whenever it is dark, regardless of who is home.
+    #                     True for interior rooms — only on when someone
+    #                     is home and using the room.
     #
     # NAIROBI DAYLIGHT NOTE:
     #   Sunrise ~06:30, Sunset ~18:30 year-round.
@@ -1526,219 +1141,205 @@ REFERENCE_HOUSEHOLD = {
     "bulbs": [
 
         {
-            "room":              "living_room",
-            "count":             2,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  18,
-            "usage_end_hour":    23,
-            # Lights on from 6pm until 11pm when family is in the lounge.
-            "p_on_occupied":     0.90,
-            # Very high — main social space, almost always lit in evenings.
-            "p_on_daylight":     0.05,
-            # Occasionally left on during overcast afternoons.
-            "controls_separately": True,
-            "notes": (
-                "Main living room / lounge area. "
-                "Dominant lighting load in evening hours. "
-                "Two ceiling LED bulbs."
+            "room":             "living_room",
+            "count":            2,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+            #   Hr:  00    01    02    03    04    05
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  06    07    08    09    10    11
+                     0.4,  0.3,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  12    13    14    15    16    17
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  18    19    20    21    22    23
+                     0.9,  0.9,  0.9,  0.9,  0.9,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Main living room / lounge. Two ceiling LED bulbs. Morning gathering (06-07h) and evening (18-22h)."
+        },
+
+        {
+            "room":             "dining_area",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.7,  0.7,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.8,  0.8,  0.8,  0.0,  0.0,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Dining area. Morning breakfast (06-07h) and evening dinner (18-20h)."
+        },
+
+        {
+            "room":             "master_bedroom",
+            "count":            2,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.7,
+                     0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.85, 0.85, 0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Master bedroom. Morning wakeup (05-06h) and late evening before sleep (21-22h)."
+        },
+
+        {
+            "room":             "children_bedroom",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.7,  0.6,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.8,  0.8,  0.0,  0.0,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Children's bedroom. Morning wakeup for school (06-07h) and early evening before sleep (19-20h)."
+        },
+
+        {
+            "room":             "bedroom_3",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.7,
+                     0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.85, 0.85, 0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Third bedroom. Household_helpers. Morning wakeup (05-06h) and late evening before sleep (21-22h)"
+        },
+        {
+            "room":             "bedroom_4",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.6,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.85, 0.85, 0.0
+            ],
+            # Non-working adult — wakes later (07h), sleeps late (21-22h).
+            "needs_occupancy":  True,
+            "notes": "Non-working adult bedroom. Later morning wakeup (07h) and late evening (21-22h)."
+        },
+        {
+            "room":             "bedroom_5",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.8,  0.8,  0.0,  0.0,  0.0
+            ],
+            # Elderly — wakes at 06h (after working adults), early to bed (19-20h).
+            "needs_occupancy":  True,
+            "notes": "Elderly bedroom. Early morning wakeup (05-06h) and early evening sleep (19-20h)."
+        },
+
+        {
+            "room":             "kitchen",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.85, 0.85, 0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.85,
+                     0.85, 0.85, 0.85, 0.0,  0.0,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Kitchen. Morning prep (06-07h) and evening dinner prep (17-20h)."
+        },
+
+        {
+            "room":             "bathroom",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.8,
+                     0.8,  0.8,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.75, 0.75, 0.75, 0.75, 0.0,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Bathroom. Morning rush (05-07h) and evening (18-21h) only."
+        },
+
+        {
+            "room":             "bathroom_2",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.8,
+                     0.8,  0.8,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.75, 0.75, 0.75, 0.75, 0.0,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Bathroom. Morning rush (05-07h) and evening (18-21h) only."
+        },
+
+        {
+            "room":             "outside_security",
+            "count":            2,
+            "wattage_w":        50,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     1.0,  1.0,  1.0,  1.0,  1.0,  1.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     1.0,  1.0,  1.0,  1.0,  1.0,  1.0
+            ],
+            # Dusk-to-dawn: 18:00–05:59.
+            "needs_occupancy":  False,
+            "notes": ("Runs dusk to dawn regardless of occupancy."
             )
         },
 
         {
-            "room":              "dining_area",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  6,
-            "usage_end_hour":    8,
-            # Morning breakfast usage.
-            "p_on_occupied":     0.70,
-            "p_on_daylight":     0.10,
-            "controls_separately": True,
-            "notes": (
-                "Dining area light. Morning breakfast and evening dinner. "
-                "Add a second entry for this room with evening hours "
-                "if dining area is used in the evening as well."
-            )
+            "room":             "staircase_corridor",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.6,  0.6,  0.6,  0.6,  0.6,  0.0
+            ],
+            "needs_occupancy":  True,
+            "notes": "Staircase or corridor light. Evening use only (18-22h)."
         },
 
         {
-            "room":              "dining_area_evening",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  18,
-            "usage_end_hour":    21,
-            "p_on_occupied":     0.80,
-            "p_on_daylight":     0.05,
-            "controls_separately": False,
-            # Same switch as dining_area — modelled as separate entry
-            # with different usage hours. Model should not sum both
-            # simultaneously — handled in lighting_model.py.
-            "notes": "Dining area evening usage (same bulb as morning entry)."
-        },
-
-        {
-            "room":              "master_bedroom",
-            "count":             2,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  19,
-            "usage_end_hour":    23,
-            "p_on_occupied":     0.85,
-            "p_on_daylight":     0.05,
-            "controls_separately": True,
-            "notes": "Master bedroom. Evening use before sleep."
-        },
-
-        {
-            "room":              "bedroom_2",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  19,
-            "usage_end_hour":    22,
-            "p_on_occupied":     0.80,
-            "p_on_daylight":     0.05,
-            "controls_separately": True,
-            "notes": "Children's bedroom. Earlier lights-out than master."
-        },
-
-        {
-            "room":              "bedroom_3",
-            "count":             0,
-            # Set count = 0 if bedroom does not exist.
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  19,
-            "usage_end_hour":    22,
-            "p_on_occupied":     0.75,
-            "p_on_daylight":     0.05,
-            "controls_separately": True,
-            "notes": "Third bedroom. Set count = 0 if not present."
-        },
-
-        {
-            "room":              "kitchen",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  6,
-            "usage_end_hour":    8,
-            "p_on_occupied":     0.85,
-            "p_on_daylight":     0.20,
-            # Kitchen may need lights even in daytime if poorly lit.
-            "controls_separately": True,
-            "notes": "Kitchen morning lighting for breakfast preparation."
-        },
-
-        {
-            "room":              "kitchen_evening",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  17,
-            "usage_end_hour":    21,
-            "p_on_occupied":     0.85,
-            "p_on_daylight":     0.05,
-            "controls_separately": False,
-            # Same bulb as kitchen morning.
-            "notes": "Kitchen evening lighting during dinner preparation."
-        },
-
-        {
-            "room":              "bathroom",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  5,
-            "usage_end_hour":    8,
-            "p_on_occupied":     0.80,
-            "p_on_daylight":     0.60,
-            # Bathroom has no windows — high p_on_daylight.
-            "controls_separately": True,
-            "notes": (
-                "Bathroom / toilet. Short duration use. "
-                "High p_on_daylight because bathroom is typically interior "
-                "with no natural light regardless of time of day."
-            )
-        },
-
-        {
-            "room":              "bathroom_evening",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  18,
-            "usage_end_hour":    22,
-            "p_on_occupied":     0.75,
-            "p_on_daylight":     0.90,
-            "controls_separately": False,
-            "notes": "Bathroom evening use. Same bulb as morning entry."
-        },
-
-        {
-            "room":              "outside_security_front",
-            "count":             1,
-            "wattage_w":         15,
-            "bulb_type":         "LED",
-            "usage_start_hour":  18,
-            "usage_end_hour":    6,
-            # Runs from 6pm to 6am — overnight security lighting.
-            "p_on_occupied":     1.00,
-            # Always on during usage window — security function.
-            "p_on_daylight":     0.00,
-            # Never on during daylight.
-            "controls_separately": True,
-            "notes": (
-                "Front door / entrance security light. "
-                "Runs from dusk to dawn. "
-                "Some households use a dusk-to-dawn sensor. "
-                "Model as usage_start=18, usage_end=6 with p_on=1.0."
-            )
-        },
-
-        {
-            "room":              "outside_security_back",
-            "count":             1,
-            "wattage_w":         15,
-            "bulb_type":         "LED",
-            "usage_start_hour":  18,
-            "usage_end_hour":    6,
-            "p_on_occupied":     1.00,
-            "p_on_daylight":     0.00,
-            "controls_separately": True,
-            "notes": "Back yard / service entrance security light."
-        },
-
-        {
-            "room":              "staircase_corridor",
-            "count":             0,
-            # Common in multi-storey or maisonette homes.
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  18,
-            "usage_end_hour":    23,
-            "p_on_occupied":     0.60,
-            "p_on_daylight":     0.20,
-            "controls_separately": True,
-            "notes": "Staircase or corridor light. Set count = 0 for single-storey."
-        },
-
-        {
-            "room":              "store_room",
-            "count":             1,
-            "wattage_w":         9,
-            "bulb_type":         "LED",
-            "usage_start_hour":  6,
-            "usage_end_hour":    22,
-            "p_on_occupied":     0.10,
-            # Low probability — used briefly and infrequently.
-            "p_on_daylight":     0.50,
-            # Interior room — may need light regardless.
-            "controls_separately": True,
-            "notes": "Store room or utility room. Low, occasional use."
+            "room":             "store_room",
+            "count":            1,
+            "wattage_w":        9,
+            "bulb_type":        "LED",
+            "tou_hourly":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.1,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.1,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Brief access: morning fetch (07h) and early evening return (16h).
+            "needs_occupancy":  True,
+            "notes": "Store room or utility room. Brief access morning and early evening."
         }
 
     ],  # end of bulbs list
@@ -1789,12 +1390,12 @@ REFERENCE_HOUSEHOLD = {
         "monthly_fixed_charge_kes": 150.0,
         # KPLC fixed meter charge per month.
 
-        "supply_reliability": "poor",
+        "supply_reliability": "fair",
         # Qualitative assessment from household: "good" / "fair" / "poor"
         # "poor" → frequent blackouts, high autonomy motivation
         # "good" → reliable, autonomy is less critical
 
-        "avg_blackout_hours_per_week": 6.0,
+        "avg_blackout_hours_per_week": 4.0,
         # Household's estimate of how many hours per week
         # the grid is unavailable.
         # Used qualitatively to justify autonomy objective.
@@ -1809,11 +1410,11 @@ REFERENCE_HOUSEHOLD = {
         # Cross-check only: if this is high and estimated consumption
         # is low, investigate the appliance survey responses.
 
-        "metering_type": "postpaid",
+        "metering_type": "prepaid",
         # "postpaid" or "prepaid" (token meter).
         # Most Nairobi residential connections are one or the other.
 
-        "existing_backup": None,
+        "existing_backup": "solar_battery",
         # Any existing power system the household currently has.
         # This schema is used for BOTH unmetered households AND
         # households with existing solar that want to resize or upgrade.
@@ -1825,17 +1426,17 @@ REFERENCE_HOUSEHOLD = {
         #   "solar_battery"      : existing hybrid PV+battery system
         # Used to understand current situation and design context.
 
-        "existing_pv_kw": 0.0,
-        # If existing_backup includes solar, installed PV capacity in kW.
-        # Set to 0.0 if no existing PV.
+        "existing_pv_kw": 11.0,
+        # Installed PV panel capacity in kW-peak. READ FROM 
+        # installation certificate. Set to 0.0 if no existing PV.
 
-        "existing_battery_kwh": 0.0,
-        # If existing_backup includes battery, installed capacity in kWh.
+        "existing_battery_kwh": 10.0,
+        # Installed battery capacity in kWh. READ FROM BATTERY LABEL.
         # Set to 0.0 if no existing battery.
 
-        "existing_backup_capacity_kw": 0.0
-        # Generator or inverter rated capacity in kW if applicable.
-        # Set to 0.0 otherwise.
+        "existing_backup_capacity_kw": 10.0
+        # Inverter rated output in kW. READ FROM INVERTER LABEL.
+        # Set to 0.0 if no inverter/generator.
     },
 
     # =========================================================================
@@ -1846,18 +1447,16 @@ REFERENCE_HOUSEHOLD = {
 
     "site": {
 
-        "roof_area_sqm": 40.0,
+        "roof_area_sqm": 60.0,
         # Available roof area for PV panels in square metres.
         # Practical limit on PPV even if optimizer wants more.
         # A 1kW PV array requires approximately 6–8 m² (depending on panel).
         # 40m² → practical maximum ~5–6 kWp.
 
-        "roof_orientation": "south_facing",
+        "roof_orientation": "north_facing",
         # Nairobi is south of the equator → north-facing is optimal.
         # Options: "north_facing" (optimal for Kenya), "south_facing",
         #          "east_facing", "west_facing", "flat"
-        # Note: 'south_facing' is actually suboptimal for Kenya.
-        # This field captures the real roof situation.
 
         "roof_tilt_degrees": 15,
         # Roof pitch angle from horizontal in degrees.
@@ -1868,7 +1467,7 @@ REFERENCE_HOUSEHOLD = {
         # Qualitative: "none" / "minimal" / "moderate" / "severe"
         # Captures shading from trees, neighbouring buildings.
 
-        "roof_type": "iron_sheet",
+        "roof_type": "clay_tile",
         # Material: "iron_sheet" / "concrete" / "clay_tile" / "other"
         # Affects mounting method and structural considerations.
 
@@ -1894,50 +1493,122 @@ REFERENCE_HOUSEHOLD = {
     # =========================================================================
 
     # Used directly in Objective 3 MILP cost objective (f1).
-    # All costs in KES.
-    # These are market prices as of mid-2025 Nairobi.
+    # All costs in KES, mid-2026 Nairobi market prices.
     # Update at survey time if prices have changed significantly.
+    # Optimizer selects model and count from each catalog list.
 
     "costs": {
 
-        "pv_panel_kes_per_kw":       80000,
-        # Installed cost per kWp of PV panels including mounting.
-        # Typical Nairobi market: KES 70,000–100,000 per kWp installed.
+        # ── PV Panels ─────────────────────────────────────────────────────────
+        # Price per panel (supply + mounting hardware). Sorted by wattage asc.
+        # Optimizer picks one model and an integer panel count.
+        "pv_panels": [
+            {"model": "LONGi_Hi-MO6_405W",         "wattage_w": 405, "price_kes": 12000},
+            {"model": "JA_Solar_JAM54S31_410W",     "wattage_w": 410, "price_kes": 12500},
+            {"model": "Canadian_Solar_CS3L_420W",   "wattage_w": 420, "price_kes": 12500},
+            {"model": "Jinko_Tiger_Pro_450W",        "wattage_w": 450, "price_kes": 13500},
+            {"model": "LONGi_Hi-MO6_540W",          "wattage_w": 540, "price_kes": 15500},
+            {"model": "JA_Solar_JAM72S30_545W",     "wattage_w": 545, "price_kes": 15500},
+            {"model": "Canadian_Solar_CS6W_550W",   "wattage_w": 550, "price_kes": 15000},
+            {"model": "Jinko_Tiger_Neo_580W",        "wattage_w": 580, "price_kes": 16500},
+            {"model": "LONGi_Hi-MO_X6_610W",        "wattage_w": 610, "price_kes": 18500},
+            {"model": "JA_Solar_JAM72S30_620W",     "wattage_w": 620, "price_kes": 18000},
+            {"model": "LONGi_Hi-MO_X6_640W",        "wattage_w": 640, "price_kes": 20000},
+        ],
 
-        "battery_kes_per_kwh":       60000,
-        # Installed cost per kWh of LiFePO4 battery storage.
-        # Typical Nairobi market: KES 50,000–80,000 per kWh installed.
+        # ── Batteries ─────────────────────────────────────────────────────────
+        # LiFePO4 units (supply + installation). Sorted by capacity asc.
+        # Optimizer picks one model; units stack in parallel to reach target kWh.
+        "batteries": [
+            {"model": "Pylontech_US2000C",       "capacity_kwh":  2.40, "price_kes":  85000},
+            {"model": "Pylontech_US3000C",       "capacity_kwh":  3.50, "price_kes": 120000},
+            {"model": "SRNE_BSLBLP48100",        "capacity_kwh":  4.80, "price_kes": 130000},
+            {"model": "Pylontech_US5000",        "capacity_kwh":  4.80, "price_kes": 155000},
+            {"model": "SRNE_HES5K-B",            "capacity_kwh":  5.00, "price_kes": 140000},
+            {"model": "Deye_BOS-GM5.1",          "capacity_kwh":  5.12, "price_kes": 148000},
+            {"model": "Must_PV18-5048_EX_5kWh",  "capacity_kwh":  5.00, "price_kes": 138000},
+            {"model": "Solax_T-BAT_H5.8",        "capacity_kwh":  5.80, "price_kes": 195000},
+            {"model": "SRNE_HES10K-B",           "capacity_kwh": 10.00, "price_kes": 270000},
+            {"model": "Deye_BOS-GM10.2",         "capacity_kwh": 10.24, "price_kes": 285000},
+            {"model": "Must_PV18-5048_EX_10kWh", "capacity_kwh": 10.00, "price_kes": 265000},
+            {"model": "SRNE_HES15K-B",           "capacity_kwh": 15.00, "price_kes": 390000},
+            {"model": "Deye_BOS-GM15.4",         "capacity_kwh": 15.36, "price_kes": 410000},
+            {"model": "Must_PV18-5048_EX_15kWh", "capacity_kwh": 15.00, "price_kes": 380000},
+            {"model": "SRNE_HES20K-B",           "capacity_kwh": 20.00, "price_kes": 510000},
+            {"model": "Deye_BOS-GM20.5",         "capacity_kwh": 20.48, "price_kes": 530000},
+            {"model": "Must_PV18-5048_EX_20kWh", "capacity_kwh": 20.00, "price_kes": 500000},
+            {"model": "SRNE_HES25K-B",           "capacity_kwh": 25.00, "price_kes": 630000},
+            {"model": "Deye_BOS-GM25.6",         "capacity_kwh": 25.60, "price_kes": 655000},
+            {"model": "Must_PV18-5048_EX_25kWh", "capacity_kwh": 25.00, "price_kes": 618000},
+            {"model": "SRNE_HES30K-B",           "capacity_kwh": 30.00, "price_kes": 750000},
+            {"model": "Deye_BOS-GM30.7",         "capacity_kwh": 30.72, "price_kes": 780000},
+            {"model": "Must_PV18-5048_EX_30kWh", "capacity_kwh": 30.00, "price_kes": 735000},
+        ],
 
-        "inverter_kes_per_kw":       30000,
-        # Installed cost per kW of hybrid inverter.
-        # Typical: KES 25,000–40,000 per kW for hybrid inverter.
+        # ── Inverters ─────────────────────────────────────────────────────────
+        # Hybrid inverters (supply + installation). Sorted by rated kW asc.
+        # Optimizer picks one model sized to cover peak load.
+        "inverters": [
+            {"model": "Must_PH1800_PLUS_3K",   "rated_kw":  3, "price_kes":  58000},
+            {"model": "SRNE_HF2430U60-100_3K", "rated_kw":  3, "price_kes":  62000},
+            {"model": "Deye_SUN-3K-SG04LP3",   "rated_kw":  3, "price_kes":  70000},
+            {"model": "Must_PH1800_PLUS_5K",   "rated_kw":  5, "price_kes":  82000},
+            {"model": "SRNE_HF2430U60-100_5K", "rated_kw":  5, "price_kes":  88000},
+            {"model": "Deye_SUN-5K-SG04LP3",   "rated_kw":  5, "price_kes":  95000},
+            {"model": "Must_EP3000_PRO_8K",    "rated_kw":  8, "price_kes": 118000},
+            {"model": "SRNE_HF2430U60-100_8K", "rated_kw":  8, "price_kes": 125000},
+            {"model": "Deye_SUN-8K-SG04LP3",   "rated_kw":  8, "price_kes": 135000},
+            {"model": "Must_EP3000_PRO_10K",   "rated_kw": 10, "price_kes": 148000},
+            {"model": "SRNE_ML2448_10K",        "rated_kw": 10, "price_kes": 155000},
+            {"model": "Deye_SUN-10K-SG04LP3",  "rated_kw": 10, "price_kes": 165000},
+            {"model": "Must_EP3000_PRO_12K",   "rated_kw": 12, "price_kes": 175000},
+            {"model": "SRNE_ML2448_12K",        "rated_kw": 12, "price_kes": 182000},
+            {"model": "Deye_SUN-12K-SG04LP3",  "rated_kw": 12, "price_kes": 195000},
+            {"model": "Must_EP3000_PRO_15K",   "rated_kw": 15, "price_kes": 215000},
+            {"model": "SRNE_ML2448_15K",        "rated_kw": 15, "price_kes": 225000},
+            {"model": "Deye_SUN-15K-SG04LP3",  "rated_kw": 15, "price_kes": 235000},
+            {"model": "Must_EP3000_PRO_20K",   "rated_kw": 20, "price_kes": 275000},
+            {"model": "SRNE_ML2448_20K",        "rated_kw": 20, "price_kes": 285000},
+            {"model": "Deye_SUN-20K-SG04LP3",  "rated_kw": 20, "price_kes": 300000},
+            {"model": "Must_EP3000_PRO_25K",   "rated_kw": 25, "price_kes": 335000},
+            {"model": "SRNE_ML2448_25K",        "rated_kw": 25, "price_kes": 348000},
+            {"model": "Deye_SUN-25K-SG04LP3",  "rated_kw": 25, "price_kes": 365000},
+            {"model": "Must_EP3000_PRO_30K",   "rated_kw": 30, "price_kes": 395000},
+            {"model": "SRNE_ML2448_30K",        "rated_kw": 30, "price_kes": 410000},
+            {"model": "Deye_SUN-30K-SG04LP3",  "rated_kw": 30, "price_kes": 430000},
+        ],
 
-        "bos_kes":                   50000,
-        # Balance of System fixed cost: wiring, breakers, mounting,
-        # installation labour, commissioning. Flat fee.
-        # Typical Nairobi residential BOS: KES 30,000–70,000.
+        # ── Balance of System ─────────────────────────────────────────────────
+        # Wiring, breakers, mounting rails, earthing, labour, commissioning.
+        # Tiered by system size; pick the bracket that covers the inverter kW.
+        "bos": [
+            {"system_size_kw_max":  5, "price_kes":  35000},
+            {"system_size_kw_max": 10, "price_kes":  55000},
+            {"system_size_kw_max": 15, "price_kes":  75000},
+            {"system_size_kw_max": 20, "price_kes":  95000},
+            {"system_size_kw_max": 25, "price_kes": 115000},
+            {"system_size_kw_max": 30, "price_kes": 135000},
+        ],
 
-        "om_kes_per_year":           5000,
-        # Annual operation and maintenance cost.
-        # Panel cleaning, inspection, minor repairs.
+        # ── Financial Parameters ───────────────────────────────────────────────
+        "om_kes_per_year":              2000,
+        # Annual O&M: panel cleaning, inspection, minor repairs.
 
-        "battery_replacement_years": 10,
-        # Expected battery cycle life before replacement needed.
-        # LiFePO4 at 80% DOD: 2000–3000 cycles → approximately 8–10 years.
+        "battery_replacement_years":    10,
+        # LiFePO4 at 80% DOD: 2000–3000 cycles → ~8–10 years.
 
-        "pv_lifetime_years":         25,
-        # Standard PV panel warranty and expected lifetime.
+        "pv_lifetime_years":            25,
+        "inverter_lifetime_years":      10,
 
-        "inverter_lifetime_years":   10,
-        # Hybrid inverter expected lifetime before replacement.
-
-        "discount_rate":             0.12,
-        # Annual discount rate for NPV/NPC calculations.
-        # Kenya commercial lending rate proxy: 10–14%.
+        "discount_rate":                0.12,
+        # Annual discount rate for NPC calculations — converts future costs to
+        # today's money: PV = cost / (1 + r)^year. Set to the cost of borrowing
+        # in Kenya (10–14%) so the solar investment is compared fairly against
+        # what that money would cost if financed by a loan. A higher rate
+        # discounts long-term savings more, favouring smaller systems.
 
         "electricity_price_escalation": 0.05
-        # Annual electricity price escalation rate.
-        # KPLC tariffs have been increasing: use 5% per year.
+        # KPLC tariffs historically rising ~5% per year.
     },
 
 
@@ -1961,7 +1632,7 @@ REFERENCE_HOUSEHOLD = {
 
         "random_seed":           None,
         # Set to an integer for reproducible results during debugging.
-        # Set to None for production runs (true randomness).
+        # Set to None for production runs (true randomness). None means each run is truly random, which is what you want for production.
 
         "markov_n_max":          None,
         # Maximum occupancy state for Markov chain.
@@ -1996,20 +1667,9 @@ REFERENCE_HOUSEHOLD = {
         # 0.02 = 2% of normal probability (appliance almost never runs).
         # Captures rare events like appliances accidentally left on.
 
-        "duration_clip_min_minutes": 1,
+        "duration_clip_min_minutes": 1
         # Minimum duration for any appliance use event.
         # Prevents zero or negative duration samples.
-
-        "validation_mae_threshold_pct":        10.0,
-        # Maximum acceptable MAE as % of mean measured load.
-        # Model fails validation if MAE exceeds this.
-
-        "validation_variability_ratio_min":    0.90,
-        "validation_variability_ratio_max":    1.10,
-        # Acceptable range for σ_model / σ_measured.
-
-        "validation_peak_avg_ratio_tolerance_pct": 10.0
-        # Maximum acceptable % difference in peak-to-average ratio.
     }
 
 }  # end of REFERENCE_HOUSEHOLD
@@ -2034,24 +1694,19 @@ def validate_household(h):
        not h.get("household_id"):
         errors.append("household_id must be a non-empty string")
 
-    if h.get("tier") not in ["low", "medium", "high", None]:
-        errors.append(
-            "tier must be one of: low, medium, high, or None. "
-            f"Got: '{h.get('tier')}'"
-        )
-
     # ── Block 2: Household composition ───────────────────────────────────────
 
     n = h.get("n_residents")
-    if not isinstance(n, int) or not (1 <= n <= 10):
+    if not isinstance(n, int) or not (1 <= n <= 15):
         errors.append(
-            f"n_residents must be an integer between 1 and 10, got: {n}"
+            f"n_residents must be an integer between 1 and 15, got: {n}"
         )
     else:
         rb = h.get("resident_breakdown", {})
         rb_sum = sum([
             rb.get("adults_working", 0),
             rb.get("adults_non_working", 0),
+            rb.get("household_helpers", 0),
             rb.get("school_children", 0),
             rb.get("young_children", 0),
             rb.get("elderly", 0)
@@ -2132,14 +1787,6 @@ def validate_household(h):
                         f"unrealistically high (> 10 kW). Check units."
                     )
 
-            if not isinstance(appl.get("controlled_by_cooking_module"), bool):
-                errors.append(
-                    f"{prefix}: controlled_by_cooking_module must be "
-                    f"True or False"
-                )
-
-            controlled = appl.get("controlled_by_cooking_module", False)
-
             tou = appl.get("tou_hourly", [])
             if len(tou) != 24:
                 errors.append(
@@ -2159,168 +1806,29 @@ def validate_household(h):
             mean_d = appl.get("mean_duration_min")
             std_d  = appl.get("std_duration_min")
 
-            # Only enforce duration constraints for non-cooking-module appliances
-            if not controlled:
-                if not isinstance(mean_d, (int, float)) or mean_d < 1:
-                    if count and count > 0:
-                        errors.append(
-                            f"{prefix}: mean_duration_min must be ≥ 1 "
-                            f"for non-cooking-module appliances, got: {mean_d}"
-                        )
-                if not isinstance(std_d, (int, float)) or std_d < 0:
+            if not isinstance(mean_d, (int, float)) or mean_d < 1:
+                if count and count > 0:
                     errors.append(
-                        f"{prefix}: std_duration_min must be ≥ 0, got: {std_d}"
+                        f"{prefix}: mean_duration_min must be ≥ 1 "
+                        f"when count > 0, got: {mean_d}"
                     )
-                if isinstance(mean_d, (int, float)) and \
-                   isinstance(std_d, (int, float)) and \
-                   mean_d > 0 and std_d > mean_d / 2:
-                    errors.append(
-                        f"{prefix}: std_duration_min ({std_d}) exceeds "
-                        f"mean_duration_min / 2 ({mean_d / 2:.1f}). "
-                        f"Risk of negative duration samples."
-                    )
+            if not isinstance(std_d, (int, float)) or std_d < 0:
+                errors.append(
+                    f"{prefix}: std_duration_min must be ≥ 0, got: {std_d}"
+                )
+            if isinstance(mean_d, (int, float)) and \
+               isinstance(std_d, (int, float)) and \
+               mean_d > 0 and std_d > mean_d / 2:
+                errors.append(
+                    f"{prefix}: std_duration_min ({std_d}) exceeds "
+                    f"mean_duration_min / 2 ({mean_d / 2:.1f}). "
+                    f"Risk of negative duration samples."
+                )
 
             if not isinstance(appl.get("needs_occupancy"), bool):
                 errors.append(
                     f"{prefix}: needs_occupancy must be True or False"
                 )
-
-    # ── Block 4b: Cooking module ──────────────────────────────────────────────
-
-    cooking = h.get("cooking", {})
-    if not isinstance(cooking, dict):
-        errors.append("cooking must be a dict")
-    else:
-        valid_fuels = ["electric", "charcoal", "lpg_gas", "kerosene", "mixed"]
-
-        if cooking.get("primary_cooking_fuel") not in valid_fuels:
-            errors.append(
-                f"cooking.primary_cooking_fuel must be one of {valid_fuels}, "
-                f"got: '{cooking.get('primary_cooking_fuel')}'"
-            )
-
-        meals = cooking.get("meals", [])
-        if not isinstance(meals, list) or len(meals) == 0:
-            errors.append("cooking.meals must be a non-empty list")
-        else:
-            seen_meal_ids = []
-            for midx, meal in enumerate(meals):
-                mprefix = f"cooking.meals[{midx}] ('{meal.get('meal_id', '?')}')"
-
-                meal_id = meal.get("meal_id")
-                if not isinstance(meal_id, str) or not meal_id:
-                    errors.append(f"{mprefix}: meal_id must be a non-empty string")
-                elif meal_id in seen_meal_ids:
-                    errors.append(f"{mprefix}: duplicate meal_id '{meal_id}'")
-                else:
-                    seen_meal_ids.append(meal_id)
-
-                if not isinstance(meal.get("cooked_at_home"), bool):
-                    errors.append(f"{mprefix}: cooked_at_home must be True or False")
-
-                for bool_field in ["cooked_at_home_weekday",
-                                   "cooked_at_home_weekend"]:
-                    if not isinstance(meal.get(bool_field), bool):
-                        errors.append(
-                            f"{mprefix}: {bool_field} must be True or False"
-                        )
-
-                for time_field in ["earliest_start_min", "latest_start_min"]:
-                    val = meal.get(time_field)
-                    if not isinstance(val, (int, float)) or \
-                       not (0 <= val <= 1439):
-                        errors.append(
-                            f"{mprefix}: {time_field} must be 0–1439 "
-                            f"(minutes from midnight), got: {val}"
-                        )
-
-                if isinstance(meal.get("earliest_start_min"), (int, float)) and \
-                   isinstance(meal.get("latest_start_min"), (int, float)):
-                    if meal["earliest_start_min"] > meal["latest_start_min"]:
-                        errors.append(
-                            f"{mprefix}: earliest_start_min "
-                            f"({meal['earliest_start_min']}) must be ≤ "
-                            f"latest_start_min ({meal['latest_start_min']})"
-                        )
-
-                n_people = meal.get("n_people_fed")
-                if not isinstance(n_people, int) or n_people < 1:
-                    errors.append(
-                        f"{mprefix}: n_people_fed must be a positive integer, "
-                        f"got: {n_people}"
-                    )
-
-                if meal.get("primary_fuel") not in valid_fuels:
-                    errors.append(
-                        f"{mprefix}: primary_fuel must be one of {valid_fuels}"
-                    )
-
-                ef = meal.get("electric_fraction")
-                if not isinstance(ef, (int, float)) or not (0.0 <= ef <= 1.0):
-                    errors.append(
-                        f"{mprefix}: electric_fraction must be float in "
-                        f"[0.0, 1.0], got: {ef}"
-                    )
-
-                # appliance_used must match an appliance name if electric_fraction > 0
-                if isinstance(ef, (int, float)) and ef > 0:
-                    appl_name = meal.get("appliance_used")
-                    if appl_name is None:
-                        errors.append(
-                            f"{mprefix}: electric_fraction > 0 but "
-                            f"appliance_used is None. Must specify an appliance."
-                        )
-                    elif isinstance(appliances, list):
-                        known_names = [a.get("name") for a in appliances]
-                        if appl_name not in known_names:
-                            errors.append(
-                                f"{mprefix}: appliance_used = '{appl_name}' "
-                                f"does not match any appliance name in "
-                                f"the appliances list."
-                            )
-                        else:
-                            # Find the appliance and confirm it is cooking-module
-                            # controlled
-                            matching = [a for a in appliances
-                                        if a.get("name") == appl_name]
-                            if matching:
-                                appl_rec = matching[0]
-                                if not appl_rec.get(
-                                    "controlled_by_cooking_module", False
-                                ):
-                                    # Allow kettles — they can appear in both
-                                    # frameworks. Warn but do not fail.
-                                    pass
-
-                if meal.get("cook_type") not in ["quick", "long"]:
-                    errors.append(
-                        f"{mprefix}: cook_type must be 'quick' or 'long', "
-                        f"got: '{meal.get('cook_type')}'"
-                    )
-
-                for phys_field in ["energy_per_capita_kwh",
-                                   "preheat_fraction",
-                                   "proportionality_factor"]:
-                    val = meal.get(phys_field)
-                    if not isinstance(val, (int, float)) or val <= 0:
-                        errors.append(
-                            f"{mprefix}: {phys_field} must be a positive "
-                            f"number, got: {val}"
-                        )
-
-                if isinstance(meal.get("preheat_fraction"), (int, float)):
-                    if not (0.0 < meal["preheat_fraction"] <= 1.0):
-                        errors.append(
-                            f"{mprefix}: preheat_fraction must be in (0, 1], "
-                            f"got: {meal['preheat_fraction']}"
-                        )
-
-                if isinstance(meal.get("proportionality_factor"), (int, float)):
-                    if not (0.0 < meal["proportionality_factor"] <= 1.0):
-                        errors.append(
-                            f"{mprefix}: proportionality_factor must be in "
-                            f"(0, 1], got: {meal['proportionality_factor']}"
-                        )
 
     # ── Block 5: Lighting ────────────────────────────────────────────────────
 
@@ -2361,24 +1869,23 @@ def validate_household(h):
                     f"'incandescent', or 'fluorescent'"
                 )
 
-            for field in ["usage_start_hour", "usage_end_hour"]:
-                val = b.get(field)
-                if not isinstance(val, int) or not (0 <= val <= 23):
-                    errors.append(
-                        f"{prefix}: {field} must be integer 0–23, got: {val}"
-                    )
-
-            for prob_field in ["p_on_occupied", "p_on_daylight"]:
-                val = b.get(prob_field)
-                if not isinstance(val, (int, float)) or \
-                   not (0.0 <= val <= 1.0):
-                    errors.append(
-                        f"{prefix}: {prob_field} must be float in [0,1]"
-                    )
-
-            if not isinstance(b.get("controls_separately"), bool):
+            tou = b.get("tou_hourly", [])
+            if len(tou) != 24:
                 errors.append(
-                    f"{prefix}: controls_separately must be True or False"
+                    f"{prefix}: tou_hourly must have 24 values, got {len(tou)}"
+                )
+            else:
+                for i, v in enumerate(tou):
+                    if not isinstance(v, (int, float)) or \
+                       not (0.0 <= v <= 1.0):
+                        errors.append(
+                            f"{prefix}: tou_hourly[{i}] = {v} must be "
+                            f"float in [0,1]"
+                        )
+
+            if not isinstance(b.get("needs_occupancy"), bool):
+                errors.append(
+                    f"{prefix}: needs_occupancy must be True or False"
                 )
 
     # ── Block 6: Grid ────────────────────────────────────────────────────────
@@ -2443,18 +1950,31 @@ def validate_household(h):
     # ── Block 8: Costs ────────────────────────────────────────────────────────
 
     costs = h.get("costs", {})
-    required_cost_fields = [
-        "pv_panel_kes_per_kw",
-        "battery_kes_per_kwh",
-        "inverter_kes_per_kw",
-        "bos_kes"
-    ]
-    for field in required_cost_fields:
-        val = costs.get(field)
-        if not isinstance(val, (int, float)) or val <= 0:
-            errors.append(
-                f"costs.{field} must be a positive number, got: {val}"
-            )
+
+    def _check_catalog(catalog, name, required_fields):
+        if not isinstance(catalog, list) or len(catalog) == 0:
+            errors.append(f"costs.{name} must be a non-empty list")
+            return
+        for i, entry in enumerate(catalog):
+            for field, kind in required_fields.items():
+                val = entry.get(field)
+                if kind == "str":
+                    if not isinstance(val, str) or not val:
+                        errors.append(f"costs.{name}[{i}].{field} must be a non-empty string")
+                else:
+                    if not isinstance(val, (int, float)) or val <= 0:
+                        errors.append(f"costs.{name}[{i}].{field} must be a positive number, got: {val}")
+
+    _check_catalog(costs.get("pv_panels"),  "pv_panels",  {"model": "str", "wattage_w": "num", "price_kes": "num"})
+    _check_catalog(costs.get("batteries"),  "batteries",  {"model": "str", "capacity_kwh": "num", "price_kes": "num"})
+    _check_catalog(costs.get("inverters"),  "inverters",  {"model": "str", "rated_kw": "num", "price_kes": "num"})
+    _check_catalog(costs.get("bos"),        "bos",        {"system_size_kw_max": "num", "price_kes": "num"})
+
+    bos = costs.get("bos")
+    if isinstance(bos, list) and len(bos) > 1:
+        sizes = [e.get("system_size_kw_max", 0) for e in bos]
+        if sizes != sorted(sizes):
+            errors.append("costs.bos entries must be sorted ascending by system_size_kw_max")
 
     # ── Final result ──────────────────────────────────────────────────────────
 
@@ -2470,115 +1990,11 @@ def validate_household(h):
 # =============================================================================
 # SECTION 3: HELPER UTILITIES
 # =============================================================================
-
-def assign_tier(household, simulation_results):
-    """
-    Assign consumption tier to a household after Monte Carlo simulation.
-
-    This is the ONLY correct way to set the tier field.
-    Call this after run_ensemble() has completed for both day types.
-
-    Parameters
-    ----------
-    household : dict
-        Household parameter dict. tier must currently be None.
-    simulation_results : dict
-        Must contain 'weighted_daily_energy_kwh' — the weighted median
-        daily energy: (5 * weekday_p50 + 2 * weekend_p50) / 7
-
-    Returns
-    -------
-    household dict with tier populated in place.
-
-    Raises
-    ------
-    ValueError if tier is already set.
-    """
-    if household.get("tier") is not None:
-        raise ValueError(
-            f"tier is already set to '{household['tier']}'. "
-            f"Set household['tier'] = None first if reassignment is needed."
-        )
-
-    median_kwh = simulation_results["weighted_daily_energy_kwh"]
-
-    if not isinstance(median_kwh, (int, float)) or median_kwh < 0:
-        raise ValueError(
-            f"weighted_daily_energy_kwh must be non-negative, got: {median_kwh}"
-        )
-
-    if median_kwh < 5.0:
-        tier = "low"
-    elif median_kwh <= 15.0:
-        tier = "medium"
-    else:
-        tier = "high"
-
-    household["tier"] = tier
-    print(
-        f"Tier assigned: '{tier}' "
-        f"(simulated median daily energy = {median_kwh:.2f} kWh/day)"
-    )
-    return household
-
-
-def get_active_appliances(household):
-    """Return only appliances with count > 0."""
-    return [a for a in household["appliances"] if a.get("count", 0) > 0]
-
-
-def get_cooking_module_appliances(household):
-    """
-    Return appliances controlled by the cooking module (count > 0).
-    These are EXCLUDED from standard tou_hourly switch-on logic.
-    """
-    return [
-        a for a in household["appliances"]
-        if a.get("count", 0) > 0
-        and a.get("controlled_by_cooking_module", False)
-    ]
-
-
 def get_standard_appliances(household):
     """
-    Return active appliances NOT controlled by the cooking module.
-    These use the standard tou_hourly switch-on mechanism.
+    Return active appliances (count > 0).
     """
-    return [
-        a for a in household["appliances"]
-        if a.get("count", 0) > 0
-        and not a.get("controlled_by_cooking_module", False)
-    ]
-
-
-def get_active_meals(household, day_type="weekday"):
-    """
-    Return meals that generate electrical load for a given day type.
-
-    Parameters
-    ----------
-    household : dict
-    day_type : str
-        "weekday" or "weekend"
-
-    Returns
-    -------
-    List of meal dicts where cooked_at_home is True for the given day
-    type and electric_fraction > 0.
-    """
-    meals = household.get("cooking", {}).get("meals", [])
-    result = []
-    for meal in meals:
-        if day_type == "weekday":
-            home = meal.get("cooked_at_home_weekday",
-                            meal.get("cooked_at_home", False))
-        else:
-            home = meal.get("cooked_at_home_weekend",
-                            meal.get("cooked_at_home", False))
-
-        if home and meal.get("electric_fraction", 0.0) > 0:
-            result.append(meal)
-    return result
+    return [a for a in household["appliances"] if a.get("count", 0) > 0]
 
 
 def get_active_bulbs(household):
@@ -2591,7 +2007,14 @@ def estimate_daily_energy_kwh(household):
     Rough deterministic estimate of daily energy consumption.
     Used for sanity checking — NOT the model output.
 
-    Includes both standard appliances and a cooking module estimate.
+    Duration is capped at 60 min per tou slot: each slot represents one
+    hour, so an appliance can contribute at most 1 hour of runtime per
+    slot regardless of mean_duration_min. This correctly handles always-on
+    appliances (fridge, router) whose duration field is 1440 min.
+
+    For appliances with needs_occupancy=True, expected energy is scaled by
+    the mean occupancy fraction for that day type, giving different weekday
+    and weekend estimates.
 
     Returns
     -------
@@ -2599,50 +2022,26 @@ def estimate_daily_energy_kwh(household):
     """
     def estimate_for_day(day_type):
         total_wh = 0.0
+        occ = household[f"occupancy_{day_type}"]
 
-        # Standard appliances via tou_hourly
         for appl in get_standard_appliances(household):
-            tou  = appl["tou_hourly"]
-            mean = appl["mean_duration_min"]
-            pwr  = appl["rated_power_w"]
-            energy_wh = 0.0
-            for tou_h in tou:
-                energy_wh += tou_h * (mean / 60.0) * pwr
-            total_wh += appl["count"] * energy_wh
+            tou      = appl["tou_hourly"]
+            pwr      = appl["rated_power_w"]
+            duration = min(appl["mean_duration_min"], 60) / 60.0
+            if appl.get("needs_occupancy"):
+                effective_tou = sum(t for t, o in zip(tou, occ) if o > 0)
+            else:
+                effective_tou = sum(tou)
+            total_wh += appl["count"] * pwr * duration * effective_tou
 
-        # Lighting
         for bulb in get_active_bulbs(household):
-            start = bulb["usage_start_hour"]
-            end   = bulb["usage_end_hour"]
-            hours = (end - start) if end >= start else (24 - start) + end
-            energy_wh = (
-                bulb["count"] *
-                bulb["wattage_w"] *
-                hours *
-                bulb["p_on_occupied"]
-            )
-            total_wh += energy_wh
+            if bulb.get("needs_occupancy"):
+                effective_tou = sum(t for t, o in zip(bulb["tou_hourly"], occ) if o > 0)
+            else:
+                effective_tou = sum(bulb["tou_hourly"])
+            total_wh += bulb["count"] * bulb["wattage_w"] * effective_tou
 
-        # Cooking module estimate
-        for meal in get_active_meals(household, day_type):
-            appl_name = meal.get("appliance_used")
-            if appl_name is None:
-                continue
-            # Find rated power
-            matching = [a for a in household["appliances"]
-                        if a.get("name") == appl_name and a.get("count", 0) > 0]
-            if not matching:
-                continue
-            pwr_w = matching[0]["rated_power_w"]
-            energy_kwh = (
-                meal["energy_per_capita_kwh"] *
-                meal["n_people_fed"] *
-                meal["proportionality_factor"] *
-                meal["electric_fraction"]
-            )
-            total_wh += energy_kwh * 1000
-
-        return total_wh / 1000  # to kWh
+        return total_wh / 1000
 
     wd = estimate_for_day("weekday")
     we = estimate_for_day("weekend")
@@ -2661,7 +2060,6 @@ def print_household_summary(household):
     print("=" * 60)
     print(f"HOUSEHOLD SUMMARY: {h['household_id']}")
     print("=" * 60)
-    print(f"  Tier         : {h['tier']}")
     print(f"  Residents    : {h['n_residents']}")
     print(f"  Location     : {h['location']['sub_county']}, "
           f"{h['location']['county']}")
@@ -2673,38 +2071,22 @@ def print_household_summary(household):
     print()
 
     std_appl = get_standard_appliances(h)
-    print(f"STANDARD APPLIANCES ({len(std_appl)} active, tou_hourly driven):")
+    print(f"APPLIANCES ({len(std_appl)} active, tou_hourly driven, "
+          f"includes cooking appliances):")
     for a in std_appl:
         print(f"  {a['name']:35s} x{a['count']}  "
               f"{a['rated_power_w']:>6.0f}W  "
               f"{a['mean_duration_min']:>4d}min avg")
 
     print()
-    cook_appl = get_cooking_module_appliances(h)
-    print(f"COOKING MODULE APPLIANCES ({len(cook_appl)} active):")
-    for a in cook_appl:
-        print(f"  {a['name']:35s} x{a['count']}  "
-              f"{a['rated_power_w']:>6.0f}W  [cooking module]")
-
-    print()
-    print("COOKING MEALS:")
-    for meal in h.get("cooking", {}).get("meals", []):
-        home_wd = meal.get("cooked_at_home_weekday", meal.get("cooked_at_home"))
-        home_we = meal.get("cooked_at_home_weekend", meal.get("cooked_at_home"))
-        ef = meal.get("electric_fraction", 0)
-        print(f"  {meal['meal_id']:20s} "
-              f"WD:{str(home_wd):5s} WE:{str(home_we):5s} "
-              f"fuel:{meal.get('primary_fuel','?'):10s} "
-              f"elec:{ef:.0%}  "
-              f"appliance:{meal.get('appliance_used','none')}")
-
-    print()
     active_bulbs = get_active_bulbs(h)
     print(f"LIGHTING ({len(active_bulbs)} zones):")
     for b in active_bulbs:
+        peak_hours = [i for i, v in enumerate(b['tou_hourly']) if v >= 0.5]
+        peak_str = (f"peak {peak_hours[0]:02d}h–{peak_hours[-1]:02d}h"
+                    if peak_hours else "low use")
         print(f"  {b['room']:30s} x{b['count']} bulb(s)  "
-              f"{b['wattage_w']}W  "
-              f"{b['usage_start_hour']:02d}:00–{b['usage_end_hour']:02d}:00")
+              f"{b['wattage_w']}W  {peak_str}")
 
     print()
     est = estimate_daily_energy_kwh(h)
@@ -2729,75 +2111,13 @@ if __name__ == "__main__":
     except ValueError as e:
         print(f"[FAIL] Test 1: Reference household validation failed:\n{e}")
 
-    # ── Test 2: tier is None at intake ────────────────────────────────────────
-    if REFERENCE_HOUSEHOLD["tier"] is None:
-        print("[PASS] Test 2: tier is None at intake (correct).")
-    else:
-        print(f"[FAIL] Test 2: tier should be None, got '{REFERENCE_HOUSEHOLD['tier']}'.")
-
-    # ── Test 3: Cooking module helpers work ───────────────────────────────────
-    print()
-    wd_meals = get_active_meals(REFERENCE_HOUSEHOLD, "weekday")
-    we_meals = get_active_meals(REFERENCE_HOUSEHOLD, "weekend")
-    print(f"[INFO] Test 3: Active weekday meals with electric load: "
-          f"{[m['meal_id'] for m in wd_meals]}")
-    print(f"[INFO] Test 3: Active weekend meals with electric load: "
-          f"{[m['meal_id'] for m in we_meals]}")
-    if len(wd_meals) >= 1:
-        print("[PASS] Test 3: get_active_meals() returns results.")
-    else:
-        print("[FAIL] Test 3: No active weekday meals found.")
-
-    # ── Test 4: Standard vs cooking module appliance separation ───────────────
-    std  = get_standard_appliances(REFERENCE_HOUSEHOLD)
-    cook = get_cooking_module_appliances(REFERENCE_HOUSEHOLD)
-    print(f"\n[INFO] Test 4: Standard appliances: {len(std)}")
-    print(f"[INFO] Test 4: Cooking module appliances: {len(cook)}")
-    if len(cook) >= 1:
-        print("[PASS] Test 4: Cooking module appliances correctly separated.")
-    else:
-        print("[WARN] Test 4: No cooking module appliances active (count>0). "
-              "Expected at least electric_hotplate for reference household.")
-
-    # ── Test 5: Print summary ─────────────────────────────────────────────────
+    # ── Test 2: Print summary ─────────────────────────────────────────────────
     print()
     print_household_summary(REFERENCE_HOUSEHOLD)
 
-    # ── Test 6: assign_tier() ─────────────────────────────────────────────────
-    import copy
-    print()
-    print("Testing assign_tier():")
-
-    h_low = copy.deepcopy(REFERENCE_HOUSEHOLD)
-    assign_tier(h_low, {"weighted_daily_energy_kwh": 3.2})
-    print(f"  [{'PASS' if h_low['tier'] == 'low' else 'FAIL'}] "
-          f"6a: 3.2 kWh/day → tier = '{h_low['tier']}'")
-
-    h_med = copy.deepcopy(REFERENCE_HOUSEHOLD)
-    assign_tier(h_med, {"weighted_daily_energy_kwh": 9.7})
-    print(f"  [{'PASS' if h_med['tier'] == 'medium' else 'FAIL'}] "
-          f"6b: 9.7 kWh/day → tier = '{h_med['tier']}'")
-
-    h_high = copy.deepcopy(REFERENCE_HOUSEHOLD)
-    assign_tier(h_high, {"weighted_daily_energy_kwh": 22.1})
-    print(f"  [{'PASS' if h_high['tier'] == 'high' else 'FAIL'}] "
-          f"6c: 22.1 kWh/day → tier = '{h_high['tier']}'")
-
-    h_boundary = copy.deepcopy(REFERENCE_HOUSEHOLD)
-    assign_tier(h_boundary, {"weighted_daily_energy_kwh": 5.0})
-    print(f"  [{'PASS' if h_boundary['tier'] == 'medium' else 'FAIL'}] "
-          f"6d: 5.0 kWh/day (boundary) → tier = '{h_boundary['tier']}'")
-
-    try:
-        assign_tier(h_low, {"weighted_daily_energy_kwh": 8.0})
-        print("  [FAIL] 6e: Should have raised ValueError on double-assign")
-    except ValueError:
-        print("  [PASS] 6e: Double-assign correctly raises ValueError")
-
-    # ── Test 7: Bad household rejected ───────────────────────────────────────
+    # ── Test 3: Bad household rejected ───────────────────────────────────────
     bad = {
         "household_id": "",
-        "tier": "ultra",
         "n_residents": 0,
         "resident_breakdown": {
             "adults_working": 0, "adults_non_working": 0,
@@ -2809,7 +2129,6 @@ if __name__ == "__main__":
             {
                 "name": "bad_appliance",
                 "category": "other",
-                "controlled_by_cooking_module": "yes",  # invalid
                 "count": 1,
                 "rated_power_w": -100,
                 "tou_hourly": [0.5]*24,
@@ -2818,10 +2137,6 @@ if __name__ == "__main__":
                 "needs_occupancy": "yes"
             }
         ],
-        "cooking": {
-            "primary_cooking_fuel": "fire",  # invalid
-            "meals": []                      # empty — invalid
-        },
         "bulbs": [],
         "grid": {
             "connected": "yes",
@@ -2838,10 +2153,11 @@ if __name__ == "__main__":
             "panel_derating_factor": 1.5
         },
         "costs": {
-            "pv_panel_kes_per_kw": 0,
-            "battery_kes_per_kwh": 0,
-            "inverter_kes_per_kw": 0,
-            "bos_kes": 0
+            "pv_panels":  [],
+            "batteries":  [{"model": "", "capacity_kwh": -1, "price_kes": 0}],
+            "inverters":  "not_a_list",
+            "bos":        [{"system_size_kw_max": 10, "price_kes": 55000},
+                           {"system_size_kw_max":  5, "price_kes": 35000}]
         }
     }
 
@@ -2849,8 +2165,8 @@ if __name__ == "__main__":
     print("Testing validator with deliberately bad household:")
     try:
         validate_household(bad)
-        print("[FAIL] Test 7: Bad household incorrectly passed validation.")
+        print("[FAIL] Test 3: Bad household incorrectly passed validation.")
     except ValueError as e:
-        print(f"[PASS] Test 7: Bad household correctly rejected:\n{e}")
+        print(f"[PASS] Test 3: Bad household correctly rejected:\n{e}")
 
     print("\nAll schema self-tests complete.")
