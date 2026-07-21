@@ -63,7 +63,7 @@ They must always be between 0 and n_residents inclusive.
 
 TOU_HOURLY NOTE
 ---------------
-tou_hourly values represent the RELATIVE LIKELIHOOD that this
+tou_weekday/tou_weekend values represent the RELATIVE LIKELIHOOD that this
 appliance will be switched on during this hour.
 They are NOT per-minute switch-on probabilities.
 The model divides by 60 internally to convert to per-minute.
@@ -194,7 +194,7 @@ REFERENCE_HOUSEHOLD = {
     # APPLIANCE GROUPS:
     #   Group A: Always-on baseline (fridge, router, standby)
     #   Group B: Morning-peak (kettle, iron, pump, water heater)
-    #   Group C: Cooking (standard tou_hourly-driven, same as other appliances)
+    #   Group C: Cooking (standard tou_weekday/tou_weekend-driven, same as other appliances)
     #   Group D: Entertainment and information
     #   Group E: Phone and device charging
     #   Group F: Laundry and cleaning
@@ -213,7 +213,8 @@ REFERENCE_HOUSEHOLD = {
             "rated_power_w":                150,
             # Read from label. Typical Nairobi fridge: 100–200W running draw.
             # Compressor cycles on/off — model as repeated duty cycles.
-            "tou_hourly":       [1.0]*24,
+            "tou_weekday":       [1.0]*24,
+            "tou_weekend":       [1.0]*24,
             "mean_duration_min":    25,
             "std_duration_min":     5,
             "needs_occupancy":  False,
@@ -230,7 +231,8 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "always_on",
             "count":                        0,
             "rated_power_w":                120,
-            "tou_hourly":       [1.0]*24,
+            "tou_weekday":       [1.0]*24,
+            "tou_weekend":       [1.0]*24,
             "mean_duration_min":    30,
             "std_duration_min":     5,
             "needs_occupancy":  False,
@@ -244,7 +246,8 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                12,
             # Read from label. Typical home router: 8–15W.
-            "tou_hourly":       [1.0]*24,
+            "tou_weekday":       [1.0]*24,
+            "tou_weekend":       [1.0]*24,
             "mean_duration_min":    1440,
             "std_duration_min":     0,
             "needs_occupancy":  False,
@@ -252,7 +255,7 @@ REFERENCE_HOUSEHOLD = {
             "notes": (
                 "Home broadband router. Runs 24/7. "
                 "Some households switch off at night — if so, reduce "
-                "tou_hourly for hours 23–05 to 0.1."
+                "tou_weekday/tou_weekend for hours 23–05 to 0.1."
             )
         },
 
@@ -261,7 +264,8 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "always_on",
             "count":                        1,
             "rated_power_w":                25,
-            "tou_hourly":       [1.0]*24,
+            "tou_weekday":       [1.0]*24,
+            "tou_weekend":       [1.0]*24,
             "mean_duration_min":    1440,
             "std_duration_min":     0,
             "needs_occupancy":  False,
@@ -275,7 +279,8 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                30,
             # Read from label. 4-camera system with DVR: ~25–40W total.
-            "tou_hourly":       [1.0]*24,
+            "tou_weekday":       [1.0]*24,
+            "tou_weekend":       [1.0]*24,
             "mean_duration_min":    1440,
             "std_duration_min":     0,
             "needs_occupancy":  False,
@@ -292,7 +297,7 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                2000,
             # Read from label. Typical Kenyan kettle: 1800–2200W.
-            "tou_hourly":       [
+            "tou_weekday":       [
             #   Hr:  00    01    02    03    04    05
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
             #   Hr:  06    07    08    09    10    11
@@ -302,7 +307,18 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.2,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
-            # tou_hourly represents ALL kettle uses across the day —
+            "tou_weekend":       [
+            #   Hr:  00    01    02    03    04    05
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  06    07    08    09    10    11
+                     0.0,  0.1,  0.3,  0.5,  0.3,  0.1,
+            #   Hr:  12    13    14    15    16    17
+                     0.1,  0.0,  0.0,  0.0,  0.1,  0.1,
+            #   Hr:  18    19    20    21    22    23
+                     0.2,  0.1,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: morning peak shifted to 08-09h (lazy start).
+            # tou_weekday/tou_weekend represents ALL kettle uses across the day —
             # morning peak (breakfast tea/porridge water), plus smaller
             # mid-morning and evening tea use.
             "mean_duration_min":    4,
@@ -312,7 +328,7 @@ REFERENCE_HOUSEHOLD = {
             "notes": (
                 "Electric kettle. Used for tea/coffee/porridge water at "
                 "breakfast, plus smaller mid-morning and evening tea uses. "
-                "All usage is captured by tou_hourly — standard mechanism."
+                "All usage is captured by tou_weekday/tou_weekend — standard mechanism."
             )
         },
 
@@ -321,9 +337,15 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "morning_peak",
             "count":                        0,
             "rated_power_w":                2000,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.2,  0.3,  0.1,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.1,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.1,  0.2,  0.3,  0.1,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.1,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
@@ -340,7 +362,7 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                1200,
             # Read from label. Typical iron: 1000–1500W.
-            "tou_hourly":       [
+            "tou_weekday":       [
             #   Hr:  00    01    02    03    04    05
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
             #   Hr:  06    07    08    09    10    11
@@ -350,6 +372,17 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.2,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+            #   Hr:  00    01    02    03    04    05
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  06    07    08    09    10    11
+                     0.0,  0.0,  0.3,  0.3,  0.2,  0.0,
+            #   Hr:  12    13    14    15    16    17
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  18    19    20    21    22    23
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: only church/outing prep 08-10h — no weekday work-rush.
             "mean_duration_min":    25,
             "std_duration_min":     10,
             "needs_occupancy":  True,
@@ -366,7 +399,7 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                750,
             # Read from label. Typical single-phase pump: 500–1000W.
-            "tou_hourly":       [
+            "tou_weekday":       [
             #   Hr:  00    01    02    03    04    05
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
             #   Hr:  06    07    08    09    10    11
@@ -376,6 +409,17 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.2,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+            #   Hr:  00    01    02    03    04    05
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  06    07    08    09    10    11
+                     0.0,  0.2,  0.5,  0.5,  0.3,  0.2,
+            #   Hr:  12    13    14    15    16    17
+                     0.2,  0.0,  0.0,  0.0,  0.2,  0.3,
+            #   Hr:  18    19    20    21    22    23
+                     0.2,  0.1,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: peak shifted to 08-10h with extra midday use (cooking/cleaning).
             "mean_duration_min":    15,
             "std_duration_min":     5,
             "needs_occupancy":  False,
@@ -394,11 +438,17 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                3000,
             # Read from label. Typical 50L element: 2000–3500W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.5,
                      0.8,  0.6,  0.2,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.2,
                      0.4,  0.2,  0.0,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.4,  0.8,  0.6,  0.2,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.2,
+                     0.5,  0.3,  0.0,  0.0,  0.0,  0.0
             ],
             "mean_duration_min":    40,
             "std_duration_min":     10,
@@ -416,12 +466,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "morning_peak",
             "count":                        0,
             "rated_power_w":                50,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.5,  0.8,  1.0,  1.0,  1.0,  1.0,
                      1.0,  1.0,  1.0,  1.0,  0.8,  0.5,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.5,  0.8,  1.0,  1.0,  1.0,  1.0,
+                     1.0,  1.0,  1.0,  1.0,  0.8,  0.5,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Sun-driven — same both days.
             "mean_duration_min":    60,
             "std_duration_min":     20,
             "needs_occupancy":  False,
@@ -430,7 +487,7 @@ REFERENCE_HOUSEHOLD = {
         },
 
         # ── GROUP C: COOKING APPLIANCES ───────────────────────────────────
-        # Cooking appliances use the SAME standard tou_hourly /
+        # Cooking appliances use the SAME standard tou_weekday/tou_weekend /
         # mean_duration_min mechanism as every other appliance.
         # rated_power_w MUST be read from the appliance label on site.
 
@@ -443,12 +500,19 @@ REFERENCE_HOUSEHOLD = {
             # Typical single hotplate: 1000–2000W.
             # If multi-plate cooker, record the TOTAL rated draw when
             # all plates in use, or per-plate if used independently.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.3,  0.4,  0.1,  0.0,  0.0,  0.0,
                      0.1,  0.2,  0.1,  0.0,  0.0,  0.2,
                      0.6,  0.5,  0.1,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.3,  0.4,  0.2,  0.0,
+                     0.3,  0.4,  0.2,  0.0,  0.0,  0.2,
+                     0.6,  0.5,  0.2,  0.0,  0.0,  0.0
+            ],
+            # Weekend: no early breakfast cooking; bigger brunch 08-10h and bigger lunch 12-14h.
             "mean_duration_min":    40,
             # Approximate full main-meal cook cycle (preheat + simmer/cycle).
             "std_duration_min":     10,
@@ -456,7 +520,7 @@ REFERENCE_HOUSEHOLD = {
             "standby_power_w":  0,
             "notes": (
                 "Electric hotplate / resistance cooker. Uses the standard "
-                "tou_hourly switch-on mechanism, same as any other "
+                "tou_weekday/tou_weekend switch-on mechanism, same as any other "
                 "appliance. rated_power_w MUST be read from the appliance "
                 "label during the survey visit — do not use the default."
             )
@@ -468,11 +532,17 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                2000,
             # READ FROM LABEL. Typical induction hob: 1200–2200W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.3,  0.4,  0.1,  0.0,  0.0,  0.0,
                      0.1,  0.2,  0.1,  0.0,  0.0,  0.2,
                      0.6,  0.5,  0.1,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.3,  0.4,  0.2,  0.0,
+                     0.3,  0.4,  0.2,  0.0,  0.0,  0.2,
+                     0.6,  0.5,  0.2,  0.0,  0.0,  0.0
             ],
             "mean_duration_min":    35,
             "std_duration_min":     10,
@@ -480,7 +550,7 @@ REFERENCE_HOUSEHOLD = {
             "standby_power_w":  2,
             "notes": (
                 "Induction cooker. More efficient than resistance hotplate. "
-                "Uses standard tou_hourly mechanism. rated_power_w from label."
+                "Uses standard tou_weekday/tou_weekend mechanism. rated_power_w from label."
             )
         },
 
@@ -490,10 +560,16 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                800,
             # READ FROM LABEL. Typical EPC: 600–1200W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
                      0.3,  0.1,  0.0,  0.0,  0.0,  0.1,
+                     0.5,  0.3,  0.0,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.1,  0.2,  0.1,  0.1,
+                     0.4,  0.2,  0.0,  0.0,  0.0,  0.1,
                      0.5,  0.3,  0.0,  0.0,  0.0,  0.0
             ],
             "mean_duration_min":    25,
@@ -502,7 +578,7 @@ REFERENCE_HOUSEHOLD = {
             "standby_power_w":  5,
             "notes": (
                 "Electric pressure cooker (EPC/Instant Pot style). "
-                "Uses standard tou_hourly mechanism. rated_power_w from label."
+                "Uses standard tou_weekday/tou_weekend mechanism. rated_power_w from label."
             )
         },
 
@@ -512,10 +588,16 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                500,
             # READ FROM LABEL. Typical rice cooker: 300–700W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
                      0.3,  0.1,  0.0,  0.0,  0.0,  0.1,
+                     0.4,  0.2,  0.0,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.1,  0.1,  0.1,
+                     0.4,  0.2,  0.0,  0.0,  0.0,  0.1,
                      0.4,  0.2,  0.0,  0.0,  0.0,  0.0
             ],
             "mean_duration_min":    30,
@@ -523,7 +605,7 @@ REFERENCE_HOUSEHOLD = {
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": (
-                "Rice cooker. Uses standard tou_hourly mechanism. "
+                "Rice cooker. Uses standard tou_weekday/tou_weekend mechanism. "
                 "rated_power_w from label."
             )
         },
@@ -538,21 +620,26 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                900,
             # READ FROM LABEL. Typical microwave: 700–1200W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.2,  0.2,  0.1,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # Shifted to lunchtime (12-14h) 
-            # dinner peak (18-19h). ~3x/week.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.1,  0.1,
+                     0.3,  0.3,  0.2,  0.0,  0.0,  0.1,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekday: lunchtime reheating only. Weekend: broader use 10-14h + evening snack.
             "mean_duration_min":    5,
             "std_duration_min":     2,
             "needs_occupancy":  True,
             "standby_power_w":  3,
             "notes": (
                 "Microwave. Lunchtime reheating only — avoids hotplate dinner peak. "
-                "Uses standard tou_hourly mechanism."
+                "Uses standard tou_weekday/tou_weekend mechanism."
             )
         },
 
@@ -564,13 +651,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                350,
             # READ FROM LABEL. Typical blender: 250–500W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.3,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.2,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # ~3x/week: not a daily appliance.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.2,  0.3,  0.2,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.2,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekday: morning only. Weekend: morning smoothies/cooking 08-10h.
             "mean_duration_min":    3,
             "std_duration_min":     1,
             "needs_occupancy":  True,
@@ -584,13 +677,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                800,
             # READ FROM LABEL.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.2,  0.1,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # ~2x/week: occasional breakfast use, not daily.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.2,  0.3,  0.1,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekday: quick 07-08h. Weekend: leisurely brunch 08-10h.
             "mean_duration_min":    4,
             "std_duration_min":     1,
             "needs_occupancy":  True,
@@ -604,13 +703,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                2000,
             # READ FROM LABEL. Typical electric oven: 1500–3000W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.1,  0.1,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # ~1x/week: occasional baking only.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.2,  0.3,  0.3,
+                     0.1,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekday: very rare (0.1). Weekend: primary baking day 09-12h.
             "mean_duration_min":    50,
             "std_duration_min":     15,
             "needs_occupancy":  True,
@@ -630,7 +735,7 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                80,
             # READ FROM LABEL. LED TV 32–43 inch: 50–120W.
-            "tou_hourly":       [
+            "tou_weekday":       [
             #   Hr:  00    01    02    03    04    05
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
             #   Hr:  06    07    08    09    10    11
@@ -640,6 +745,17 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.6,  0.8,  0.9,  0.9,  0.7,  0.3
             ],
+            "tou_weekend":       [
+            #   Hr:  00    01    02    03    04    05
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  06    07    08    09    10    11
+                     0.0,  0.0,  0.2,  0.4,  0.5,  0.5,
+            #   Hr:  12    13    14    15    16    17
+                     0.4,  0.3,  0.3,  0.4,  0.4,  0.5,
+            #   Hr:  18    19    20    21    22    23
+                     0.7,  0.9,  0.9,  0.9,  0.7,  0.3
+            ],
+            # Weekend: morning viewing from 08h; full afternoon/evening block.
             "mean_duration_min":    120,
             "std_duration_min":     40,
             "needs_occupancy":  True,
@@ -655,11 +771,17 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "entertainment",
             "count":                        1,
             "rated_power_w":                60,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.2,  0.4,  0.5,  0.5,  0.3,  0.1
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.1,  0.2,  0.2,
+                     0.1,  0.0,  0.1,  0.1,  0.2,  0.3,
+                     0.3,  0.5,  0.6,  0.5,  0.3,  0.1
             ],
             "mean_duration_min":    90,
             "std_duration_min":     30,
@@ -674,12 +796,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                18,
             # READ FROM LABEL. DSTV active: 15–22W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.1,  0.1,  0.1,  0.1,  0.1,
                      0.2,  0.2,  0.2,  0.2,  0.3,  0.4,
                      0.6,  0.8,  0.9,  0.9,  0.7,  0.3
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.2,  0.4,  0.5,  0.5,
+                     0.4,  0.3,  0.3,  0.4,  0.4,  0.5,
+                     0.7,  0.9,  0.9,  0.9,  0.7,  0.3
+            ],
+            # Weekend: follows TV pattern — morning viewing from 08h.
             "mean_duration_min":    120,
             "std_duration_min":     40,
             "needs_occupancy":  True,
@@ -693,12 +822,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                45,
             # READ FROM LABEL (adapter brick).
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.1,  0.1,  0.1,  0.1,  0.1,
                      0.1,  0.1,  0.1,  0.1,  0.2,  0.3,
                      0.4,  0.4,  0.3,  0.2,  0.1,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.1,  0.2,  0.3,  0.3,
+                     0.2,  0.2,  0.2,  0.2,  0.3,  0.3,
+                     0.4,  0.4,  0.3,  0.2,  0.1,  0.0
+            ],
+            # Weekend: more daytime use 09-15h (work from home / study).
             "mean_duration_min":    120,
             "std_duration_min":     60,
             "needs_occupancy":  True,
@@ -711,10 +847,16 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "entertainment",
             "count":                        1,
             "rated_power_w":                45,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.1,  0.1,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.1,  0.3,
+                     0.4,  0.4,  0.3,  0.2,  0.1,  0.0
+            ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.1,  0.2,  0.2,
+                     0.2,  0.1,  0.1,  0.2,  0.2,  0.3,
                      0.4,  0.4,  0.3,  0.2,  0.1,  0.0
             ],
             "mean_duration_min":    90,
@@ -730,13 +872,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                150,
             # READ FROM LABEL. Desktop + monitor: 100–250W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.3,  0.3,  0.2,  0.0,  0.0,  0.0
             ],
-            # ~4-5x/week: regular but not guaranteed daily.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.1,  0.1,
+                     0.0,  0.0,  0.1,  0.2,  0.2,  0.1,
+                     0.3,  0.3,  0.2,  0.0,  0.0,  0.0
+            ],
+            # Weekday: evening only. Weekend: some mid-morning and afternoon use.
             "mean_duration_min":    120,
             "std_duration_min":     60,
             "needs_occupancy":  True,
@@ -749,14 +897,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "entertainment",
             "count":                        1,
             "rated_power_w":                150,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.2,  0.2,  0.1,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # Shifted to afternoon (15-17h) to avoid overlap with peak TV/decoder
-            # hours (18-22h). ~3x/week.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.1,  0.3,  0.3,
+                     0.2,  0.0,  0.2,  0.3,  0.2,  0.1,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekday: after-school afternoon 15-17h. Weekend: morning 09-12h + afternoon.
             "mean_duration_min":    90,
             "std_duration_min":     45,
             "needs_occupancy":  True,
@@ -769,12 +922,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "entertainment",
             "count":                        1,
             "rated_power_w":                10,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.1,  0.2,  0.1,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.1,  0.2,
                      0.4,  0.5,  0.4,  0.2,  0.1,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.2,  0.3,  0.4,  0.4,
+                     0.3,  0.3,  0.3,  0.3,  0.3,  0.4,
+                     0.5,  0.6,  0.5,  0.3,  0.1,  0.0
+            ],
+            # Weekend: music throughout the day — cooking, relaxing, chores.
             "mean_duration_min":    90,
             "std_duration_min":     40,
             "needs_occupancy":  True,
@@ -793,7 +953,7 @@ REFERENCE_HOUSEHOLD = {
             # Young child and second school child excluded. Confirm count at survey.
             "rated_power_w":                10,
             # READ FROM LABEL on charger brick. Varies: 5W–25W.
-            "tou_hourly":       [
+            "tou_weekday":       [
             #   Overnight charging dominant in Kenya.
             #   Hr:  00    01    02    03    04    05
                      0.9,  0.9,  0.9,  0.9,  0.8,  0.7,
@@ -804,6 +964,13 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.3,  0.5,  0.6,  0.7,  0.8,  0.9
             ],
+            "tou_weekend":       [
+                     0.9,  0.9,  0.9,  0.9,  0.8,  0.7,
+                     0.4,  0.2,  0.1,  0.1,  0.1,  0.1,
+                     0.1,  0.1,  0.1,  0.1,  0.1,  0.2,
+                     0.3,  0.5,  0.6,  0.7,  0.8,  0.9
+            ],
+            # Overnight charging pattern same both days.
             "mean_duration_min":    120,
             "std_duration_min":     40,
             "needs_occupancy":  False,
@@ -819,7 +986,13 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "charging",
             "count":                        1,
             "rated_power_w":                18,
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.5,  0.5,  0.5,  0.5,  0.4,  0.3,
+                     0.2,  0.1,  0.1,  0.1,  0.1,  0.1,
+                     0.1,  0.1,  0.1,  0.1,  0.1,  0.2,
+                     0.4,  0.5,  0.6,  0.6,  0.5,  0.5
+            ],
+            "tou_weekend":       [
                      0.5,  0.5,  0.5,  0.5,  0.4,  0.3,
                      0.2,  0.1,  0.1,  0.1,  0.1,  0.1,
                      0.1,  0.1,  0.1,  0.1,  0.1,  0.2,
@@ -837,7 +1010,13 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "charging",
             "count":                        2,
             "rated_power_w":                10,
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.3,  0.3,  0.3,  0.3,  0.2,  0.1,
+                     0.1,  0.1,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
+                     0.2,  0.3,  0.4,  0.4,  0.3,  0.3
+            ],
+            "tou_weekend":       [
                      0.3,  0.3,  0.3,  0.3,  0.2,  0.1,
                      0.1,  0.1,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
@@ -858,13 +1037,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        1,
             "rated_power_w":                500,
             # READ FROM LABEL. Front-loader cold-wash: 300–500W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.1,  0.2,  0.1,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # ~2-3x/week: laundry is not a daily activity.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.1,  0.3,  0.4,  0.3,  0.1,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: primary laundry day — higher probability 08-11h.
             "mean_duration_min":    45,
             "std_duration_min":     10,
             "needs_occupancy":  True,
@@ -880,13 +1065,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "laundry",
             "count":                        1,
             "rated_power_w":                1000,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.2,  0.2,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
-            # ~2-3x/week: cleaning is not a daily activity.
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.3,  0.4,  0.3,
+                     0.1,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: full house clean — more likely and wider window 09-12h.
             "mean_duration_min":    20,
             "std_duration_min":     8,
             "needs_occupancy":  True,
@@ -902,7 +1093,7 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                60,
             # READ FROM LABEL. Typical ceiling fan: 40–75W at high speed.
-            "tou_hourly":       [
+            "tou_weekday":       [
             #   Peak use: late afternoon/evening when indoor heat builds.
             #   Hr:  00    01    02    03    04    05
                      0.3,  0.3,  0.3,  0.2,  0.1,  0.1,
@@ -913,6 +1104,13 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.5,  0.5,  0.5,  0.5,  0.4,  0.3
             ],
+            "tou_weekend":       [
+                     0.3,  0.3,  0.3,  0.2,  0.1,  0.1,
+                     0.1,  0.1,  0.2,  0.3,  0.4,  0.4,
+                     0.4,  0.4,  0.4,  0.4,  0.4,  0.4,
+                     0.5,  0.5,  0.5,  0.5,  0.4,  0.3
+            ],
+            # Weekend: more midday use — people home during hottest hours.
             "mean_duration_min":    180,
             "std_duration_min":     60,
             "needs_occupancy":  False,
@@ -930,12 +1128,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "comfort",
             "count":                        0,
             "rated_power_w":                50,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.2,  0.2,  0.2,  0.1,  0.1,  0.0,
                      0.0,  0.0,  0.0,  0.1,  0.2,  0.2,
                      0.3,  0.3,  0.3,  0.4,  0.4,  0.4,
                      0.5,  0.5,  0.4,  0.4,  0.3,  0.2
             ],
+            "tou_weekend":       [
+                     0.2,  0.2,  0.2,  0.1,  0.1,  0.0,
+                     0.0,  0.0,  0.1,  0.2,  0.3,  0.4,
+                     0.4,  0.4,  0.4,  0.4,  0.4,  0.4,
+                     0.5,  0.5,  0.4,  0.4,  0.3,  0.2
+            ],
+            # Weekend: more afternoon use — people home during peak heat 09-17h.
             "mean_duration_min":    120,
             "std_duration_min":     60,
             "needs_occupancy":  True,
@@ -949,12 +1154,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                1500,
             # READ FROM LABEL. 1-ton split unit: 1000–1800W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.1,  0.2,  0.3,
                      0.4,  0.4,  0.4,  0.3,  0.2,  0.1,
                      0.1,  0.1,  0.1,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.2,  0.3,  0.4,
+                     0.5,  0.5,  0.5,  0.4,  0.3,  0.2,
+                     0.1,  0.1,  0.1,  0.0,  0.0,  0.0
+            ],
+            # Weekend: higher probability — full household present during hottest hours.
             "mean_duration_min":    120,
             "std_duration_min":     60,
             "needs_occupancy":  True,
@@ -969,12 +1181,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "outdoor",
             "count":                        1,
             "rated_power_w":                200,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.3,  0.5,  0.3,  0.1,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.2,  0.4,
                      0.4,  0.3,  0.1,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.1,  0.3,  0.4,  0.3,  0.2,
+                     0.2,  0.2,  0.2,  0.1,  0.2,  0.3,
+                     0.3,  0.2,  0.1,  0.0,  0.0,  0.0
+            ],
+            # Weekend: later morning departures (church/errands 08-10h) + casual daytime comings/goings.
             "mean_duration_min":    1,
             "std_duration_min":     0,
             "needs_occupancy":  False,
@@ -988,12 +1207,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                1500,
             # READ FROM LABEL. Submersible borehole: 750–3000W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
                      0.5,  0.6,  0.4,  0.2,  0.1,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.2,  0.4,
                      0.3,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
+                     0.3,  0.4,  0.4,  0.3,  0.2,  0.1,
+                     0.1,  0.0,  0.0,  0.1,  0.2,  0.3,
+                     0.3,  0.2,  0.1,  0.0,  0.0,  0.0
+            ],
+            # Weekend: more midday top-up cycles — guests/social gatherings raise demand.
             "mean_duration_min":    30,
             "std_duration_min":     10,
             "needs_occupancy":  False,
@@ -1009,12 +1235,19 @@ REFERENCE_HOUSEHOLD = {
             "count":                        0,
             "rated_power_w":                1500,
             # READ FROM LABEL. Typical: 1200–2000W.
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.4,  0.5,  0.2,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.1,
                      0.2,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.1,  0.3,  0.4,  0.2,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.2,
+                     0.3,  0.2,  0.1,  0.0,  0.0,  0.0
+            ],
+            # Weekend: morning prep shifted later (08-10h); evening prep for going out.
             "mean_duration_min":    10,
             "std_duration_min":     4,
             "needs_occupancy":  True,
@@ -1027,12 +1260,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "personal_care",
             "count":                        1,
             "rated_power_w":                15,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.5,  0.4,  0.1,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.2,  0.5,  0.3,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: no early work rush — grooming shifts to 08-10h.
             "mean_duration_min":    5,
             "std_duration_min":     2,
             "needs_occupancy":  True,
@@ -1045,12 +1285,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "other",
             "count":                        0,
             "rated_power_w":                100,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.1,  0.2,  0.2,
                      0.1,  0.1,  0.2,  0.2,  0.1,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.2,  0.3,  0.3,
+                     0.2,  0.2,  0.3,  0.3,  0.2,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: longer project sessions — no work schedule to interrupt.
             "mean_duration_min":    60,
             "std_duration_min":     30,
             "needs_occupancy":  True,
@@ -1063,12 +1310,19 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "other",
             "count":                        1,
             "rated_power_w":                15,
-            "tou_hourly":       [
+            "tou_weekday":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.1,  0.2,  0.2,  0.1,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.1,  0.2,
                      0.2,  0.1,  0.0,  0.0,  0.0,  0.0
             ],
+            "tou_weekend":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.1,  0.2,  0.2,  0.1,
+                     0.1,  0.1,  0.1,  0.1,  0.1,  0.1,
+                     0.1,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            # Weekend: casual spread — school work, leisure printing, no morning rush.
             "mean_duration_min":    5,
             "std_duration_min":     2,
             "needs_occupancy":  True,
@@ -1081,7 +1335,8 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "other",
             "count":                        0,
             "rated_power_w":                0,
-            "tou_hourly":       [0.0]*24,
+            "tou_weekday":       [0.0]*24,
+            "tou_weekend":       [0.0]*24,
             "mean_duration_min":    0,
             "std_duration_min":     0,
             "needs_occupancy":  True,
@@ -1098,7 +1353,8 @@ REFERENCE_HOUSEHOLD = {
             "category":                     "other",
             "count":                        0,
             "rated_power_w":                0,
-            "tou_hourly":       [0.0]*24,
+            "tou_weekday":       [0.0]*24,
+            "tou_weekend":       [0.0]*24,
             "mean_duration_min":    0,
             "std_duration_min":     0,
             "needs_occupancy":  True,
@@ -1120,7 +1376,7 @@ REFERENCE_HOUSEHOLD = {
     #   count           : number of bulbs in this room/zone
     #   wattage_w       : rated power per bulb in watts
     #   bulb_type       : "LED" / "CFL" / "incandescent" / "fluorescent"
-    #   tou_hourly      : 24-element array (same as appliances).
+    #   tou_weekday/tou_weekend      : 24-element array (same as appliances).
     #                     Value = probability the light is on in that hour.
     #                     0.0 = never on; 1.0 = always on.
     #                     Interior rooms (bathroom, kitchen, store) may have
@@ -1145,7 +1401,17 @@ REFERENCE_HOUSEHOLD = {
             "count":            2,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+            #   Hr:  00    01    02    03    04    05
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  06    07    08    09    10    11
+                     0.4,  0.3,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  12    13    14    15    16    17
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+            #   Hr:  18    19    20    21    22    23
+                     0.9,  0.9,  0.9,  0.9,  0.9,  0.0
+            ],
+            "tou_weekend":       [
             #   Hr:  00    01    02    03    04    05
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
             #   Hr:  06    07    08    09    10    11
@@ -1164,7 +1430,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.7,  0.7,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.8,  0.8,  0.8,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.7,  0.7,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1179,7 +1451,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            2,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.7,
+                     0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.85, 0.85, 0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.7,
                      0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1194,7 +1472,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.7,  0.6,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.8,  0.8,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.7,  0.6,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1209,7 +1493,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.7,
+                     0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.85, 0.85, 0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.7,
                      0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1223,7 +1513,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.6,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.85, 0.85, 0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.6,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1238,7 +1534,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.8,  0.8,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.6,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1254,7 +1556,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.85, 0.85, 0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.85,
+                     0.85, 0.85, 0.85, 0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.85, 0.85, 0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.85,
@@ -1269,7 +1577,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.8,
+                     0.8,  0.8,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.75, 0.75, 0.75, 0.75, 0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.8,
                      0.8,  0.8,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1284,7 +1598,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.8,
+                     0.8,  0.8,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.75, 0.75, 0.75, 0.75, 0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.8,
                      0.8,  0.8,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1299,7 +1619,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            2,
             "wattage_w":        50,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     1.0,  1.0,  1.0,  1.0,  1.0,  1.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     1.0,  1.0,  1.0,  1.0,  1.0,  1.0
+            ],
+            "tou_weekend":       [
                      1.0,  1.0,  1.0,  1.0,  1.0,  1.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1316,7 +1642,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.6,  0.6,  0.6,  0.6,  0.6,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
@@ -1331,7 +1663,13 @@ REFERENCE_HOUSEHOLD = {
             "count":            1,
             "wattage_w":        9,
             "bulb_type":        "LED",
-            "tou_hourly":       [
+            "tou_weekday":       [
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.1,  0.0,  0.0,  0.0,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.1,  0.0,
+                     0.0,  0.0,  0.0,  0.0,  0.0,  0.0
+            ],
+            "tou_weekend":       [
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.1,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.0,  0.1,  0.0,
@@ -1787,21 +2125,18 @@ def validate_household(h):
                         f"unrealistically high (> 10 kW). Check units."
                     )
 
-            tou = appl.get("tou_hourly", [])
-            if len(tou) != 24:
-                errors.append(
-                    f"{prefix}: tou_hourly must have 24 values, got {len(tou)}"
-                )
-            else:
-                for i, v in enumerate(tou):
-                    if not isinstance(v, (int, float)):
-                        errors.append(
-                            f"{prefix}: tou_hourly[{i}] must be numeric"
-                        )
-                    elif not (0.0 <= v <= 1.0):
-                        errors.append(
-                            f"{prefix}: tou_hourly[{i}] = {v} outside [0,1]"
-                        )
+            for tou_field in ("tou_weekday", "tou_weekend"):
+                tou = appl.get(tou_field, [])
+                if len(tou) != 24:
+                    errors.append(
+                        f"{prefix}: {tou_field} must have 24 values, got {len(tou)}"
+                    )
+                else:
+                    for i, v in enumerate(tou):
+                        if not isinstance(v, (int, float)):
+                            errors.append(f"{prefix}: {tou_field}[{i}] must be numeric")
+                        elif not (0.0 <= v <= 1.0):
+                            errors.append(f"{prefix}: {tou_field}[{i}] = {v} outside [0,1]")
 
             mean_d = appl.get("mean_duration_min")
             std_d  = appl.get("std_duration_min")
@@ -1869,19 +2204,18 @@ def validate_household(h):
                     f"'incandescent', or 'fluorescent'"
                 )
 
-            tou = b.get("tou_hourly", [])
-            if len(tou) != 24:
-                errors.append(
-                    f"{prefix}: tou_hourly must have 24 values, got {len(tou)}"
-                )
-            else:
-                for i, v in enumerate(tou):
-                    if not isinstance(v, (int, float)) or \
-                       not (0.0 <= v <= 1.0):
-                        errors.append(
-                            f"{prefix}: tou_hourly[{i}] = {v} must be "
-                            f"float in [0,1]"
-                        )
+            for tou_field in ("tou_weekday", "tou_weekend"):
+                tou = b.get(tou_field, [])
+                if len(tou) != 24:
+                    errors.append(
+                        f"{prefix}: {tou_field} must have 24 values, got {len(tou)}"
+                    )
+                else:
+                    for i, v in enumerate(tou):
+                        if not isinstance(v, (int, float)) or not (0.0 <= v <= 1.0):
+                            errors.append(
+                                f"{prefix}: {tou_field}[{i}] = {v} must be float in [0,1]"
+                            )
 
             if not isinstance(b.get("needs_occupancy"), bool):
                 errors.append(
@@ -2024,8 +2358,10 @@ def estimate_daily_energy_kwh(household):
         total_wh = 0.0
         occ = household[f"occupancy_{day_type}"]
 
+        tou_key = f"tou_{day_type}"
+
         for appl in get_standard_appliances(household):
-            tou      = appl["tou_hourly"]
+            tou      = appl[tou_key]
             pwr      = appl["rated_power_w"]
             duration = min(appl["mean_duration_min"], 60) / 60.0
             if appl.get("needs_occupancy"):
@@ -2035,10 +2371,11 @@ def estimate_daily_energy_kwh(household):
             total_wh += appl["count"] * pwr * duration * effective_tou
 
         for bulb in get_active_bulbs(household):
+            tou = bulb[tou_key]
             if bulb.get("needs_occupancy"):
-                effective_tou = sum(t for t, o in zip(bulb["tou_hourly"], occ) if o > 0)
+                effective_tou = sum(t for t, o in zip(tou, occ) if o > 0)
             else:
-                effective_tou = sum(bulb["tou_hourly"])
+                effective_tou = sum(tou)
             total_wh += bulb["count"] * bulb["wattage_w"] * effective_tou
 
         return total_wh / 1000
@@ -2071,8 +2408,7 @@ def print_household_summary(household):
     print()
 
     std_appl = get_standard_appliances(h)
-    print(f"APPLIANCES ({len(std_appl)} active, tou_hourly driven, "
-          f"includes cooking appliances):")
+    print(f"APPLIANCES ({len(std_appl)} active, tou_weekday/tou_weekend driven:")
     for a in std_appl:
         print(f"  {a['name']:35s} x{a['count']}  "
               f"{a['rated_power_w']:>6.0f}W  "
@@ -2082,7 +2418,7 @@ def print_household_summary(household):
     active_bulbs = get_active_bulbs(h)
     print(f"LIGHTING ({len(active_bulbs)} zones):")
     for b in active_bulbs:
-        peak_hours = [i for i, v in enumerate(b['tou_hourly']) if v >= 0.5]
+        peak_hours = [i for i, v in enumerate(b['tou_weekday']) if v >= 0.5]
         peak_str = (f"peak {peak_hours[0]:02d}h–{peak_hours[-1]:02d}h"
                     if peak_hours else "low use")
         print(f"  {b['room']:30s} x{b['count']} bulb(s)  "
@@ -2131,7 +2467,8 @@ if __name__ == "__main__":
                 "category": "other",
                 "count": 1,
                 "rated_power_w": -100,
-                "tou_hourly": [0.5]*24,
+                "tou_weekday": [0.5],
+            "tou_weekend":  [0.5]*24,
                 "mean_duration_min": 0,
                 "std_duration_min": 100,
                 "needs_occupancy": "yes"
