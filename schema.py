@@ -178,6 +178,81 @@ REFERENCE_HOUSEHOLD = {
     # 21–23: Winding down
 
     # =========================================================================
+    # BLOCK 3b: PER-ROOM OCCUPANCY
+    # =========================================================================
+    # Number of people in each room at each hour — same 24-value integer
+    # array format as the household occupancy above.
+    # Used by the lighting estimator instead of household-level occupancy,
+    # giving per-room conditioning (closer to CREST's room-activity model).
+    # outdoor_security is omitted — it is dusk-to-dawn (needs_occupancy=False)
+    # and does not depend on room occupancy.
+    # Collected in the survey alongside household occupancy (Block 3).
+
+    "room_occupancy": {
+
+        "living_room": {
+            "weekday": [0, 0, 0, 0, 0, 0,  2, 3, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  4, 5, 6, 5, 4, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 2, 3, 4, 5, 5,  4, 4, 3, 3, 4, 4,  5, 6, 6, 5, 4, 0],
+        },
+
+        "dining_area": {
+            "weekday": [0, 0, 0, 0, 0, 0,  4, 4, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  5, 5, 4, 0, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 2, 4, 5, 3, 0,  0, 4, 5, 2, 0, 0,  4, 5, 4, 0, 0, 0],
+        },
+
+        "master_bedroom": {
+            "weekday": [0, 0, 0, 0, 0, 2,  2, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 2, 2, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 2, 2, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 2, 2, 0],
+        },
+
+        "children_bedroom": {
+            "weekday": [0, 0, 0, 0, 0, 0,  2, 2, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 2, 2, 0, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 0, 2, 2, 0, 0,  0, 0, 0, 0, 0, 0,  0, 2, 2, 0, 0, 0],
+        },
+
+        "bedroom_3": {
+            "weekday": [0, 0, 0, 0, 0, 1,  1, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 1, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 1, 1, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 1, 0],
+        },
+
+        "bedroom_4": {
+            "weekday": [0, 0, 0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 1, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 1, 1, 0],
+        },
+
+        "bedroom_5": {
+            "weekday": [0, 0, 0, 0, 0, 0,  1, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 1, 1, 0, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 1, 1, 0, 0, 0],
+        },
+
+        "kitchen": {
+            "weekday": [0, 0, 0, 0, 0, 0,  2, 2, 0, 0, 0, 0,  0, 0, 0, 0, 0, 2,  2, 1, 0, 0, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 1, 2, 2, 1, 0,  0, 2, 2, 1, 0, 0,  2, 2, 1, 0, 0, 0],
+        },
+
+        "bathroom": {
+            "weekday": [0, 0, 0, 0, 0, 2,  3, 2, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  2, 2, 2, 1, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 2, 3, 2, 1, 0,  0, 0, 0, 0, 0, 0,  2, 2, 2, 1, 0, 0],
+        },
+
+        "bathroom_2": {
+            "weekday": [0, 0, 0, 0, 0, 1,  2, 2, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  2, 2, 1, 1, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 1, 2, 2, 0, 0,  0, 0, 0, 0, 0, 0,  2, 2, 2, 1, 0, 0],
+        },
+
+        "staircase_corridor": {
+            "weekday": [0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  3, 4, 3, 2, 2, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0,  3, 4, 3, 2, 2, 0],
+        },
+
+        "store_room": {
+            "weekday": [0, 0, 0, 0, 0, 0,  0, 1, 0, 0, 0, 0,  0, 0, 0, 0, 1, 0,  0, 0, 0, 0, 0, 0],
+            "weekend": [0, 0, 0, 0, 0, 0,  0, 0, 1, 1, 1, 0,  0, 0, 1, 1, 0, 0,  0, 0, 0, 0, 0, 0],
+        },
+
+    },  # end of room_occupancy
+
+    # =========================================================================
     # BLOCK 4a: APPLIANCE INVENTORY
     # =========================================================================
     # Each appliance is a dict with exactly the fields shown below.
@@ -217,6 +292,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [1.0]*24,
             "mean_duration_min":    25,
             "std_duration_min":     5,
+            "restart_delay_min":    0,
             "needs_occupancy":  False,
             "standby_power_w":  0,
             "notes": (
@@ -235,6 +311,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [1.0]*24,
             "mean_duration_min":    30,
             "std_duration_min":     5,
+            "restart_delay_min":    0,
             "needs_occupancy":  False,
             "standby_power_w":  0,
             "notes": "Chest freezer. Less common in households."
@@ -250,6 +327,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [1.0]*24,
             "mean_duration_min":    1440,
             "std_duration_min":     0,
+            "restart_delay_min":    0,
             "needs_occupancy":  False,
             "standby_power_w":  12,
             "notes": (
@@ -268,6 +346,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [1.0]*24,
             "mean_duration_min":    1440,
             "std_duration_min":     0,
+            "restart_delay_min":    0,
             "needs_occupancy":  False,
             "standby_power_w":  25,
             "notes": "Electric fence energiser. Common in gated estates."
@@ -283,6 +362,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [1.0]*24,
             "mean_duration_min":    1440,
             "std_duration_min":     0,
+            "restart_delay_min":    0,
             "needs_occupancy":  False,
             "standby_power_w":  30,
             "notes": "CCTV DVR plus cameras. Runs 24/7."
@@ -323,6 +403,7 @@ REFERENCE_HOUSEHOLD = {
             # mid-morning and evening tea use.
             "mean_duration_min":    4,
             "std_duration_min":     1,
+            "restart_delay_min":   20,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
@@ -351,6 +432,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    4,
             "std_duration_min":     1,
+            "restart_delay_min":   20,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Second kettle for large households."
@@ -385,6 +467,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: only church/outing prep 08-10h — no weekday work-rush.
             "mean_duration_min":    25,
             "std_duration_min":     10,
+            "restart_delay_min":   90,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
@@ -422,6 +505,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: peak shifted to 08-10h with extra midday use (cooking/cleaning).
             "mean_duration_min":    15,
             "std_duration_min":     5,
+            "restart_delay_min":   30,
             "needs_occupancy":  False,
             "standby_power_w":  0,
             "notes": (
@@ -452,6 +536,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    40,
             "std_duration_min":     10,
+            "restart_delay_min":  120,
             "needs_occupancy":  True,
             "standby_power_w":  50,
             "notes": (
@@ -481,6 +566,7 @@ REFERENCE_HOUSEHOLD = {
             # Sun-driven — same both days.
             "mean_duration_min":    60,
             "std_duration_min":     20,
+            "restart_delay_min":    0,
             "needs_occupancy":  False,
             "standby_power_w":  0,
             "notes": "Circulation pump for solar thermal system. Very low load."
@@ -516,6 +602,7 @@ REFERENCE_HOUSEHOLD = {
             "mean_duration_min":    40,
             # Approximate full main-meal cook cycle (preheat + simmer/cycle).
             "std_duration_min":     10,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
@@ -546,6 +633,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    35,
             "std_duration_min":     10,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  2,
             "notes": (
@@ -574,6 +662,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    25,
             "std_duration_min":     8,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": (
@@ -602,6 +691,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    30,
             "std_duration_min":     8,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": (
@@ -635,6 +725,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekday: lunchtime reheating only. Weekend: broader use 10-14h + evening snack.
             "mean_duration_min":    5,
             "std_duration_min":     2,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  3,
             "notes": (
@@ -666,6 +757,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekday: morning only. Weekend: morning smoothies/cooking 08-10h.
             "mean_duration_min":    3,
             "std_duration_min":     1,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Blender. Short food-prep bursts. Not a primary cooker."
@@ -692,6 +784,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekday: quick 07-08h. Weekend: leisurely brunch 08-10h.
             "mean_duration_min":    4,
             "std_duration_min":     1,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Pop-up toaster. Short breakfast use. Not a primary cooker."
@@ -718,6 +811,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekday: very rare (0.1). Weekend: primary baking day 09-12h.
             "mean_duration_min":    50,
             "std_duration_min":     15,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
@@ -758,6 +852,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: morning viewing from 08h; full afternoon/evening block.
             "mean_duration_min":    120,
             "std_duration_min":     40,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  1,
             "notes": (
@@ -785,6 +880,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    90,
             "std_duration_min":     30,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  1,
             "notes": "Second/bedroom TV. Evening use only."
@@ -811,6 +907,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: follows TV pattern — morning viewing from 08h.
             "mean_duration_min":    120,
             "std_duration_min":     40,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  8,
             "notes": "DSTV/Zuku decoder. Switched off at the wall when not in use — no standby draw."
@@ -837,6 +934,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: more daytime use 09-15h (work from home / study).
             "mean_duration_min":    120,
             "std_duration_min":     60,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  2,
             "notes": "Personal laptop. Evening use dominant."
@@ -861,6 +959,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    90,
             "std_duration_min":     45,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  2,
             "notes": "Second laptop."
@@ -887,6 +986,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekday: evening only. Weekend: some mid-morning and afternoon use.
             "mean_duration_min":    120,
             "std_duration_min":     60,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": "Desktop PC with monitor. Evening use. 4-5x per week."
@@ -912,6 +1012,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekday: after-school afternoon 15-17h. Weekend: morning 09-12h + afternoon.
             "mean_duration_min":    90,
             "std_duration_min":     45,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  2,
             "notes": "Gaming console. Afternoon use before peak TV hours. 3x per week."
@@ -937,6 +1038,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: music throughout the day — cooking, relaxing, chores.
             "mean_duration_min":    90,
             "std_duration_min":     40,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  2,
             "notes": "Bluetooth speaker or radio. Evening/weekend use."
@@ -973,6 +1075,7 @@ REFERENCE_HOUSEHOLD = {
             # Overnight charging pattern same both days.
             "mean_duration_min":    120,
             "std_duration_min":     40,
+            "restart_delay_min":  120,
             "needs_occupancy":  False,
             "standby_power_w":  1,
             "notes": (
@@ -1000,6 +1103,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    150,
             "std_duration_min":     50,
+            "restart_delay_min":  120,
             "needs_occupancy":  False,
             "standby_power_w":  2,
             "notes": "Tablet charger. Evening use and overnight charging."
@@ -1024,6 +1128,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    180,
             "std_duration_min":     60,
+            "restart_delay_min":  120,
             "needs_occupancy":  False,
             "standby_power_w":  1,
             "notes": "Power bank charging. Common due to KPLC outages."
@@ -1052,6 +1157,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: primary laundry day — higher probability 08-11h.
             "mean_duration_min":    45,
             "std_duration_min":     10,
+            "restart_delay_min":  240,
             "needs_occupancy":  True,
             "standby_power_w":  3,
             "notes": (
@@ -1080,6 +1186,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: full house clean — more likely and wider window 09-12h.
             "mean_duration_min":    20,
             "std_duration_min":     8,
+            "restart_delay_min":  120,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Vacuum cleaner. Morning cleaning. 2-3x per week."
@@ -1113,6 +1220,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: more midday use — people home during hottest hours.
             "mean_duration_min":    180,
             "std_duration_min":     60,
+            "restart_delay_min":   30,
             "needs_occupancy":  False,
             # Fans run while people sleep — left on overnight in warm weather.
             "standby_power_w":  0,
@@ -1143,6 +1251,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: more afternoon use — people home during peak heat 09-17h.
             "mean_duration_min":    120,
             "std_duration_min":     60,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Portable standing fan."
@@ -1169,6 +1278,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: higher probability — full household present during hottest hours.
             "mean_duration_min":    120,
             "std_duration_min":     60,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": "Air conditioner. Very rare in medium-tier Nairobi."
@@ -1196,6 +1306,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: later morning departures (church/errands 08-10h) + casual daytime comings/goings.
             "mean_duration_min":    1,
             "std_duration_min":     0,
+            "restart_delay_min":    2,
             "needs_occupancy":  False,
             "standby_power_w":  10,
             "notes": "Automated gate motor. Short high-power events."
@@ -1222,6 +1333,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: more midday top-up cycles — guests/social gatherings raise demand.
             "mean_duration_min":    30,
             "std_duration_min":     10,
+            "restart_delay_min":   30,
             "needs_occupancy":  False,
             "standby_power_w":  0,
             "notes": "Borehole pump. Set count = 1 only if compound has borehole."
@@ -1250,6 +1362,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: morning prep shifted later (08-10h); evening prep for going out.
             "mean_duration_min":    10,
             "std_duration_min":     4,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Hair dryer. Morning and evening use."
@@ -1275,6 +1388,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: no early work rush — grooming shifts to 08-10h.
             "mean_duration_min":    5,
             "std_duration_min":     2,
+            "restart_delay_min":   60,
             "needs_occupancy":  True,
             "standby_power_w":  1,
             "notes": "Electric shaver/trimmer. Morning grooming."
@@ -1300,6 +1414,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: longer project sessions — no work schedule to interrupt.
             "mean_duration_min":    60,
             "std_duration_min":     30,
+            "restart_delay_min":   30,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Domestic sewing machine. Daytime use."
@@ -1325,6 +1440,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: casual spread — school work, leisure printing, no morning rush.
             "mean_duration_min":    5,
             "std_duration_min":     2,
+            "restart_delay_min":   10,
             "needs_occupancy":  True,
             "standby_power_w":  5,
             "notes": "Inkjet or laser printer. Low load, occasional use."
@@ -1339,6 +1455,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [0.0]*24,
             "mean_duration_min":    0,
             "std_duration_min":     0,
+            "restart_delay_min":    0,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
@@ -1357,6 +1474,7 @@ REFERENCE_HOUSEHOLD = {
             "tou_weekend":       [0.0]*24,
             "mean_duration_min":    0,
             "std_duration_min":     0,
+            "restart_delay_min":    0,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": "Second catch-all placeholder."
@@ -1376,12 +1494,20 @@ REFERENCE_HOUSEHOLD = {
     #   count           : number of bulbs in this room/zone
     #   wattage_w       : rated power per bulb in watts
     #   bulb_type       : "LED" / "CFL" / "incandescent" / "fluorescent"
-    #   tou_weekday/tou_weekend      : 24-element array (same as appliances).
-    #                     Value = probability the light is on in that hour.
-    #                     0.0 = never on; 1.0 = always on.
-    #                     Interior rooms (bathroom, kitchen, store) may have
-    #                     non-zero daytime values — they need light regardless
-    #                     of natural daylight.
+    #   tou_weekday/tou_weekend  : 24-element array (same as appliances).
+    #                     tou[h] = probability of a switch-on event (room entry)
+    #                     during hour h. 0.0 = never; 1.0 = certain entry.
+    #                     The model applies the same per-minute Bernoulli draw
+    #                     as appliances — room entry probability drives the
+    #                     switch-on, mean_duration_min drives how long the
+    #                     light stays on for that visit.
+    #   mean_duration_min : typical room visit duration in minutes.
+    #                     Used identically to appliance mean_duration_min.
+    #                     Set to 60 for always-on lights (dusk-to-dawn) so
+    #                     the estimator treats each hour as fully on.
+    #   std_duration_min  : standard deviation of room visit duration.
+    #                     Used by calibrate_appliance() during Monte Carlo
+    #                     verification. Set to 0 for always-on lights.
     #   needs_occupancy : False for security lights — they switch on
     #                     whenever it is dark, regardless of who is home.
     #                     True for interior rooms — only on when someone
@@ -1421,6 +1547,9 @@ REFERENCE_HOUSEHOLD = {
             #   Hr:  18    19    20    21    22    23
                      0.9,  0.9,  0.9,  0.9,  0.9,  0.0
             ],
+            "mean_duration_min": 120,
+            "std_duration_min":   40,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Main living room / lounge. Two ceiling LED bulbs. Morning gathering (06-07h) and evening (18-22h)."
         },
@@ -1442,6 +1571,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.8,  0.8,  0.8,  0.0,  0.0,  0.0
             ],
+            "mean_duration_min":  25,
+            "std_duration_min":    8,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Dining area. Morning breakfast (06-07h) and evening dinner (18-20h)."
         },
@@ -1463,6 +1595,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.85, 0.85, 0.0
             ],
+            "mean_duration_min":  50,
+            "std_duration_min":   15,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Master bedroom. Morning wakeup (05-06h) and late evening before sleep (21-22h)."
         },
@@ -1484,6 +1619,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.8,  0.8,  0.0,  0.0,  0.0
             ],
+            "mean_duration_min":  45,
+            "std_duration_min":   15,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Children's bedroom. Morning wakeup for school (06-07h) and early evening before sleep (19-20h)."
         },
@@ -1505,6 +1643,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.0,  0.0,  0.0,  0.85, 0.85, 0.0
             ],
+            "mean_duration_min":  45,
+            "std_duration_min":   15,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Third bedroom. Household_helpers. Morning wakeup (05-06h) and late evening before sleep (21-22h)"
         },
@@ -1526,6 +1667,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.85, 0.85, 0.0
             ],
             # Non-working adult — wakes later (07h), sleeps late (21-22h).
+            "mean_duration_min":  45,
+            "std_duration_min":   15,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Non-working adult bedroom. Later morning wakeup (07h) and late evening (21-22h)."
         },
@@ -1547,6 +1691,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.8,  0.8,  0.0,  0.0,  0.0
             ],
             # Elderly — wakes at 06h (after working adults), early to bed (19-20h).
+            "mean_duration_min":  45,
+            "std_duration_min":   15,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Elderly bedroom. Early morning wakeup (05-06h) and early evening sleep (19-20h)."
         },
@@ -1568,6 +1715,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.85,
                      0.85, 0.85, 0.85, 0.0,  0.0,  0.0
             ],
+            "mean_duration_min":  40,
+            "std_duration_min":   12,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Kitchen. Morning prep (06-07h) and evening dinner prep (17-20h)."
         },
@@ -1589,6 +1739,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.75, 0.75, 0.75, 0.75, 0.0,  0.0
             ],
+            "mean_duration_min":  15,
+            "std_duration_min":    5,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Bathroom. Morning rush (05-07h) and evening (18-21h) only."
         },
@@ -1610,6 +1763,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.75, 0.75, 0.75, 0.75, 0.0,  0.0
             ],
+            "mean_duration_min":  15,
+            "std_duration_min":    5,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Bathroom. Morning rush (05-07h) and evening (18-21h) only."
         },
@@ -1631,7 +1787,10 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      1.0,  1.0,  1.0,  1.0,  1.0,  1.0
             ],
-            # Dusk-to-dawn: 18:00–05:59.
+            # Dusk-to-dawn: always on for the full hour when active.
+            "mean_duration_min":  60,
+            "std_duration_min":    0,
+            "restart_delay_min":   0,
             "needs_occupancy":  False,
             "notes": ("Runs dusk to dawn regardless of occupancy."
             )
@@ -1654,6 +1813,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0,
                      0.6,  0.6,  0.6,  0.6,  0.6,  0.0
             ],
+            "mean_duration_min":  20,
+            "std_duration_min":    8,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Staircase or corridor light. Evening use only (18-22h)."
         },
@@ -1676,6 +1838,9 @@ REFERENCE_HOUSEHOLD = {
                      0.0,  0.0,  0.0,  0.0,  0.0,  0.0
             ],
             # Brief access: morning fetch (07h) and early evening return (16h).
+            "mean_duration_min":   5,
+            "std_duration_min":    2,
+            "restart_delay_min":   0,
             "needs_occupancy":  True,
             "notes": "Store room or utility room. Brief access morning and early evening."
         }
@@ -2085,6 +2250,33 @@ def validate_household(h):
                         f"{key}[{i}] = {v} exceeds n_residents = {n}."
                     )
 
+    # ── Block 3b: Room occupancy ─────────────────────────────────────────────
+
+    room_occ = h.get("room_occupancy", {})
+    if not isinstance(room_occ, dict):
+        errors.append("room_occupancy must be a dict")
+    else:
+        for room_name, schedules in room_occ.items():
+            if not isinstance(schedules, dict):
+                errors.append(f"room_occupancy['{room_name}'] must be a dict with 'weekday' and 'weekend' keys")
+                continue
+            for day_type in ("weekday", "weekend"):
+                arr = schedules.get(day_type, [])
+                if len(arr) != 24:
+                    errors.append(
+                        f"room_occupancy['{room_name}'].{day_type} must have 24 values, got {len(arr)}"
+                    )
+                else:
+                    for i, v in enumerate(arr):
+                        if not isinstance(v, (int, float)) or v < 0:
+                            errors.append(
+                                f"room_occupancy['{room_name}'].{day_type}[{i}] must be a non-negative number, got: {v}"
+                            )
+                        elif isinstance(n, int) and v > n:
+                            errors.append(
+                                f"room_occupancy['{room_name}'].{day_type}[{i}] = {v} exceeds n_residents = {n}"
+                            )
+
     # ── Block 4a: Appliances ──────────────────────────────────────────────────
 
     appliances = h.get("appliances", [])
@@ -2160,6 +2352,13 @@ def validate_household(h):
                     f"Risk of negative duration samples."
                 )
 
+            restart_d = appl.get("restart_delay_min")
+            if not isinstance(restart_d, (int, float)) or restart_d < 0:
+                errors.append(
+                    f"{prefix}: restart_delay_min must be a non-negative "
+                    f"number, got: {restart_d}"
+                )
+
             if not isinstance(appl.get("needs_occupancy"), bool):
                 errors.append(
                     f"{prefix}: needs_occupancy must be True or False"
@@ -2216,6 +2415,14 @@ def validate_household(h):
                             errors.append(
                                 f"{prefix}: {tou_field}[{i}] = {v} must be float in [0,1]"
                             )
+
+            for dur_field in ("mean_duration_min", "std_duration_min",
+                              "restart_delay_min"):
+                v = b.get(dur_field)
+                if not isinstance(v, (int, float)) or v < 0:
+                    errors.append(
+                        f"{prefix}: {dur_field} must be a non-negative number, got: {v}"
+                    )
 
             if not isinstance(b.get("needs_occupancy"), bool):
                 errors.append(
@@ -2370,13 +2577,25 @@ def estimate_daily_energy_kwh(household):
                 effective_tou = sum(tou)
             total_wh += appl["count"] * pwr * duration * effective_tou
 
+        room_occ_block = household.get("room_occupancy", {})
+
         for bulb in get_active_bulbs(household):
-            tou = bulb[tou_key]
-            if bulb.get("needs_occupancy"):
-                effective_tou = sum(t for t, o in zip(tou, occ) if o > 0)
-            else:
+            tou      = bulb[tou_key]
+            room     = bulb["room"]
+            duration = min(bulb["mean_duration_min"], 60) / 60.0
+            room_occ = room_occ_block.get(room, {}).get(day_type)
+
+            if not bulb.get("needs_occupancy"):
+                # Outdoor/security — dusk-to-dawn, no occupancy filter.
                 effective_tou = sum(tou)
-            total_wh += bulb["count"] * bulb["wattage_w"] * effective_tou
+            elif room_occ is not None:
+                # Per-room occupancy available — only count hours room is occupied.
+                effective_tou = sum(t for t, o in zip(tou, room_occ) if o > 0)
+            else:
+                # Fallback: room not in room_occupancy — use household occupancy.
+                effective_tou = sum(t for t, o in zip(tou, occ) if o > 0)
+
+            total_wh += bulb["count"] * bulb["wattage_w"] * duration * effective_tou
 
         return total_wh / 1000
 
@@ -2471,6 +2690,7 @@ if __name__ == "__main__":
             "tou_weekend":  [0.5]*24,
                 "mean_duration_min": 0,
                 "std_duration_min": 100,
+                "restart_delay_min": -1,
                 "needs_occupancy": "yes"
             }
         ],
