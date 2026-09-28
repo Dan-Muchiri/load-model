@@ -2,7 +2,7 @@
 schema.py
 =========
 Residential Load Model — Household Parameter Schema
-MSc Thesis: Multi-Objective Sizing for Hybrid Solar Systems
+MSc Thesis: MULTI-OBJECTIVE SIZING OF HYBRID SOLAR SYSTEMS USING SYNTHETIC RESIDENTIAL LOADS AND MACHINE LEARNING BASED IRRADIANCE AND TEMPERATURE FORECASTS
 Author: Dan Munene Muchiri | JKUAT | ENM321-2049/2024
 
 PURPOSE
@@ -10,15 +10,13 @@ PURPOSE
 This file defines the COMPLETE and AUTHORITATIVE contract of the components
 of the project:
 
-    1. The online survey  →  must collect every field defined here
-    2. The load model     →  must only use fields defined here
+    1. The interview questionnaire  →  must collect every field defined here
+    2. The load model               →  must only use fields defined here
 
 Nothing in the model may depend on information not in this schema.
-Nothing in the survey should collect information not used here.
-
-If you find yourself wanting to add a field mid-project,
-add it here first, then update the validator, survey parser,
-and model in that order.
+Nothing in the questionnaire should collect information not used here.
+Fields are collected on-site by a solar installer administering a
+structured interview to the household.
 
 NAIROBI-SPECIFIC ASSUMPTIONS
 -----------------------------
@@ -75,8 +73,7 @@ switched on in that hour.
 # =============================================================================
 # SECTION 1: REFERENCE HOUSEHOLD
 # =============================================================================
-# This is a complete, realistic, validated example of a high-tier
-# Nairobi household. It is used for:
+# This is a complete, realistic example of a Nairobi household. It is used for:
 #   - Testing the model before survey data arrives
 #   - Verifying the validator
 #   - Onboarding new developers to the schema
@@ -112,7 +109,7 @@ REFERENCE_HOUSEHOLD = {
 
     "n_residents": 8,
     # Integer. Total number of people who live in this household.
-    # Range: 1–10. Hard upper bound for all occupancy values.
+    # Range: 1–15. Hard upper bound for all occupancy values.
 
     "resident_breakdown": {
         # Must sum to n_residents.
@@ -2638,8 +2635,21 @@ def print_household_summary(household):
     print(f"LIGHTING ({len(active_bulbs)} zones):")
     for b in active_bulbs:
         peak_hours = [i for i, v in enumerate(b['tou_weekday']) if v >= 0.5]
-        peak_str = (f"peak {peak_hours[0]:02d}h–{peak_hours[-1]:02d}h"
-                    if peak_hours else "low use")
+        if peak_hours:
+            ranges = []
+            start = prev = peak_hours[0]
+            for hour in peak_hours[1:]:
+                if hour == prev + 1:
+                    prev = hour
+                    continue
+                ranges.append((start, prev))
+                start = prev = hour
+            ranges.append((start, prev))
+            peak_str = "peak " + ", ".join(
+                f"{s:02d}h–{e:02d}h" for s, e in ranges
+            )
+        else:
+            peak_str = "low use"
         print(f"  {b['room']:30s} x{b['count']} bulb(s)  "
               f"{b['wattage_w']}W  {peak_str}")
 
