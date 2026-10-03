@@ -79,6 +79,25 @@ because schema.py models the two day types independently.
                           household use this appliance?
                           Use WEEKEND_FREQUENCY to map the answer.
 
+   i. weekday_sessions_per_day : On a day they DO use it, how many
+                          SEPARATE times do they switch it on that day?
+                          (e.g. kettle: "once for breakfast, once more
+                          for evening tea" = 2). This is different from
+                          "days used" above and different from the
+                          number of windows in (1) — a household can
+                          report two windows meaning "it happens once,
+                          at either time" (sessions_per_day = 1), or
+                          two windows meaning "it happens at both
+                          times, every day it's used" (sessions_per_day
+                          = 2). Ask explicitly; do not infer it from
+                          the window count. Default to 1 if the
+                          household only describes a single routine
+                          use, however many windows it spans.
+
+   j. weekend_sessions_per_day : Same question, for weekend days.
+                          Can differ from the weekday answer (e.g. an
+                          extra lazy-morning tea on weekends).
+
 NOTE: rated_power_w and count are collected separately in the main
 schema survey (read from the appliance label). They are NOT inputs
 to this calibration script — they are already in schema.py.
@@ -111,6 +130,116 @@ WEEKEND_FREQUENCY = {
 
 
 # =============================================================================
+# RESTART-DELAY DEFAULTS (per appliance)
+# =============================================================================
+# restart_delay_min is a physical/behavioural property of the appliance
+# itself -- tank reheat time, wash-cycle length, "just had tea, not
+# thirsty again yet" -- not a household preference, so it is NOT an
+# interview question. These defaults mirror REFERENCE_HOUSEHOLD's own
+# appliance entries in schema.py and should be used as-is unless a
+# technician has a specific, noted reason to believe a household's
+# behaviour genuinely differs (e.g. a large household running
+# back-to-back laundry loads) -- in which case pass an explicit
+# restart_delay_min to calibrate_appliance() to override the table.
+#
+# Bulbs are NOT in this table and must never use it -- they always use
+# restart_delay_min=0 (see BULB CALIBRATION section below). There is no
+# physical cooldown on a light switch; always pass 0 explicitly.
+APPLIANCE_RESTART_DELAY_MIN = {
+    # ── Group A: always-on baseline ──
+    "refrigerator":               0,
+    "chest_freezer":               0,
+    "wifi_router":                 0,
+    "electric_fence_energiser":    0,
+    "cctv_system":                 0,
+    # ── Group B: morning-peak ──
+    "electric_kettle":            20,
+    "electric_kettle_2":          20,
+    "iron_box":                   20,
+    "water_pump":                 20,
+    "immersion_water_heater":     20,
+    "solar_water_heater_pump":     0,
+    # ── Group C: cooking ──
+    "electric_hotplate":          30,
+    "induction_cooker":           30,
+    "electric_pressure_cooker":   60,
+    "rice_cooker":                60,
+    "microwave":                  30,
+    "blender":                    30,
+    "toaster":                    30,
+    "electric_oven":              60,
+    # ── Group D: entertainment and information ──
+    "television":                 30,
+    "television_2":               30,
+    "dstv_decoder":                30,
+    "laptop":                     60,
+    "laptop_2":                   60,
+    "desktop_computer":           60,
+    "gaming_console":             60,
+    "bluetooth_speaker":          30,
+    # ── Group E: phone and device charging ──
+    "smartphone_charger":        120,
+    "tablet_charger":            120,
+    "power_bank_charging":       120,
+    # ── Group F: laundry and cleaning ──
+    "washing_machine":           240,
+    "vacuum_cleaner":            120,
+    # ── Group G: comfort ──
+    "ceiling_fan":                30,
+    "standing_fan":               30,
+    "air_conditioner":            30,
+    # ── Group H: outdoor and security ──
+    "gate_motor":                  2,
+    "borehole_pump":              30,
+    # ── Group I: personal care and miscellaneous ──
+    "hair_dryer":                 30,
+    "electric_shaver":            60,
+    "sewing_machine":             30,
+    "printer":                    10,
+}
+
+# Fallback for anything not in the table above -- e.g. the
+# "other_appliance_1"/"other_appliance_2" catch-all slots in schema.py,
+# or a genuinely new appliance type. 20 minutes is the single most
+# common value among the standard appliances above -- a reasonable
+# guess, not a substitute for adding the real appliance's value to the
+# table once its task-completion time is known.
+DEFAULT_RESTART_DELAY_MIN = 20
+
+
+def get_restart_delay_min(appliance_name, override=None):
+    """
+    Look up the default restart_delay_min for a named appliance.
+
+    Parameters
+    ----------
+    appliance_name : str, must match a schema.py appliance "name" field
+                     to hit the table; anything else falls back to
+                     DEFAULT_RESTART_DELAY_MIN (with a warning, since
+                     a miss is often a typo rather than a genuinely new
+                     appliance).
+    override : int or None. If given, takes precedence over the table --
+               use this when a technician has a specific, noted reason
+               to believe this household's behaviour genuinely differs
+               from the standard default.
+
+    Returns
+    -------
+    int, minutes.
+    """
+    if override is not None:
+        return override
+    if appliance_name in APPLIANCE_RESTART_DELAY_MIN:
+        return APPLIANCE_RESTART_DELAY_MIN[appliance_name]
+    print(
+        f"[WARN] '{appliance_name}' not found in APPLIANCE_RESTART_DELAY_MIN -- "
+        f"falling back to the generic default of {DEFAULT_RESTART_DELAY_MIN} min. "
+        f"Check for a typo, or add this appliance's real value to the table."
+    )
+    return DEFAULT_RESTART_DELAY_MIN
+
+
+# =============================================================================
 # STEP 1: RAW SHAPE FROM INTERVIEW WINDOWS
 # =============================================================================
 
@@ -123,9 +252,15 @@ def build_raw_shape(windows, decrement_per_hour=0.2):
     ----------
     windows : list of dict, each with:
         "start_hour" : int, window start (inclusive)
-        "end_hour"   : int, window end (exclusive)
+        "end_hour"   : int, window end (exclusive). May be <= start_hour
+                       to mean the window crosses midnight (e.g.
+                       start_hour=22, end_hour=2 means 22:00-02:00) --
+                       detected automatically, no need to write 26 by hand.
         "peak_hour"  : int or None. If given, a triangular taper is
                        applied around it. If None, the window is flat.
+                       If the window crosses midnight, pass the peak as
+                       its literal 24h-clock hour (e.g. 1 for 01:00) --
+                       it is re-aligned to the wrapped window internally.
         "peak_value" : float in (0, 1]. Height of the taper peak
                        (or flat value if peak_hour is None). Default 1.0 --
                        relative height BETWEEN windows; the absolute scale
@@ -143,10 +278,20 @@ def build_raw_shape(windows, decrement_per_hour=0.2):
         peak = w.get("peak_hour")
         peak_val = w.get("peak_value", 1.0)
 
+        if end <= start:
+            # Window crosses midnight (e.g. 22:00-02:00 given as
+            # start_hour=22, end_hour=2). Push end past 24 so
+            # range(start, end) is non-empty; h % 24 below wraps the
+            # overflow hours back to a valid 0-based index. If the peak
+            # falls on the post-midnight side, shift it the same way so
+            # the taper distance in the triangular branch stays correct.
+            end += 24
+            if peak is not None and peak < start:
+                peak += 24
+
         if peak is None:
             # Flat across the window.
             for h in range(start, end):
-                # h % 24 wraps hours > 23 back to 0-based index (handles windows crossing midnight).
                 # max() keeps the highest value if two windows overlap at the same hour.
                 shape[h % 24] = max(shape[h % 24], peak_val)
         else:
@@ -165,7 +310,7 @@ def build_raw_shape(windows, decrement_per_hour=0.2):
 # =============================================================================
 
 def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
-                     appliance_name="appliance"):
+                     sessions_per_day=1.0, appliance_name="appliance"):
     """
     Scale raw_shape so that the mechanism's IMPLIED average daily "on"
     minutes matches the household's reported usage for this day type.
@@ -174,16 +319,29 @@ def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
     expected number of switch-on events starting in hour h ~= tou[h]
     (60 independent per-minute trials at probability tou[h]/60).
     So implied daily total minutes = mean_duration_min * sum(tou).
+    sum(tou) is therefore pinned to exactly (days_used/period_days) *
+    sessions_per_day -- the expected NUMBER of switch-on events per day,
+    not a count per window. Multiple windows only shape WHEN those
+    expected events are likely to land; they do not add extra events on
+    their own -- that is what sessions_per_day is for.
 
     Parameters
     ----------
     raw_shape      : np.ndarray, 24 values, from build_raw_shape()
-    mean_duration_min : float, typical session length (already in schema)
+    mean_duration_min : float, typical length of ONE session (already in schema)
     days_used      : float, number of days this appliance is used within
                      the period (e.g. 4 out of 5 weekdays, or 1 out of 2
                      weekend days)
     period_days    : int, total days in the period being calibrated.
                      5 for weekday calibration, 2 for weekend calibration.
+    sessions_per_day : float, default 1.0. How many separate times per
+                     day (on a day it IS used) this is actually switched
+                     on -- e.g. a kettle boiled once for breakfast AND
+                     once for evening tea = 2.0. Multiplies directly
+                     into target_minutes. NOT inferred from the number
+                     of windows in raw_shape: two windows can mean
+                     "happens once, at either time" (sessions_per_day
+                     stays 1) just as easily as "happens at both."
     appliance_name : str, used only for warning messages
 
     Returns
@@ -196,8 +354,9 @@ def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
         "clipped"        : bool, True if any value was capped at 1.0
     """
     # Average "on" minutes per day of THIS day type.
-    # e.g. used 4 out of 5 weekdays, 4 min/session → 4/5 × 4 = 3.2 min/weekday
-    target_minutes = (days_used / period_days) * mean_duration_min
+    # e.g. used 4 out of 5 weekdays, 2 sessions/day, 4 min/session
+    #      → 4/5 × 2 × 4 = 6.4 min/weekday
+    target_minutes = (days_used / period_days) * mean_duration_min * sessions_per_day
 
     raw_total = mean_duration_min * raw_shape.sum()
 
@@ -235,12 +394,21 @@ def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
 # =============================================================================
 
 def verify_calibration(tou, mean_duration_min, std_duration_min,
-                        target_minutes, n_days=500, restart_delay_min=10,
+                        target_minutes, n_days=500,
+                        restart_delay_min=DEFAULT_RESTART_DELAY_MIN,
                         random_seed=None):
     """
     Simulate n_days using the SAME per-minute Bernoulli mechanism the real
     appliance engine uses, and check the average daily "on" minutes
     converges to target_minutes.
+
+    This function has no appliance_name, so it cannot resolve
+    restart_delay_min from APPLIANCE_RESTART_DELAY_MIN itself -- its
+    default is the same generic DEFAULT_RESTART_DELAY_MIN used elsewhere
+    as a last resort. In practice every caller in this file always
+    passes restart_delay_min explicitly (already resolved via
+    get_restart_delay_min() upstream), so this default only matters if
+    this function is called standalone.
 
     Parameters
     ----------
@@ -295,8 +463,9 @@ def verify_calibration(tou, mean_duration_min, std_duration_min,
 
 
 def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
-                               days_used, period_days, appliance_name="appliance",
-                               restart_delay_min=10, n_days=300,
+                               days_used, period_days, sessions_per_day=1.0,
+                               appliance_name="appliance",
+                               restart_delay_min=None, n_days=300,
                                max_iterations=5, random_seed=None):
     """
     Refines calibrate_shape()'s closed-form scalar using the verification
@@ -306,12 +475,26 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
 
     Each iteration: simulate → compare to target → rescale → repeat.
     Stops early once within 10% tolerance or max_iterations is reached.
+
+    Raises ValueError instead of returning silently if it never converges --
+    this happens when restart_delay_min, mean_duration_min and
+    sessions_per_day jointly require more total "on" time than can
+    physically fit in the given window(s), even with tou clipped to 1.0
+    (switch-on certain every minute). A badly off-target tou must never
+    be pasted into schema.py without this being surfaced loudly.
+
+    restart_delay_min : int or None. As in calibrate_appliance() -- leave
+                        as None to resolve via APPLIANCE_RESTART_DELAY_MIN
+                        for appliance_name; pass a number to override.
     """
+    restart_delay_min = get_restart_delay_min(appliance_name, override=restart_delay_min)
+
     result = calibrate_shape(raw_shape, mean_duration_min, days_used,
-                              period_days, appliance_name)
+                              period_days, sessions_per_day, appliance_name)
     tou = np.array(result["tou"])
     target = result["target_minutes"]
 
+    stalled = False
     for i in range(max_iterations):
         check = verify_calibration(
             tou, mean_duration_min, std_duration_min, target,
@@ -325,12 +508,30 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
             break
 
         if check["simulated_mean_minutes"] <= 0:
-            print(f"[WARN] {appliance_name}: simulated mean is zero -- "
-                  f"window/shape may be too narrow. Stopping iteration.")
+            stalled = True
             break
 
         correction = target / check["simulated_mean_minutes"]
         tou = np.clip(tou * correction, 0.0, 1.0)
+    else:
+        # Loop ran out of iterations without breaking -- check is the
+        # last attempt, and it did not pass.
+        stalled = not check["passed"]
+
+    if stalled or not check["passed"]:
+        raise ValueError(
+            f"{appliance_name}: calibration did not converge after "
+            f"{i + 1} iteration(s) -- simulated {check['simulated_mean_minutes']} "
+            f"min/day vs. target {target} min/day ({check['pct_error']}% error). "
+            f"This means mean_duration_min={mean_duration_min}, "
+            f"sessions_per_day and restart_delay_min={restart_delay_min} "
+            f"jointly require more total 'on' time than the reported "
+            f"window(s) can physically hold, even with tou at 1.0 "
+            f"(switch-on certain every minute). Widen the usage window(s) "
+            f"with the household, reduce sessions_per_day, or reconsider "
+            f"restart_delay_min for this appliance before pasting a result "
+            f"into schema.py."
+        )
 
     return {
         "tou":            [round(float(v), 4) for v in tou],
@@ -346,9 +547,11 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
 def calibrate_appliance(weekday_windows, weekend_windows,
                          mean_duration_min, std_duration_min,
                          weekday_days_used, weekend_days_used,
+                         weekday_sessions_per_day=1.0,
+                         weekend_sessions_per_day=1.0,
                          appliance_name="appliance",
                          decrement_per_hour=0.2,
-                         restart_delay_min=10, n_days=300,
+                         restart_delay_min=None, n_days=300,
                          random_seed=None):
     """
     Full calibration pipeline for both day types. Returns tou_weekday and
@@ -359,15 +562,32 @@ def calibrate_appliance(weekday_windows, weekend_windows,
     weekday_windows   : list of window dicts for weekday usage
     weekend_windows   : list of window dicts for weekend usage
                         (pass [] if never used on weekends)
-    mean_duration_min : float, typical session length in minutes
+    mean_duration_min : float, typical length of ONE session in minutes
     std_duration_min  : float, standard deviation of session length
     weekday_days_used : float, days used out of 5 weekdays
                         (from WEEKDAY_FREQUENCY)
     weekend_days_used : float, days used out of 2 weekend days
                         (from WEEKEND_FREQUENCY)
-    appliance_name    : str, used in log messages
+    weekday_sessions_per_day : float, default 1.0. Separate times per
+                        day this is switched on, on a weekday it IS
+                        used (e.g. kettle: breakfast + evening tea = 2.0).
+                        See the interview note (i) in this file's module
+                        docstring — not inferred from window count.
+    weekend_sessions_per_day : float, default 1.0. Same, for weekend days.
+    appliance_name    : str, used in log messages. Also used to look up
+                        restart_delay_min in APPLIANCE_RESTART_DELAY_MIN
+                        when restart_delay_min is not given explicitly --
+                        so it should match the appliance's schema.py
+                        "name" field for the lookup to hit.
     decrement_per_hour: float, triangle taper rate (default 0.2)
-    restart_delay_min : int, lockout minutes after each event
+    restart_delay_min : int or None. Lockout minutes after each event.
+                        This is a physical property of the appliance, not
+                        an interview question -- leave as None (default)
+                        to use APPLIANCE_RESTART_DELAY_MIN's value for
+                        appliance_name. Pass an explicit number only to
+                        override the table (e.g. for bulbs, which must
+                        always use 0, or a household with noted unusual
+                        behaviour).
     n_days            : int, simulated days for verification
     random_seed       : int or None
 
@@ -377,14 +597,16 @@ def calibrate_appliance(weekday_windows, weekend_windows,
         "tou_weekday" : 24-value list, paste into schema.py tou_weekday field
         "tou_weekend" : 24-value list, paste into schema.py tou_weekend field
     """
-    def _run_one(windows, days_used, period_days, label):
+    restart_delay_min = get_restart_delay_min(appliance_name, override=restart_delay_min)
+
+    def _run_one(windows, days_used, period_days, sessions_per_day, label):
         # Appliance not used on this day type — return all zeros.
         if days_used == 0 or not windows:
             return [0.0] * 24
 
         raw = build_raw_shape(windows, decrement_per_hour)
         result = calibrate_shape(raw, mean_duration_min, days_used, period_days,
-                                  f"{appliance_name} ({label})")
+                                  sessions_per_day, f"{appliance_name} ({label})")
 
         check = verify_calibration(
             result["tou"], mean_duration_min, std_duration_min,
@@ -400,7 +622,7 @@ def calibrate_appliance(weekday_windows, weekend_windows,
         print(f"  [{label}] closed-form missed ({check['pct_error']}%) — refining:")
         refined = calibrate_shape_iterative(
             raw, mean_duration_min, std_duration_min,
-            days_used, period_days,
+            days_used, period_days, sessions_per_day,
             f"{appliance_name} ({label})",
             restart_delay_min=restart_delay_min,
             n_days=n_days, random_seed=random_seed
@@ -408,8 +630,10 @@ def calibrate_appliance(weekday_windows, weekend_windows,
         return refined["tou"]
 
     print(f"\nCalibrating: {appliance_name}")
-    tou_weekday = _run_one(weekday_windows, weekday_days_used, 5, "weekday")
-    tou_weekend = _run_one(weekend_windows, weekend_days_used, 2, "weekend")
+    tou_weekday = _run_one(weekday_windows, weekday_days_used, 5,
+                            weekday_sessions_per_day, "weekday")
+    tou_weekend = _run_one(weekend_windows, weekend_days_used, 2,
+                            weekend_sessions_per_day, "weekend")
 
     return {
         "tou_weekday": tou_weekday,
@@ -439,6 +663,12 @@ def calibrate_appliance(weekday_windows, weekend_windows,
 #     staircase        :  ~20 min (transit + short stays)
 #     store_room       :   ~5 min (brief retrieval)
 #     outside_security :  60 min  (dusk-to-dawn: always full hour, set fixed)
+#
+# sessions_per_day matters MORE for rooms than for most appliances --
+# rooms are routinely entered multiple separate times a day (kitchen:
+# breakfast prep AND dinner prep; bathroom: morning AND evening). Ask
+# "how many separate times a day do they go into the [room]?" per room,
+# per day type, same as for appliances -- do not assume 1.
 #
 # The tou_weekday/tou_weekend values produced by calibrate_appliance() will
 # represent the per-hour probability that someone ENTERS that room,
@@ -476,6 +706,10 @@ if __name__ == "__main__":
     std_duration_min  = 1
     weekday_days_used = WEEKDAY_FREQUENCY["every_weekday"]   # 5 out of 5
     weekend_days_used = WEEKEND_FREQUENCY["both_days"]        # 2 out of 2
+    # Both windows are real, separate boils every day used (not "either/or"),
+    # so sessions_per_day = 2 -- see interview note (i)/(j) in the module docstring.
+    weekday_sessions_per_day = 2.0
+    weekend_sessions_per_day = 2.0
 
     result = calibrate_appliance(
         weekday_windows   = weekday_windows,
@@ -484,8 +718,11 @@ if __name__ == "__main__":
         std_duration_min  = std_duration_min,
         weekday_days_used = weekday_days_used,
         weekend_days_used = weekend_days_used,
+        weekday_sessions_per_day = weekday_sessions_per_day,
+        weekend_sessions_per_day = weekend_sessions_per_day,
         appliance_name    = "electric_kettle",
-        restart_delay_min = 20,   # matches schema.py electric_kettle.restart_delay_min
+        # restart_delay_min omitted -- resolves to 20 via
+        # APPLIANCE_RESTART_DELAY_MIN["electric_kettle"].
         random_seed       = 42,
     )
 
@@ -512,6 +749,8 @@ if __name__ == "__main__":
         std_duration_min  = 40,
         weekday_days_used = WEEKDAY_FREQUENCY["every_weekday"],
         weekend_days_used = WEEKEND_FREQUENCY["both_days"],
+        weekday_sessions_per_day = 2.0,  # morning gather AND evening session, every day
+        weekend_sessions_per_day = 2.0,
         appliance_name    = "living_room bulb",
         restart_delay_min = 0,    # no cooldown on a light switch
         random_seed       = 42,
@@ -545,6 +784,8 @@ if __name__ == "__main__":
         std_duration_min  = 12,
         weekday_days_used = WEEKDAY_FREQUENCY["every_weekday"],
         weekend_days_used = WEEKEND_FREQUENCY["both_days"],
+        weekday_sessions_per_day = 2.0,  # morning prep AND dinner prep
+        weekend_sessions_per_day = 3.0,  # brunch, lunch, AND dinner prep
         appliance_name    = "kitchen bulb",
         restart_delay_min = 0,    # no cooldown on a light switch
         random_seed       = 42,
