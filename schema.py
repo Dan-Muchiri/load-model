@@ -464,7 +464,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: only church/outing prep 08-10h — no weekday work-rush.
             "mean_duration_min":    25,
             "std_duration_min":     10,
-            "restart_delay_min":   90,
+            "restart_delay_min":   20,
             "needs_occupancy":  True,
             "standby_power_w":  0,
             "notes": (
@@ -502,7 +502,7 @@ REFERENCE_HOUSEHOLD = {
             # Weekend: peak shifted to 08-10h with extra midday use (cooking/cleaning).
             "mean_duration_min":    15,
             "std_duration_min":     5,
-            "restart_delay_min":   30,
+            "restart_delay_min":   20,
             "needs_occupancy":  False,
             "standby_power_w":  0,
             "notes": (
@@ -533,7 +533,7 @@ REFERENCE_HOUSEHOLD = {
             ],
             "mean_duration_min":    40,
             "std_duration_min":     10,
-            "restart_delay_min":  120,
+            "restart_delay_min":   20,
             "needs_occupancy":  True,
             "standby_power_w":  50,
             "notes": (
