@@ -339,6 +339,7 @@ q("select_one hour_end", "security_light_off", "What time do they usually go off
 inside = "${room_type} != 'outside_security'"
 q("note", "room_presence_note",
   "When is someone in this room on a normal weekday, and how many people? "
+  "(Awake time only, not sleeping.) "
   "This also tells us when the light gets used -- we work out from location and date "
   "when it's dark enough to need it, so there's no need to ask about the light separately.",
   relevant=inside)
