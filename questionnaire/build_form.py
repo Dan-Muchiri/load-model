@@ -175,7 +175,7 @@ def window_repeat(name, label, relevant, day):
     """One repeat of usage windows; fields feed calibrate_tou.build_raw_shape().
     Field names are prefixed with the repeat name because XLSForm names must be unique."""
     p = name
-    q("begin_repeat", name, label, relevant=relevant)
+    q("begin_repeat", name, label, relevant=relevant, appearance="field-list")
     q("select_one hour", f"{p}_start", f"{day}: from what time is it used?",
       hint="If it is used at more than one time of day, add an entry for each one.",
       required="yes", appearance="minimal")
@@ -205,7 +205,7 @@ def sessions_q(name, label, relevant):
 
 def people_repeat(name, label, relevant, day, who):
     p = name
-    q("begin_repeat", name, label, relevant=relevant)
+    q("begin_repeat", name, label, relevant=relevant, appearance="field-list")
     q("select_one hour", f"{p}_start", f"{day}: from what time?", required="yes", appearance="minimal")
     q("select_one hour_end", f"{p}_end", "Until what time?", required="yes",
       constraint=f". != ${{{p}_start}}", cmsg="Start and end cannot be the same hour.",
@@ -257,7 +257,7 @@ def category_presence(cat, who, day, relevant):
 
 # ---------------------------------------------------------------- A. Start
 q("start", "start"); q("end", "end")
-q("begin_group", "group_start", "A. Consent and household details")
+q("begin_group", "group_start", "A. Consent and household details", appearance="field-list")
 q("acknowledge", "consent",
   "Has the respondent read (or been read) the information sheet, had their questions answered, and signed the consent form?",
   required="yes")
@@ -272,7 +272,7 @@ q("select_one dwelling", "dwelling", "Type of house", required="yes")
 q("end_group")
 
 # ---------------------------------------------------------------- B. Composition
-q("begin_group", "group_people", "B. Who lives here")
+q("begin_group", "group_people", "B. Who lives here", appearance="field-list")
 q("integer", "number_of_residents", "Including yourself, how many people normally sleep in this house on most nights?",
   hint="Include live-in house helps. Leave out visitors staying less than a month.",
   required="yes", constraint=". >= 1 and . <= 15", cmsg="Between 1 and 15.")
@@ -292,7 +292,7 @@ q("note", "resident_count_check", "These add up to ${resident_count_sum} but the
 q("end_group")
 
 # ---------------------------------------------------------------- C. Occupancy
-q("begin_group", "group_occupancy", "C. When people are usually home")
+q("begin_group", "group_occupancy", "C. When people are usually home", appearance="field-list")
 q("note", "occupancy_note",
   "A few questions for each group of residents from Section B (only shown if the "
   "household has any). We'll ask about weekdays first, then whether weekends differ.")
@@ -307,7 +307,7 @@ q("end_group")
 
 # ---------------------------------------------------------------- D. Rooms and lights
 q("begin_group", "group_rooms", "D. Rooms and lights (walk through the house room by room)")
-q("begin_repeat", "room", "Room")
+q("begin_repeat", "room", "Room", appearance="field-list")
 q("select_one room", "room_type", "Which room is this?", required="yes")
 q("text", "room_other", "What is this room called?", relevant="${room_type} = 'other'", required="yes")
 q("integer", "bulbs", "How many light bulbs or tubes are in this room?", required="yes", constraint=". >= 0")
@@ -358,7 +358,7 @@ q("note", "appliance_note",
   "Add one entry for each appliance, reading the label as you go. If two of the same appliance are used "
   "at different times (for example a sitting-room TV and a bedroom TV), add them as two entries. "
   "Before finishing, ask: anything that charges, heats water, pumps water, cooks, or runs all night?")
-q("begin_repeat", "appliance", "Appliance")
+q("begin_repeat", "appliance", "Appliance", appearance="field-list")
 q("select_one appliance", "appliance_type", "Which appliance?", required="yes", appearance="minimal autocomplete")
 q("text", "appliance_other", "What is it?", relevant="${appliance_type} = 'other'", required="yes")
 q("select_one yes_no", "appliance_other_always_on",
@@ -432,7 +432,7 @@ q("end_group")
 # calibrate_tou.APPLIANCE_RESTART_DELAY_MIN and this file's
 # APPLIANCE_POWER_FALLBACK_W/APPLIANCE_NEEDS_OCCUPANCY. Revisit when
 # Objective 3 work starts.
-q("begin_group", "group_grid", "F. Electricity supply and backup")
+q("begin_group", "group_grid", "F. Electricity supply and backup", appearance="field-list")
 q("select_one yes_no", "grid_connected", "Is the house connected to Kenya Power?", required="yes")
 g = "${grid_connected} = 'yes'"
 q("select_one phase", "phase", "Is the supply single-phase or three-phase?",
@@ -459,7 +459,7 @@ q("text", "backup_loads", "What does the backup power when the grid is off?", re
 q("end_group")
 
 # ---------------------------------------------------------------- G. Site
-q("begin_group", "group_site", "G. Roof and site (interviewer, from the walk-around)")
+q("begin_group", "group_site", "G. Roof and site (interviewer, from the walk-around)", appearance="field-list")
 q("decimal", "roof_length", "Usable roof length (m)", required="yes", constraint=". > 0")
 q("decimal", "roof_width", "Usable roof width (m)", required="yes", constraint=". > 0")
 q("select_one orientation", "orientation", "Which way does the best roof face?", required="yes")
@@ -471,7 +471,7 @@ q("decimal", "cable_length_meters", "Cable run from roof to a likely inverter sp
 q("end_group")
 
 # ---------------------------------------------------------------- H. Close
-q("begin_group", "group_close", "H. Follow-up")
+q("begin_group", "group_close", "H. Follow-up", appearance="field-list")
 q("select_one willing", "logger_willing",
   "Would you be willing to host a power logger on your main board for one week, including a weekend? "
   "A qualified installer would fit it; it only records how much power the house uses.", required="yes")
@@ -497,8 +497,9 @@ def build(out=HERE / "household_survey.xlsx"):
         for n, l in items:
             ch.append([lst, n, l])
     st = wb.create_sheet("settings")
-    st.append(["form_title", "form_id", "version", "default_language"])
-    st.append(["Household energy use interview", "household_energy_v1", "2026100301", "English"])
+    st.append(["form_title", "form_id", "version", "default_language", "style"])
+    # style "pages": the Kobo web form shows each section (A to H) as its own page.
+    st.append(["Household energy use interview", "household_energy_v1", "1", "English", "pages"])
     for sh in wb.worksheets:
         for c in sh[1]:
             c.font = Font(bold=True)
