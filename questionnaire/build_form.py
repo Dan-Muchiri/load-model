@@ -119,12 +119,67 @@ ROOMS = [
     ("outside_security", "Outside / security lights"), ("other", "Other room"),
 ]
 
+# Fallback values for rooms where room_has_pattern = 'no' (D. Rooms and
+# lights) -- used instead of asking visit length or frequency directly.
+#
+# ROOM_VISIT_MINUTES_FALLBACK (how long ONE visit lasts) is a flat,
+# room-type-only lookup: a bathroom visit takes about as long regardless
+# of household size. Same "physical fact, not interview data" reasoning as
+# calibrate_tou.APPLIANCE_RESTART_DELAY_MIN. Mostly calibrate_tou.py's
+# BULB CALIBRATION example durations; the kitchen is 75 min because cooking
+# a main meal (githeri, beans, ugali) often takes an hour or more, and the
+# store room is a short pass-through visit. All are tunable defaults.
+#
+# ROOM_VISITS_FALLBACK (how many separate visits a day) scales with the
+# people who actually use that kind of room, not with every resident:
+#   "per_resident" -- each resident uses it on their own (bathroom):
+#                     visits = number_of_residents * rate
+#   "per_household" -- shared rooms used together (living room, kitchen,
+#                     dining area, store room): visits = rate, whatever the house size
+#   "per_sleeper"  -- bedrooms: visits = BEDROOM_SLEEPERS * rate
+#   "awake_hours"  -- corridors and stairs: no visits at all. The light is
+#                     left on whenever it is dark and the household is awake
+#                     at home (until people go to bed, and from when they
+#                     get up), like a room that is always occupied then.
+# For per_resident and per_household rooms, and children's bedrooms, the
+# total is split across the "no pattern" rooms of the same type (two
+# unpatterned bathrooms share the household's bathroom visits). A room
+# with room_has_pattern = 'yes' has its own times and is not counted.
+# survey_to_schema.unpatterned_visits() applies this; visits are at least 1.
+#
+# "other" is the fallback for any room type not listed (including
+# room_type == 'other' itself, which has no fixed identity to look up).
+ROOM_VISIT_MINUTES_FALLBACK = {
+    "living_room": 120, "dining_area": 30, "master_bedroom": 45,
+    "children_bedroom": 45, "bedroom": 45, "kitchen": 75,
+    "bathroom": 15, "store_room": 3,
+    "other": 20,
+}
+ROOM_VISITS_FALLBACK = {
+    "bathroom":           ("per_resident", 2.0),
+    "living_room":        ("per_household", 2.0),
+    "dining_area":        ("per_household", 3.0),
+    "kitchen":            ("per_household", 3.0),
+    "staircase_corridor": ("awake_hours", None),
+    "store_room":         ("per_household", 1.0),
+    "other":              ("per_household", 2.0),
+    "master_bedroom":     ("per_sleeper", 2.0),   # getting up + going to bed
+    "children_bedroom":   ("per_sleeper", 2.0),
+    "bedroom":            ("per_sleeper", 2.0),
+}
+# Likely sleepers per bedroom, always capped at number_of_residents:
+# master 2; children's = school_children + young_children (at least 1);
+# any other bedroom 1.
+BEDROOM_SLEEPERS = {"master_bedroom": 2, "children_bedroom": "children", "bedroom": 1}
+
 def hours(end=False):
     rng = range(1, 25) if end else range(0, 24)
     return [(str(h), f"{h:02d}:00" + (" (midnight)" if h in (0, 24) else "")) for h in rng]
 
 CHOICES = {
     "yes_no": [("yes", "Yes"), ("no", "No")],
+    # values stay yes/no for survey_to_schema.py; labels answer the either/or question
+    "room_pattern": [("yes", "Predictable times"), ("no", "Any time, no pattern")],
     "hour": hours(),
     "hour_end": hours(end=True),
     "hour_or_home": [("home_all_day", "Home all day, does not go out")] + hours(),
@@ -203,15 +258,23 @@ def sessions_q(name, label, relevant):
     q("integer", name, label, hint=SESSIONS_HINT, relevant=relevant, required="yes",
       default="1", constraint=". >= 1 and . <= 20", cmsg="Between 1 and 20.")
 
-def people_repeat(name, label, relevant, day, who):
+def presence_repeat(name, label, relevant, day):
+    """Only used for room_weekday/room_weekend: the times someone is in the
+    room (no head-count -- only "in use or not" is ever used). This is
+    a rough interviewer estimate, not a census. It switches that room's
+    light (on while someone is in the room and it is dark), and it is used
+    for ONE household-level thing only: finding the night. The unbroken run
+    of hours with nobody in any room that contains 03:00 counts as asleep
+    (survey_to_schema.active_occupancy). It never caps or replaces Section
+    C's daytime counts: a room with no entry at some hour does not mean the
+    house is empty then. Treat every block as "typically in use about
+    then" -- say so to the interviewer too."""
     p = name
     q("begin_repeat", name, label, relevant=relevant, appearance="field-list")
     q("select_one hour", f"{p}_start", f"{day}: from what time?", required="yes", appearance="minimal")
     q("select_one hour_end", f"{p}_end", "Until what time?", required="yes",
       constraint=f". != ${{{p}_start}}", cmsg="Start and end cannot be the same hour.",
       appearance="minimal")
-    q("integer", f"{p}_people", who, required="yes",
-      constraint=". >= 0 and . <= ${number_of_residents}", cmsg="Cannot be more than the number of residents.")
     q("end_repeat")
 
 # Whole-household occupancy (Section C) is asked per resident category, not
@@ -228,6 +291,14 @@ def people_repeat(name, label, relevant, day, who):
 # survey_to_schema.py sums count x presence across all six categories per
 # hour to build occupancy_weekday/occupancy_weekend -- the interviewer
 # never aggregates headcounts by hand.
+#
+# This category-based data (not room_weekday/room_weekend in Section D) is
+# the single authoritative source for occupancy_weekday/occupancy_weekend.
+# Room-level presence is a separate, rougher estimate used to drive that
+# room's own lighting and to find the night -- see the note on
+# presence_repeat() above. Do not
+# cross-check one against the other; they are not meant to agree, and
+# neither is a precise census of where every resident is at every hour.
 RESIDENT_CATEGORIES = [
     ("adults_working",     "the adults who go out to work or college"),
     ("adults_non_working", "the adults who are usually at home during the day"),
@@ -314,7 +385,7 @@ q("integer", "bulbs", "How many light bulbs or tubes are in this room?", require
 q("decimal", "bulb_watts", "Wattage printed on the bulb (W)",
   hint="Read it off the bulb. If the bulbs differ, record the most common and note the others below.",
   relevant="${bulbs} > 0", constraint=". > 0 and . <= 200", cmsg="Between 1 and 200 W. Check units.")
-q("select_one bulb_type", "bulb_type", "Bulb type", relevant="${bulbs} > 0", required="yes")
+q("select_one bulb_type", "bulb_type", "Bulb type", relevant="${bulbs} > 0", required="${bulbs} > 0")
 q("image", "bulb_photo", "Photo of a bulb label (optional)", relevant="${bulbs} > 0")
 # outside lights
 q("select_one security_mode", "security_mode", "How are the outside lights switched?",
@@ -327,27 +398,41 @@ q("select_one hour_end", "security_light_off", "What time do they usually go off
   constraint=". != ${security_light_on}", cmsg="Start and end cannot be the same hour.",
   appearance="minimal")
 # indoor rooms
-# room_weekday/room_weekend feed each bulb's mean_duration_min AND
-# std_duration_min -- no separate duration/variability question is asked.
-# Each repeat entry's own (end - start) is that visit's mean;
-# std_duration_min is derived downstream as ~25% of that mean, matching
-# calibrate_tou.py's own documented fallback for when std can't be reliably
-# asked directly. Not computed across repeat entries -- a room's morning
-# vs. evening blocks are structurally different sessions, not repeated
-# samples of the same event, and there are usually too few of them for a
-# meaningful standard deviation.
+# When there IS a recognisable pattern, room_weekday/room_weekend give the
+# hours someone is in the room. The light is then simply on whenever
+# someone is in the room and it is dark (bulb switching = "presence"), so
+# no visit length or variability is needed for these rooms.
+#
+# Some rooms genuinely have no time-of-day pattern at all -- a bathroom or
+# store room is used in brief, scattered visits, not during a particular
+# window. Forcing a start/end time block onto that would imply a pattern
+# that doesn't exist, so room_has_pattern asks first and branches:
+# "yes" keeps the window-based flow above; "no" skips windows entirely and
+# asks nothing more: visit length and how often come from the fallback
+# tables at the top of this file, spread evenly across the household's
+# awake at-home hours (Section C minus the night) rather than any
+# specific time of day.
 inside = "${room_type} != 'outside_security'"
+q("select_one room_pattern", "room_has_pattern",
+  "Does this room tend to be used at fairly predictable times of day (like meal times "
+  "for a kitchen), or could it be used at almost any time with no clear pattern "
+  "(common for a bathroom or store room)?",
+  relevant=inside, required="yes")
+pattern = f"{inside} and ${{room_has_pattern}} = 'yes'"
+# room_has_pattern = 'no' asks nothing further here -- survey_to_schema.py
+# applies ROOM_VISIT_MINUTES_FALLBACK[room_type] for duration and
+# ROOM_VISITS_FALLBACK / BEDROOM_SLEEPERS for visits per day instead (see
+# the comment on those tables), spread over the household's awake at-home
+# hours (Section C minus the night).
 q("note", "room_presence_note",
-  "When is someone in this room on a normal weekday, and how many people? "
-  "(Awake time only, not sleeping.) "
+  "Roughly when is someone in this room on a normal weekday? "
+  "A typical estimate is fine. (Awake time only, not sleeping.) "
   "This also tells us when the light gets used -- we work out from location and date "
   "when it's dark enough to need it, so there's no need to ask about the light separately.",
-  relevant=inside)
-people_repeat("room_weekday", "Weekday: time in this room", inside, "Weekday",
-              "How many people are usually in this room then?")
-q("select_one yes_no", "room_weekend_same", "Is the room used at the same times at the weekend?", relevant=inside, required="yes")
-people_repeat("room_weekend", "Weekend: time in this room", f"{inside} and ${{room_weekend_same}} = 'no'", "Weekend",
-              "How many people are usually in this room then?")
+  relevant=pattern)
+presence_repeat("room_weekday", "Weekday: time in this room", pattern, "Weekday")
+q("select_one yes_no", "room_weekend_same", "Is the room used at the same times at the weekend?", relevant=pattern, required="yes")
+presence_repeat("room_weekend", "Weekend: time in this room", f"{pattern} and ${{room_weekend_same}} = 'no'", "Weekend")
 q("text", "room_notes", "Notes on this room (optional)")
 q("end_repeat")
 q("end_group")
@@ -499,7 +584,7 @@ def build(out=HERE / "household_survey.xlsx"):
     st = wb.create_sheet("settings")
     st.append(["form_title", "form_id", "version", "default_language", "style"])
     # style "pages": the Kobo web form shows each section (A to H) as its own page.
-    st.append(["Household energy use interview", "household_energy_v1", "1", "English", "pages"])
+    st.append(["Household energy use interview", "household_energy_v1", "3", "English", "pages"])
     for sh in wb.worksheets:
         for c in sh[1]:
             c.font = Font(bold=True)

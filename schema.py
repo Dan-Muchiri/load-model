@@ -1509,6 +1509,19 @@ REFERENCE_HOUSEHOLD = {
     #                     whenever it is dark, regardless of who is home.
     #                     True for interior rooms — only on when someone
     #                     is home and using the room.
+    #   switching       : optional, how the simulator turns the light on.
+    #                     "tou" (default): per-minute Bernoulli switch-on
+    #                       from tou, as described above.
+    #                     "presence": on whenever room_occupancy for this
+    #                       room is > 0, it is dark and (needs_occupancy)
+    #                       someone is home. tou is then 1.0 in the occupied
+    #                       hours, for the energy estimate only. Used for
+    #                       rooms surveyed with the questionnaire.
+    #                     "dark": on whenever it is dark during hours where
+    #                       tou > 0 (dusk-to-dawn and timer security lights).
+    #                     Duration fields are not used by "presence" or
+    #                     "dark"; set mean_duration_min 60 and std 0 so
+    #                     estimate_daily_energy_kwh() counts full hours.
     #
     # NAIROBI DAYLIGHT NOTE:
     #   Sunrise ~06:30, Sunset ~18:30 year-round.
@@ -1789,6 +1802,7 @@ REFERENCE_HOUSEHOLD = {
             "std_duration_min":    0,
             "restart_delay_min":   0,
             "needs_occupancy":  False,
+            "switching":        "dark",
             "notes": ("Runs dusk to dawn regardless of occupancy."
             )
         },
@@ -2424,6 +2438,16 @@ def validate_household(h):
             if not isinstance(b.get("needs_occupancy"), bool):
                 errors.append(
                     f"{prefix}: needs_occupancy must be True or False"
+                )
+
+            switching = b.get("switching", "tou")
+            if switching not in ("tou", "presence", "dark"):
+                errors.append(
+                    f"{prefix}: switching must be 'tou', 'presence' or 'dark', got: {switching}"
+                )
+            elif switching == "presence" and b.get("room") not in room_occ:
+                errors.append(
+                    f"{prefix}: switching = 'presence' needs room_occupancy for this room"
                 )
 
     # ── Block 6: Grid ────────────────────────────────────────────────────────
