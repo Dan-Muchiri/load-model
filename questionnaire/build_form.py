@@ -230,7 +230,10 @@ def window_repeat(name, label, relevant, day):
     """One repeat of usage windows; fields feed calibrate_tou.build_raw_shape().
     Field names are prefixed with the repeat name because XLSForm names must be unique."""
     p = name
-    q("begin_repeat", name, label, relevant=relevant, appearance="field-list")
+    # Relevance sits on a wrapper group, not the repeat: Enketo does not
+    # reliably show a nested repeat that becomes relevant inside a field-list page.
+    q("begin_group", f"{p}_grp", "", relevant=relevant)
+    q("begin_repeat", name, label, appearance="field-list")
     q("select_one hour", f"{p}_start", f"{day}: from what time is it used?",
       hint="If it is used at more than one time of day, add an entry for each one.",
       required="yes", appearance="minimal")
@@ -248,6 +251,7 @@ def window_repeat(name, label, relevant, day):
            "evenings are more reliable.",
       required="yes", appearance="horizontal")
     q("end_repeat")
+    q("end_group")
 
 SESSIONS_HINT = ("For example: a kettle boiled once in the morning and once in the evening, every day "
                  "it's used, is 2. A kettle boiled either in the morning or the evening, but not both, "
@@ -270,12 +274,16 @@ def presence_repeat(name, label, relevant, day):
     house is empty then. Treat every block as "typically in use about
     then" -- say so to the interviewer too."""
     p = name
-    q("begin_repeat", name, label, relevant=relevant, appearance="field-list")
+    # Relevance sits on a wrapper group, not the repeat: Enketo does not
+    # reliably show a nested repeat that becomes relevant inside a field-list page.
+    q("begin_group", f"{p}_grp", "", relevant=relevant)
+    q("begin_repeat", name, label, appearance="field-list")
     q("select_one hour", f"{p}_start", f"{day}: from what time?", required="yes", appearance="minimal")
     q("select_one hour_end", f"{p}_end", "Until what time?", required="yes",
       constraint=f". != ${{{p}_start}}", cmsg="Start and end cannot be the same hour.",
       appearance="minimal")
     q("end_repeat")
+    q("end_group")
 
 # Whole-household occupancy (Section C) is asked per resident category, not
 # as pre-aggregated hourly headcounts -- nobody naturally thinks of their
@@ -384,9 +392,9 @@ q("text", "room_other", "What is this room called?", relevant="${room_type} = 'o
 q("integer", "bulbs", "How many light bulbs or tubes are in this room?", required="yes", constraint=". >= 0")
 q("decimal", "bulb_watts", "Wattage printed on the bulb (W)",
   hint="Read it off the bulb. If the bulbs differ, record the most common and note the others below.",
-  relevant="${bulbs} > 0", constraint=". > 0 and . <= 200", cmsg="Between 1 and 200 W. Check units.")
-q("select_one bulb_type", "bulb_type", "Bulb type", relevant="${bulbs} > 0", required="${bulbs} > 0")
-q("image", "bulb_photo", "Photo of a bulb label (optional)", relevant="${bulbs} > 0")
+  constraint=". > 0 and . <= 200", cmsg="Between 1 and 200 W. Check units.")
+q("select_one bulb_type", "bulb_type", "Bulb type", required="${bulbs} > 0")
+q("image", "bulb_photo", "Photo of a bulb label (optional)")
 # outside lights
 q("select_one security_mode", "security_mode", "How are the outside lights switched?",
   relevant="${room_type} = 'outside_security' and ${bulbs} > 0", required="yes")
@@ -584,7 +592,7 @@ def build(out=HERE / "household_survey.xlsx"):
     st = wb.create_sheet("settings")
     st.append(["form_title", "form_id", "version", "default_language", "style"])
     # style "pages": the Kobo web form shows each section (A to H) as its own page.
-    st.append(["Household energy use interview", "household_energy_v1", "3", "English", "pages"])
+    st.append(["Household energy use interview", "household_energy_v1", "4", "English", "pages"])
     for sh in wb.worksheets:
         for c in sh[1]:
             c.font = Font(bold=True)
