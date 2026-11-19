@@ -206,6 +206,21 @@ APPLIANCE_RESTART_DELAY_MIN = {
 # table once its task-completion time is known.
 DEFAULT_RESTART_DELAY_MIN = 20
 
+# Upper limit on a calibrated tou value.
+# For APPLIANCES, tou[h] is the switch-on RATE in hour h: the expected
+# number of switch-ons per hour while the appliance is free (not running
+# and not in its restart lockout). The engine turns it into a per-minute
+# probability tou[h] / 60, so the mechanical ceiling is 60 (switch-on
+# certain at every free minute). Values above 1 are what let an appliance
+# be used several times inside one hour (a gate opened 4 times between
+# 06:00 and 08:00, three showers before 07:00). Below 1 it reads exactly as
+# before. The realised number of uses per hour can never exceed
+# 60 / (mean_duration_min + restart_delay_min); answers that need more than
+# that still fail calibration and are flagged.
+# For BULBS, tou stays a value in [0, 1] (pass max_tou=TOU_MAX_BULB).
+TOU_MAX_APPLIANCE = 60.0
+TOU_MAX_BULB = 1.0
+
 
 def get_restart_delay_min(appliance_name, override=None):
     """
@@ -310,14 +325,19 @@ def build_raw_shape(windows, decrement_per_hour=0.2):
 # =============================================================================
 
 def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
-                     sessions_per_day=1.0, appliance_name="appliance"):
+                     sessions_per_day=1.0, appliance_name="appliance",
+                     max_tou=TOU_MAX_APPLIANCE):
     """
     Scale raw_shape so that the mechanism's IMPLIED average daily "on"
     minutes matches the household's reported usage for this day type.
 
     Mechanism assumption (matches the per-minute Bernoulli engine):
-    expected number of switch-on events starting in hour h ~= tou[h]
-    (60 independent per-minute trials at probability tou[h]/60).
+    tou[h] is the switch-on RATE in hour h (per-minute probability
+    tou[h]/60 at every free minute), so the expected number of switch-on
+    events starting in hour h ~= tou[h] while lockouts are rare. For
+    appliances tou[h] may exceed 1 (several uses inside one hour); see
+    TOU_MAX_APPLIANCE. The lockout bias (blocked minutes during a run and
+    its restart delay) is corrected by calibrate_shape_iterative().
     So implied daily total minutes = mean_duration_min * sum(tou).
     sum(tou) is therefore pinned to exactly (days_used/period_days) *
     sessions_per_day -- the expected NUMBER of switch-on events per day,
@@ -343,6 +363,8 @@ def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
                      "happens once, at either time" (sessions_per_day
                      stays 1) just as easily as "happens at both."
     appliance_name : str, used only for warning messages
+    max_tou        : float, cap on any hour (TOU_MAX_APPLIANCE, or
+                     TOU_MAX_BULB for lights)
 
     Returns
     -------
@@ -351,7 +373,7 @@ def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
         "target_minutes" : the average daily "on" minutes this was
                            calibrated to hit
         "scalar_k"       : the calibration scalar applied
-        "clipped"        : bool, True if any value was capped at 1.0
+        "clipped"        : bool, True if any value was capped at max_tou
     """
     # Average "on" minutes per day of THIS day type.
     # e.g. used 4 out of 5 weekdays, 2 sessions/day, 4 min/session
@@ -369,17 +391,17 @@ def calibrate_shape(raw_shape, mean_duration_min, days_used, period_days,
     k = target_minutes / raw_total
     calibrated = raw_shape * k
 
-    clipped = bool((calibrated > 1.0).any())
+    clipped = bool((calibrated > max_tou).any())
     if clipped:
-        over_hours = [h for h, v in enumerate(calibrated) if v > 1.0]
+        over_hours = [h for h, v in enumerate(calibrated) if v > max_tou]
         print(
-            f"[WARN] {appliance_name}: calibration requires tou > 1.0 "
+            f"[WARN] {appliance_name}: calibration requires tou > {max_tou:g} "
             f"at hour(s) {over_hours} -- the reported window is too narrow "
-            f"for the reported usage volume. Capping at 1.0 (this will "
+            f"for the reported usage volume. Capping at {max_tou:g} (this will "
             f"UNDER-represent the reported total). Consider widening the "
             f"usage window with the household."
         )
-        calibrated = np.clip(calibrated, 0.0, 1.0)
+        calibrated = np.clip(calibrated, 0.0, max_tou)
 
     return {
         "tou":            [round(float(v), 4) for v in calibrated],
@@ -466,7 +488,8 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
                                days_used, period_days, sessions_per_day=1.0,
                                appliance_name="appliance",
                                restart_delay_min=None, n_days=300,
-                               max_iterations=5, random_seed=None):
+                               max_iterations=10, random_seed=None,
+                               max_tou=TOU_MAX_APPLIANCE):
     """
     Refines calibrate_shape()'s closed-form scalar using the verification
     loop itself, correcting for the restart_delay bias (closed form
@@ -479,8 +502,8 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
     Raises ValueError instead of returning silently if it never converges --
     this happens when restart_delay_min, mean_duration_min and
     sessions_per_day jointly require more total "on" time than can
-    physically fit in the given window(s), even with tou clipped to 1.0
-    (switch-on certain every minute). A badly off-target tou must never
+    physically fit in the given window(s), even with tou at max_tou
+    (for appliances, switch-on certain at every free minute). A badly off-target tou must never
     be pasted into schema.py without this being surfaced loudly.
 
     restart_delay_min : int or None. As in calibrate_appliance() -- leave
@@ -490,7 +513,8 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
     restart_delay_min = get_restart_delay_min(appliance_name, override=restart_delay_min)
 
     result = calibrate_shape(raw_shape, mean_duration_min, days_used,
-                              period_days, sessions_per_day, appliance_name)
+                              period_days, sessions_per_day, appliance_name,
+                              max_tou=max_tou)
     tou = np.array(result["tou"])
     target = result["target_minutes"]
 
@@ -512,7 +536,7 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
             break
 
         correction = target / check["simulated_mean_minutes"]
-        tou = np.clip(tou * correction, 0.0, 1.0)
+        tou = np.clip(tou * correction, 0.0, max_tou)
     else:
         # Loop ran out of iterations without breaking -- check is the
         # last attempt, and it did not pass.
@@ -526,8 +550,7 @@ def calibrate_shape_iterative(raw_shape, mean_duration_min, std_duration_min,
             f"This means mean_duration_min={mean_duration_min}, "
             f"sessions_per_day and restart_delay_min={restart_delay_min} "
             f"jointly require more total 'on' time than the reported "
-            f"window(s) can physically hold, even with tou at 1.0 "
-            f"(switch-on certain every minute). Widen the usage window(s) "
+            f"window(s) can physically hold, even with tou at {max_tou:g}. Widen the usage window(s) "
             f"with the household, reduce sessions_per_day, or reconsider "
             f"restart_delay_min for this appliance before pasting a result "
             f"into schema.py."
@@ -552,7 +575,7 @@ def calibrate_appliance(weekday_windows, weekend_windows,
                          appliance_name="appliance",
                          decrement_per_hour=0.2,
                          restart_delay_min=None, n_days=300,
-                         random_seed=None):
+                         random_seed=None, max_tou=TOU_MAX_APPLIANCE):
     """
     Full calibration pipeline for both day types. Returns tou_weekday and
     tou_weekend arrays ready to paste directly into schema.py.
@@ -590,6 +613,7 @@ def calibrate_appliance(weekday_windows, weekend_windows,
                         behaviour).
     n_days            : int, simulated days for verification
     random_seed       : int or None
+    max_tou           : float, TOU_MAX_APPLIANCE (default) or TOU_MAX_BULB
 
     Returns
     -------
@@ -606,7 +630,8 @@ def calibrate_appliance(weekday_windows, weekend_windows,
 
         raw = build_raw_shape(windows, decrement_per_hour)
         result = calibrate_shape(raw, mean_duration_min, days_used, period_days,
-                                  sessions_per_day, f"{appliance_name} ({label})")
+                                  sessions_per_day, f"{appliance_name} ({label})",
+                                  max_tou=max_tou)
 
         check = verify_calibration(
             result["tou"], mean_duration_min, std_duration_min,
@@ -625,7 +650,7 @@ def calibrate_appliance(weekday_windows, weekend_windows,
             days_used, period_days, sessions_per_day,
             f"{appliance_name} ({label})",
             restart_delay_min=restart_delay_min,
-            n_days=n_days, random_seed=random_seed
+            n_days=n_days, random_seed=random_seed, max_tou=max_tou
         )
         return refined["tou"]
 
@@ -673,6 +698,9 @@ def calibrate_appliance(weekday_windows, weekend_windows,
 # The tou_weekday/tou_weekend values produced by calibrate_appliance() will
 # represent the per-hour probability that someone ENTERS that room,
 # which is the correct CREST switch-on interpretation for lighting.
+#
+# ALWAYS pass max_tou=TOU_MAX_BULB for bulbs: a bulb's tou stays in [0, 1]
+# (schema.validate_household enforces it).
 #
 # ALWAYS pass restart_delay_min=0 for bulbs. There is no physical
 # cooldown on a light switch — the visit duration already provides

@@ -4,3 +4,4 @@ __pycache__/
 households/
 .env
 .vscode/
+.mypy_cache

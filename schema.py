@@ -79,6 +79,13 @@ switched on in that hour.
 #   - Onboarding new developers to the schema
 #   - Serving as the template for the survey parser output
 
+# Appliance tou is a switch-on RATE per hour (expected switch-ons per hour
+# while the appliance is free); it may exceed 1 when an appliance is used
+# several times within one hour. The engine uses tou / 60 as a per-minute
+# probability, so 60 is the ceiling. Bulb tou stays in [0, 1].
+# Must equal calibrate_tou.TOU_MAX_APPLIANCE (checked in the tests).
+TOU_MAX_APPLIANCE = 60.0
+
 REFERENCE_HOUSEHOLD = {
 
     # =========================================================================
@@ -535,11 +542,14 @@ REFERENCE_HOUSEHOLD = {
             "std_duration_min":     10,
             "restart_delay_min":   20,
             "needs_occupancy":  True,
-            "standby_power_w":  50,
+            "standby_power_w":  0,
+            # 0: the form's choice is "Instant shower", which draws nothing
+            # when off. Storage geysers (~50 W tank loss) are not covered
+            # for now.
             "notes": (
-                "Electric geyser or immersion water heater. "
-                "One of the largest loads when active. "
-                "Set count = 1 if household has electric shower or geyser."
+                "Electric instant shower (the form asks only for this; "
+                "storage geysers are not covered for now). "
+                "One of the largest loads when active."
             )
         },
 
@@ -2338,8 +2348,12 @@ def validate_household(h):
                     for i, v in enumerate(tou):
                         if not isinstance(v, (int, float)):
                             errors.append(f"{prefix}: {tou_field}[{i}] must be numeric")
-                        elif not (0.0 <= v <= 1.0):
-                            errors.append(f"{prefix}: {tou_field}[{i}] = {v} outside [0,1]")
+                        elif not (0.0 <= v <= TOU_MAX_APPLIANCE):
+                            # Appliance tou is a switch-on rate per hour (see
+                            # calibrate_tou.TOU_MAX_APPLIANCE); above 1 means
+                            # several switch-ons within the hour.
+                            errors.append(f"{prefix}: {tou_field}[{i}] = {v} "
+                                          f"outside [0,{TOU_MAX_APPLIANCE:g}]")
 
             mean_d = appl.get("mean_duration_min")
             std_d  = appl.get("std_duration_min")
@@ -2569,10 +2583,12 @@ def estimate_daily_energy_kwh(household):
     Rough deterministic estimate of daily energy consumption.
     Used for sanity checking — NOT the model output.
 
-    Duration is capped at 60 min per tou slot: each slot represents one
-    hour, so an appliance can contribute at most 1 hour of runtime per
-    slot regardless of mean_duration_min. This correctly handles always-on
-    appliances (fridge, router) whose duration field is 1440 min.
+    Appliances: on-time per hour follows the engine's renewal cycle
+    (wait for a switch-on at rate tou per hour, run mean_duration_min, rest
+    restart_delay_min), so it matches simulate.py and handles tou > 1 and
+    always-on loads (fridge, router). standby_power_w is added for the
+    hours a unit is not running, as simulate.py does. Bulbs: duration is capped at 60 min
+    per tou slot, as before.
 
     For appliances with needs_occupancy=True, expected energy is scaled by
     the mean occupancy fraction for that day type, giving different weekday
@@ -2591,12 +2607,17 @@ def estimate_daily_energy_kwh(household):
         for appl in get_standard_appliances(household):
             tou      = appl[tou_key]
             pwr      = appl["rated_power_w"]
-            duration = min(appl["mean_duration_min"], 60) / 60.0
+            d, r     = appl["mean_duration_min"], appl.get("restart_delay_min", 0)
+            # On-time per hour from the engine's renewal cycle: wait for a
+            # switch-on (mean 60/t min at rate t per hour), run d, rest r.
+            # Fraction on = d / (60/t + d + r). For small t this is ~ t*d/60
+            # (the old estimate); it stays correct when t > 1 and for
+            # always-on loads (d = 1440 -> ~ always on).
+            on_hours = [d / (60.0 / t + d + r) if t > 0 else 0.0 for t in tou]
             if appl.get("needs_occupancy"):
-                effective_tou = sum(t for t, o in zip(tou, occ) if o > 0)
-            else:
-                effective_tou = sum(tou)
-            total_wh += appl["count"] * pwr * duration * effective_tou
+                on_hours = [x for x, o in zip(on_hours, occ) if o > 0]
+            standby = appl.get("standby_power_w", 0) * (24 - sum(on_hours))
+            total_wh += appl["count"] * (pwr * sum(on_hours) + standby)
 
         room_occ_block = household.get("room_occupancy", {})
 

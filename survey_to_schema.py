@@ -13,7 +13,7 @@ APPLIANCE_POWER_FALLBACK_W and APPLIANCE_NEEDS_OCCUPANCY tables it uses.
 USAGE
 -----
     python survey_to_schema.py kobo_export.json --out households/
-    python survey_to_schema.py questionnaire/sample_submission.json --out households/
+    python survey_to_schema.py questionnaire/sample_households.json --out households/   # made-up test homes
 
 kobo_export.json is the JSON download from KoboToolbox (the API's
 /api/v2/assets/<uid>/data/?format=json). A single submission, a list of
@@ -39,7 +39,7 @@ import sys
 from pathlib import Path
 
 import schema
-from calibrate_tou import (APPLIANCE_RESTART_DELAY_MIN, DEFAULT_RESTART_DELAY_MIN,
+from calibrate_tou import (APPLIANCE_RESTART_DELAY_MIN, DEFAULT_RESTART_DELAY_MIN, TOU_MAX_BULB,
                            WEEKDAY_FREQUENCY, WEEKEND_FREQUENCY, calibrate_appliance)
 
 sys.path.insert(0, str(Path(__file__).parent / "questionnaire"))
@@ -48,6 +48,9 @@ from build_form import (ALWAYS_ON, APPLIANCE_NEEDS_OCCUPANCY,  # noqa: E402
                         ROOM_VISIT_MINUTES_FALLBACK, ROOM_VISITS_FALLBACK)
 
 REF = schema.REFERENCE_HOUSEHOLD
+
+# Typical wattage by bulb type, used when the bulb label can't be read.
+BULB_TYPE_FALLBACK_W = {"LED": 9, "CFL": 15, "fluorescent": 36, "incandescent": 60}
 
 # Relative height of a usage window versus the household's other windows
 # (calibrate_tou.py, field d. peak_value).
@@ -131,8 +134,10 @@ def blocks_to_array(blocks, prefix, warnings, label):
     return arr
 
 
-def to_windows(rows, prefix):
-    """Form usage windows -> calibrate_tou.build_raw_shape() window dicts."""
+def to_windows(rows, prefix, warnings=None, label=""):
+    """Form usage windows -> calibrate_tou.build_raw_shape() window dicts.
+    A peak outside its window (older forms allowed it) would taper the whole
+    shape to zero, so it is treated as "spread" with a warning."""
     out = []
     for r in rows or []:
         start, end = int(r[f"{prefix}_start"]), int(r[f"{prefix}_end"])
@@ -145,6 +150,11 @@ def to_windows(rows, prefix):
             peak = int(peak)
             if peak < start:
                 peak += 24
+            if not start <= peak < end:
+                if warnings is not None:
+                    warnings.append(f"{label}: peak {peak % 24:02d}:00 is outside the window "
+                                    f"{start:02d}:00-{end % 24:02d}:00, treated as spread evenly.")
+                peak = None
         out.append({"start_hour": start, "end_hour": end, "peak_hour": peak,
                     "peak_value": OFTEN_TO_PEAK[r.get(f"{prefix}_often", "always")]})
     return out
@@ -332,7 +342,8 @@ def calibrate_unpatterned(pending, s, occ_wd, occ_we, room_occ, warnings, log):
             weekday_days_used=WEEKDAY_FREQUENCY["every_weekday"] if wd_w else 0,
             weekend_days_used=WEEKEND_FREQUENCY["both_days"] if we_w else 0,
             weekday_sessions_per_day=visits, weekend_sessions_per_day=visits,
-            appliance_name=f"{bulb['room']} bulb", restart_delay_min=0, random_seed=42)
+            appliance_name=f"{bulb['room']} bulb", restart_delay_min=0, random_seed=42,
+            max_tou=TOU_MAX_BULB)
         log.append(text)
         bulb.update(tou_weekday=res["tou_weekday"], tou_weekend=res["tou_weekend"],
                     mean_duration_min=minutes, std_duration_min=duration_std(minutes),
@@ -376,8 +387,10 @@ def build_rooms_and_bulbs(s, warnings):
         bulb = {"room": name, "count": count, "wattage_w": num(r.get("bulb_watts")),
                 "bulb_type": r.get("bulb_type"), "restart_delay_min": 0}
         if bulb["wattage_w"] is None:
-            bulb["wattage_w"] = 9
-            warnings.append(f"{name}: bulb wattage missing, assumed 9 W LED.")
+            btype = bulb["bulb_type"] or "LED"
+            bulb["wattage_w"] = BULB_TYPE_FALLBACK_W.get(btype, 9)
+            warnings.append(f"{name}: bulb wattage missing, assumed {bulb['wattage_w']} W "
+                            f"(typical {btype}).")
 
         if rtype == "outside_security":
             mode = r.get("security_mode", "dusk_to_dawn")
@@ -469,8 +482,6 @@ def build_appliances(s, warnings, log):
             out[name] = base
             continue
         base["rated_power_w"] = w
-        if num(ans.get("standby_watts")) is not None:
-            base["standby_power_w"] = num(ans["standby_watts"])
 
         # ---- time of use
         if always_on:
@@ -480,13 +491,13 @@ def build_appliances(s, warnings, log):
             # named always-on appliances keep their catalogue duty cycle
         else:
             mean = int(num_required(ans["duration_typical"], "duration_typical"))
-            std = duration_std(mean, num(ans.get("duration_shortest")), num(ans.get("duration_longest")))
+            std = duration_std(mean)   # form asks only the typical time
             wd_freq, we_freq = ans["weekday_frequency"], ans["weekend_frequency"]
-            wd_w = to_windows(ans.get("appliance_weekday"), "appliance_weekday")
+            wd_w = to_windows(ans.get("appliance_weekday"), "appliance_weekday", warnings, f"{name} weekday")
             if ans.get("weekend_same_as_weekday") == "yes":
                 we_w = wd_w
             else:
-                we_w = to_windows(ans.get("appliance_weekend"), "appliance_weekend")
+                we_w = to_windows(ans.get("appliance_weekend"), "appliance_weekend", warnings, f"{name} weekend")
             res, text = calibrate_quietly(
                 warnings,
                 weekday_windows=wd_w, weekend_windows=we_w,
@@ -536,7 +547,7 @@ def build_grid(s, warnings):
         "import_tariff_kes_per_kwh": tariff_kes if connected else 0.0,
         "export_tariff_kes_per_kwh": 0.0,
         "monthly_fixed_charge_kes": REF["grid"]["monthly_fixed_charge_kes"] if connected else 0.0,
-        "supply_reliability": s.get("reliability", "good"),
+        "supply_reliability": s.get("reliability") or REF["grid"]["supply_reliability"],  # no longer asked
         "avg_blackout_hours_per_week": num(s.get("blackout_hours"), 0),
         "monthly_bill_kes": num(s.get("monthly_spend"), 0),
         "metering_type": s.get("metering"),
@@ -603,6 +614,7 @@ def submission_to_household(s):
     for line in "".join(log).splitlines():
         if "WARN" in line:
             warnings.append(line.strip())
+    warnings = list(dict.fromkeys(warnings))   # iterative calibration repeats its [WARN] lines
 
     follow_up = {k: s.get(k) for k in ("dwelling", "logger_willing", "routine_change",
                                          "backup_loads", "interviewer_notes", "token_kwh", "token_kes")}

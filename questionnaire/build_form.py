@@ -23,7 +23,7 @@ APPLIANCES = [
     ("cctv_system", "CCTV system"),
     ("electric_kettle", "Electric kettle"), ("iron_box", "Iron box"),
     ("water_pump", "Water pump (tank / pressure)"),
-    ("immersion_water_heater", "Instant shower or water heater"),
+    ("immersion_water_heater", "Instant shower"),  # storage geysers not covered for now
     ("solar_water_heater_pump", "Solar water heater pump"),
     ("electric_hotplate", "Electric hotplate / coil cooker"), ("induction_cooker", "Induction cooker"),
     ("electric_pressure_cooker", "Electric pressure cooker"), ("rice_cooker", "Rice cooker"),
@@ -203,8 +203,6 @@ CHOICES = {
     "phase": [("single", "Single-phase"), ("three", "Three-phase"), ("dont_know", "Don't know")],
     "metering": [("prepaid", "Prepaid (tokens)"), ("postpaid", "Postpaid (monthly bill)")],
     "tariff": [("domestic", "Domestic"), ("lifeline", "Lifeline"), ("dont_know", "Don't know")],
-    "reliability": [("good", "Good: rare outages"), ("fair", "Fair: a few outages a month"),
-                    ("poor", "Poor: outages most weeks")],
     "backup": [("none", "None"), ("generator", "Generator"),
                ("inverter_battery", "Inverter and battery, no panels"),
                ("solar_only", "Solar panels, no battery"), ("solar_battery", "Solar panels and battery")],
@@ -217,7 +215,7 @@ CHOICES = {
     "willing": [("yes", "Yes"), ("maybe", "Maybe"), ("no", "No")],
 }
 
-S = []  # survey rows
+S: list[dict[str, str]] = []  # survey rows
 def q(type_, name="", label="", hint="", required="", constraint="", cmsg="",
       relevant="", appearance="", calculation="", repeat_count="", default="", parameters=""):
     S.append(dict(type=type_, name=name, label=label, hint=hint, required=required,
@@ -241,8 +239,15 @@ def window_repeat(name, label, relevant, day):
       hint="The hour it stops. 06:00 to 09:00 means up to 08:59. Times past midnight are allowed.",
       required="yes", constraint=f". != ${{{p}_start}}", cmsg="Start and end cannot be the same hour.",
       appearance="minimal")
+    # The peak must sit inside the window (or be "spread"): build_raw_shape()
+    # tapers 0.2 per hour away from it, so a peak outside the window can zero
+    # the whole shape and the appliance is NOT MODELLED.
+    st, en = f"number(${{{p}_start}})", f"number(${{{p}_end}})"
     q("select_one peak", f"{p}_peak", "Within that time, which hour is it most likely to be on?",
-      required="yes", appearance="minimal")
+      required="yes", appearance="minimal",
+      constraint=f". = 'spread' or ({en} > {st} and number(.) >= {st} and number(.) < {en}) "
+                 f"or ({en} <= {st} and (number(.) >= {st} or number(.) < {en}))",
+      cmsg="Pick an hour inside the time given above, or 'spread evenly'.")
     q("select_one often", f"{p}_often",
       "How likely is it to actually be used at this particular time of day: always, usually, "
       "sometimes or rarely?",
@@ -391,10 +396,10 @@ q("select_one room", "room_type", "Which room is this?", required="yes")
 q("text", "room_other", "What is this room called?", relevant="${room_type} = 'other'", required="yes")
 q("integer", "bulbs", "How many light bulbs or tubes are in this room?", required="yes", constraint=". >= 0")
 q("decimal", "bulb_watts", "Wattage printed on the bulb (W)",
-  hint="Read it off the bulb. If the bulbs differ, record the most common and note the others below.",
+  hint="Read it off the bulb. If the bulbs differ, record the most common and note the others below. "
+       "If it can't be read, leave it blank -- a typical value for the bulb type will be used.",
   constraint=". > 0 and . <= 200", cmsg="Between 1 and 200 W. Check units.")
 q("select_one bulb_type", "bulb_type", "Bulb type", required="${bulbs} > 0")
-q("image", "bulb_photo", "Photo of a bulb label (optional)")
 # outside lights
 q("select_one security_mode", "security_mode", "How are the outside lights switched?",
   relevant="${room_type} = 'outside_security' and ${bulbs} > 0", required="yes")
@@ -441,7 +446,6 @@ q("note", "room_presence_note",
 presence_repeat("room_weekday", "Weekday: time in this room", pattern, "Weekday")
 q("select_one yes_no", "room_weekend_same", "Is the room used at the same times at the weekend?", relevant=pattern, required="yes")
 presence_repeat("room_weekend", "Weekend: time in this room", f"{pattern} and ${{room_weekend_same}} = 'no'", "Weekend")
-q("text", "room_notes", "Notes on this room (optional)")
 q("end_repeat")
 q("end_group")
 
@@ -468,8 +472,6 @@ q("decimal", "label_watts", "Rated power on the label (W)",
   constraint=". > 0 and . <= 10000", cmsg="Between 1 and 10000 W.")
 q("decimal", "label_volts", "Volts on the label", relevant="not(${label_watts} > 0)")
 q("decimal", "label_amps", "Amps on the label", relevant="not(${label_watts} > 0) and ${label_volts} > 0")
-q("decimal", "standby_watts", "Standby power on the label, if printed (W)", constraint=". >= 0")
-q("image", "label_photo", "Photo of the rating label")
 # label_watts/volts/amps may all be left blank (no readable label).
 # survey_to_schema.py must then fall back to
 # APPLIANCE_POWER_FALLBACK_W[appliance_type] for named appliances --
@@ -486,10 +488,6 @@ q("integer", "duration_typical",
   "The last time it was used, about how many minutes was it on?",
   hint="For charging: time plugged in. For a washing machine: one full wash. For a fan: until it was switched off.",
   relevant=use, required="yes", constraint=". >= 1 and . <= 1440")
-q("integer", "duration_shortest", "What is the shortest time it is usually on (minutes)?", relevant=use,
-  constraint=". >= 1 and . <= ${duration_typical}", cmsg="Should not be longer than the typical time.")
-q("integer", "duration_longest", "And the longest (minutes)?", relevant=use,
-  constraint=". >= ${duration_typical} and . <= 1440", cmsg="Should not be shorter than the typical time.")
 q("select_one weekday_frequency", "weekday_frequency",
   "On how many weekdays (Monday to Friday) in a normal week is it used, even just once?",
   hint="This is about which days, not how many times in a day -- that's the next question.",
@@ -508,7 +506,6 @@ window_repeat("appliance_weekend", "Weekend time of use",
 sessions_q("appliance_weekend_sessions",
            "On a weekend day it's used, how many separate times does it get switched on?",
            f"{use} and ${{weekend_frequency}} != 'never'")
-q("text", "appliance_notes", "Notes (optional)")
 q("end_repeat")
 q("end_group")
 
@@ -536,7 +533,6 @@ q("integer", "monthly_spend", "In a normal month, about how much do you spend on
   relevant=g, required="yes", constraint=". >= 0")
 q("decimal", "token_kwh", "Last token: how many kWh did it give? (from the SMS)", relevant="${metering} = 'prepaid'")
 q("integer", "token_kes", "And for how many shillings?", relevant="${token_kwh} > 0")
-q("select_one reliability", "reliability", "How reliable is the power supply here?", relevant=g, required="yes")
 q("decimal", "blackout_hours", "In a normal week, about how many hours in total is the power off?",
   relevant=g, required="yes", constraint=". >= 0 and . <= 168")
 q("select_one backup", "backup", "Do you have any backup power?", required="yes")
@@ -569,8 +565,6 @@ q("select_one willing", "logger_willing",
   "Would you be willing to host a power logger on your main board for one week, including a weekend? "
   "A qualified installer would fit it; it only records how much power the house uses.", required="yes")
 q("text", "routine_change", "Any weeks in the next two months when your routine will be unusual (travel, guests, holidays)?")
-q("note", "readback",
-  "Read back the busiest electricity times you recorded and ask if they sound right. Correct any entries before saving.")
 q("text", "interviewer_notes", "Interviewer notes", appearance="multiline")
 q("end_group")
 
@@ -592,7 +586,7 @@ def build(out=HERE / "household_survey.xlsx"):
     st = wb.create_sheet("settings")
     st.append(["form_title", "form_id", "version", "default_language", "style"])
     # style "pages": the Kobo web form shows each section (A to H) as its own page.
-    st.append(["Household energy use interview", "household_energy_v1", "4", "English", "pages"])
+    st.append(["Household energy use interview", "household_energy_v1", "5", "English", "pages"])
     for sh in wb.worksheets:
         for c in sh[1]:
             c.font = Font(bold=True)
