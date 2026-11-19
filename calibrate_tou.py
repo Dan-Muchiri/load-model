@@ -217,9 +217,17 @@ DEFAULT_RESTART_DELAY_MIN = 20
 # before. The realised number of uses per hour can never exceed
 # 60 / (mean_duration_min + restart_delay_min); answers that need more than
 # that still fail calibration and are flagged.
-# For BULBS, tou stays a value in [0, 1] (pass max_tou=TOU_MAX_BULB).
+# For BULBS switched by presence or darkness, tou only marks hours and stays in
+# [0, 1] (pass max_tou=TOU_MAX_BULB). Lights in rooms with no fixed pattern
+# are switched like appliances (one switch-on per visit) and use the
+# appliance limit, since a shared bathroom can be entered several times an hour.
 TOU_MAX_APPLIANCE = 60.0
 TOU_MAX_BULB = 1.0
+
+# The verification simulates at least enough days for this many switch-on
+# events, so its Monte Carlo noise (~1/sqrt(events)) stays well inside the
+# 10% tolerance even for appliances used once a week or less.
+MIN_VERIFY_EVENTS = 400
 
 
 def get_restart_delay_min(appliance_name, override=None):
@@ -632,10 +640,17 @@ def calibrate_appliance(weekday_windows, weekend_windows,
         result = calibrate_shape(raw, mean_duration_min, days_used, period_days,
                                   sessions_per_day, f"{appliance_name} ({label})",
                                   max_tou=max_tou)
+        # Rarely used appliances need more simulated days: the Monte Carlo
+        # check's relative noise is about 1/sqrt(number of events), so with
+        # 300 days an appliance used once a week (0.2 events/day, ~60 events)
+        # has ~13% noise and can never meet the 10% tolerance. Simulate
+        # enough days for about MIN_VERIFY_EVENTS events.
+        events_per_day = days_used / period_days * sessions_per_day
+        n_days_here = max(n_days, int(np.ceil(MIN_VERIFY_EVENTS / events_per_day)))
 
         check = verify_calibration(
             result["tou"], mean_duration_min, std_duration_min,
-            result["target_minutes"], n_days=n_days,
+            result["target_minutes"], n_days=n_days_here,
             restart_delay_min=restart_delay_min, random_seed=random_seed
         )
 
@@ -650,7 +665,7 @@ def calibrate_appliance(weekday_windows, weekend_windows,
             days_used, period_days, sessions_per_day,
             f"{appliance_name} ({label})",
             restart_delay_min=restart_delay_min,
-            n_days=n_days, random_seed=random_seed, max_tou=max_tou
+            n_days=n_days_here, random_seed=random_seed, max_tou=max_tou
         )
         return refined["tou"]
 
@@ -699,8 +714,10 @@ def calibrate_appliance(weekday_windows, weekend_windows,
 # represent the per-hour probability that someone ENTERS that room,
 # which is the correct CREST switch-on interpretation for lighting.
 #
-# ALWAYS pass max_tou=TOU_MAX_BULB for bulbs: a bulb's tou stays in [0, 1]
-# (schema.validate_household enforces it).
+# Pass max_tou=TOU_MAX_BULB only for bulbs whose tou marks hours (presence /
+# dark switching). Visit-calibrated bulbs (switching = "tou") keep the
+# appliance limit; schema.validate_household allows them up to
+# TOU_MAX_APPLIANCE.
 #
 # ALWAYS pass restart_delay_min=0 for bulbs. There is no physical
 # cooldown on a light switch — the visit duration already provides

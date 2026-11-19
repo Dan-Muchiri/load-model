@@ -1,0 +1,3514 @@
+{
+ "results": [
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H901",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Kasarani",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2215 36.8968 1610 5",
+   "group_start/dwelling": "flat",
+   "group_people/number_of_residents": "1",
+   "group_people/adults_working": "1",
+   "group_people/adults_non_working": "0",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "0",
+   "group_people/young_children": "0",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "7",
+   "group_occupancy/adults_working_weekday_away_end": "22",
+   "group_occupancy/adults_working_weekend_same": "yes",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "other",
+     "group_rooms/room/room_other": "Bedsitter main room",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "8",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "9"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "90",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1500",
+     "group_appliances/appliance/duration_typical": "3",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "lifeline",
+   "group_grid/monthly_spend": "200",
+   "group_grid/token_kwh": "16.5",
+   "group_grid/token_kes": "200",
+   "group_grid/blackout_hours": "1",
+   "group_grid/backup": "none",
+   "group_site/roof_length": "4",
+   "group_site/roof_width": "3",
+   "group_site/orientation": "flat",
+   "group_site/tilt": "0",
+   "group_site/shading": "minimal",
+   "group_site/roof_type": "concrete",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "15",
+   "group_close/logger_willing": "no",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Interviewer-error case: a security guard in a bedsitter, away 07:00-22:00 every day, whose room time was keyed as 08:00 instead of 20:00, so the only room time is when nobody is home. The night run then covers every hour and the no-pattern bathroom has no awake hours to light. Lifeline tariff."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H902",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Dagoretti North",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2903 36.7843 1745 5",
+   "group_start/dwelling": "flat",
+   "group_people/number_of_residents": "2",
+   "group_people/adults_working": "2",
+   "group_people/adults_non_working": "0",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "0",
+   "group_people/young_children": "0",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "7",
+   "group_occupancy/adults_working_weekday_away_end": "18",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "home_all_day",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "9",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "23"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "8",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "22",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "24"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "12",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "20"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "8",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "10"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "13",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "14"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "18",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "20"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "90"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "wifi_router",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "10"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1800",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "sometimes"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "16",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "microwave",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "800",
+     "group_appliances/appliance/duration_typical": "3",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "21",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "85",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "23",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "dstv_decoder",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "15",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "23",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "laptop",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "65",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "17",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "washing_machine",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "450",
+     "group_appliances/appliance/duration_typical": "75",
+     "group_appliances/appliance/weekday_frequency": "never",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "1800",
+   "group_grid/token_kwh": "32.3",
+   "group_grid/token_kes": "1000",
+   "group_grid/blackout_hours": "2",
+   "group_grid/backup": "none",
+   "group_site/roof_length": "10",
+   "group_site/roof_width": "8",
+   "group_site/orientation": "flat",
+   "group_site/tilt": "0",
+   "group_site/shading": "minimal",
+   "group_site/roof_type": "concrete",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "25",
+   "group_close/logger_willing": "yes",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Young couple, one-bedroom flat in Kilimani, both work in town."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H903",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Embakasi West",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2836 36.8961 1625 5",
+   "group_start/dwelling": "flat",
+   "group_people/number_of_residents": "5",
+   "group_people/adults_working": "1",
+   "group_people/adults_non_working": "1",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "3",
+   "group_people/young_children": "0",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "6",
+   "group_occupancy/adults_working_weekday_away_end": "19",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "home_all_day",
+   "group_occupancy/adults_non_working_weekday_away_start": "9",
+   "group_occupancy/adults_non_working_weekday_away_end": "13",
+   "group_occupancy/adults_non_working_weekend_same": "yes",
+   "group_occupancy/school_children_weekday_away_start": "7",
+   "group_occupancy/school_children_weekday_away_end": "16",
+   "group_occupancy/school_children_weekend_same": "no",
+   "group_occupancy/school_children_weekend_away_start": "home_all_day",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "16",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "9",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "6"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "children_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "8",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "20",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "12",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "7",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "12",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "14"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "18",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "21"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "19",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "7",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "10"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "19",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "staircase_corridor",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "110"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "75",
+     "group_appliances/appliance/duration_typical": "240",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "22",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "dstv_decoder",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "12",
+     "group_appliances/appliance/duration_typical": "240",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "22",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1800",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "iron_box",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1200",
+     "group_appliances/appliance/duration_typical": "20",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "17",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "blender",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "350",
+     "group_appliances/appliance/duration_typical": "3",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "occasionally",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "2000",
+   "group_grid/token_kwh": "32.3",
+   "group_grid/token_kes": "1000",
+   "group_grid/blackout_hours": "2",
+   "group_grid/backup": "none",
+   "group_site/roof_length": "9",
+   "group_site/roof_width": "7",
+   "group_site/orientation": "east_facing",
+   "group_site/tilt": "0",
+   "group_site/shading": "minimal",
+   "group_site/roof_type": "concrete",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "20",
+   "group_close/logger_willing": "yes",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Family of five in a two-bedroom flat in Umoja: father works long days, mother sells at the market 09:00-13:00 every day including weekends; cooks on gas."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H904",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Lang'ata",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.3418 36.7592 1790 5",
+   "group_start/dwelling": "maisonette",
+   "group_people/number_of_residents": "6",
+   "group_people/adults_working": "2",
+   "group_people/adults_non_working": "0",
+   "group_people/household_helpers": "1",
+   "group_people/school_children": "2",
+   "group_people/young_children": "1",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "7",
+   "group_occupancy/adults_working_weekday_away_end": "19",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "home_all_day",
+   "group_occupancy/household_helpers_weekday_away_start": "home_all_day",
+   "group_occupancy/household_helpers_weekend_same": "no",
+   "group_occupancy/household_helpers_weekend_away_start": "14",
+   "group_occupancy/household_helpers_weekend_away_end": "18",
+   "group_occupancy/school_children_weekday_away_start": "7",
+   "group_occupancy/school_children_weekday_away_end": "17",
+   "group_occupancy/school_children_weekend_same": "no",
+   "group_occupancy/school_children_weekend_away_start": "home_all_day",
+   "group_occupancy/young_children_weekday_away_start": "home_all_day",
+   "group_occupancy/young_children_weekend_same": "no",
+   "group_occupancy/young_children_weekend_away_start": "10",
+   "group_occupancy/young_children_weekend_away_end": "16",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "4",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "9",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "12"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "16",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "9",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "dining_area",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "7",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "8"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "13",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "14"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "19",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "children_bedroom",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "6"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "21",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "18",
+     "group_rooms/room/bulb_type": "fluorescent",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "12",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "14"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "17",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "13",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "14"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "19",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "20"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "store_room",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "outside_security",
+     "group_rooms/room/bulbs": "4",
+     "group_rooms/room/bulb_watts": "20",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/security_mode": "motion"
+    },
+    {
+     "group_rooms/room/room_type": "outside_security",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "15",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/security_mode": "dusk_to_dawn"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "160"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "chest_freezer",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "120"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "wifi_router",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "12"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "cctv_system",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "35"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_fence_energiser",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "20"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "borehole_pump",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1100",
+     "group_appliances/appliance/duration_typical": "45",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "immersion_water_heater",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "4500",
+     "group_appliances/appliance/duration_typical": "8",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "sometimes"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "4",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "7",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "4"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "induction_cooker",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "2000",
+     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "microwave",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "900",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "toaster",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_volts": "230",
+     "group_appliances/appliance/label_amps": "3.5",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "rice_cooker",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "500",
+     "group_appliances/appliance/duration_typical": "40",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_oven",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "2200",
+     "group_appliances/appliance/duration_typical": "45",
+     "group_appliances/appliance/weekday_frequency": "never",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "air_conditioner",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1200",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "1",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "occasionally",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "16",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "ceiling_fan",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "60",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "15",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "110",
+     "group_appliances/appliance/duration_typical": "300",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "dstv_decoder",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "18",
+     "group_appliances/appliance/duration_typical": "300",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "60",
+     "group_appliances/appliance/duration_typical": "60",
+     "group_appliances/appliance/weekday_frequency": "most_weekdays",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "most_weekdays",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "gaming_console",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "150",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "18",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "washing_machine",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "500",
+     "group_appliances/appliance/duration_typical": "90",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "vacuum_cleaner",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1400",
+     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/weekday_frequency": "rarely",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "iron_box",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1200",
+     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "never"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_shaver",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/duration_typical": "5",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "gate_motor",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "250",
+     "group_appliances/appliance/duration_typical": "1",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "6",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "4"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "other",
+     "group_appliances/appliance/appliance_other": "Aquarium pump",
+     "group_appliances/appliance/appliance_other_always_on": "yes",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "15"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "dont_know",
+   "group_grid/metering": "postpaid",
+   "group_grid/tariff": "dont_know",
+   "group_grid/monthly_spend": "9500",
+   "group_grid/blackout_hours": "3",
+   "group_grid/backup": "generator",
+   "group_grid/backup_kilowatts": "7.5",
+   "group_grid/backup_loads": "Borehole pump, fridge, freezer, lights, gate and CCTV",
+   "group_site/roof_length": "14",
+   "group_site/roof_width": "9",
+   "group_site/orientation": "west_facing",
+   "group_site/tilt": "25",
+   "group_site/shading": "severe",
+   "group_site/roof_type": "clay_tile",
+   "group_site/mounting": "ground",
+   "group_site/cable_length_meters": "40",
+   "group_close/logger_willing": "yes",
+   "group_close/routine_change": "Away 20 Dec to 3 Jan (upcountry for Christmas).",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Large maisonette family with a borehole and generator, on a monthly KPLC bill (tariff and phase not known); live-in house help; toddler at grandmother's on Saturdays; instant showers used four times each morning; three TVs, one with no label."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H905",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Kajiado North",
+   "group_start/county": "Kajiado",
+   "group_start/gps": "-1.3962 36.7518 1785 8",
+   "group_start/dwelling": "bungalow",
+   "group_people/number_of_residents": "5",
+   "group_people/adults_working": "0",
+   "group_people/adults_non_working": "1",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "2",
+   "group_people/young_children": "0",
+   "group_people/elderly": "2",
+   "group_occupancy/adults_non_working_weekday_away_start": "9",
+   "group_occupancy/adults_non_working_weekday_away_end": "13",
+   "group_occupancy/adults_non_working_weekend_same": "no",
+   "group_occupancy/adults_non_working_weekend_away_start": "home_all_day",
+   "group_occupancy/school_children_weekday_away_start": "home_all_day",
+   "group_occupancy/school_children_weekend_same": "no",
+   "group_occupancy/school_children_weekend_away_start": "8",
+   "group_occupancy/school_children_weekend_away_end": "12",
+   "group_occupancy/elderly_weekday_away_start": "9",
+   "group_occupancy/elderly_weekday_away_end": "12",
+   "group_occupancy/elderly_weekend_same": "no",
+   "group_occupancy/elderly_weekend_away_start": "8",
+   "group_occupancy/elderly_weekend_away_end": "11",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "60",
+     "group_rooms/room/bulb_type": "incandescent",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "40",
+     "group_rooms/room/bulb_type": "incandescent",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "children_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "3",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "11",
+     "group_rooms/room/bulb_type": "CFL",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "store_room",
+     "group_rooms/room/bulbs": "0",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "other",
+     "group_rooms/room/room_other": "Shop front",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "outside_security",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "11",
+     "group_rooms/room/bulb_type": "CFL",
+     "group_rooms/room/security_mode": "timer",
+     "group_rooms/room/security_light_on": "19",
+     "group_rooms/room/security_light_off": "23"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "3",
+     "group_appliances/appliance/label_watts": "5",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "power_bank_charging",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "15",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "tablet_charger",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "12",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "once_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "occasionally",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "bluetooth_speaker",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "8",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "20",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "rarely"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "14",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "22",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    }
+   ],
+   "group_grid/grid_connected": "no",
+   "group_grid/backup": "solar_only",
+   "group_grid/solar_panel_count": "2",
+   "group_grid/solar_panel_watts": "150",
+   "group_grid/backup_kilowatts": "0.3",
+   "group_grid/backup_loads": "Everything: lights, phones, radio, small TV",
+   "group_site/roof_length": "9",
+   "group_site/roof_width": "7",
+   "group_site/orientation": "south_facing",
+   "group_site/tilt": "20",
+   "group_site/shading": "none",
+   "group_site/roof_type": "other",
+   "group_site/mounting": "elevated",
+   "group_site/cable_length_meters": "8",
+   "group_close/logger_willing": "maybe",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Off-grid retired couple in Kajiado on solar panels only, with their son and two grandchildren: the couple goes to the market on weekdays and church on Sunday morning, the grandchildren do online school at home and Saturday tuition 08:00-12:00, a small shop at the front, old filament bulbs, no fixed times for any room."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H906",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Roysambu",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2189 36.8792 1600 5",
+   "group_start/dwelling": "bungalow",
+   "group_people/number_of_residents": "6",
+   "group_people/adults_working": "2",
+   "group_people/adults_non_working": "0",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "2",
+   "group_people/young_children": "1",
+   "group_people/elderly": "1",
+   "group_occupancy/adults_working_weekday_away_start": "7",
+   "group_occupancy/adults_working_weekday_away_end": "18",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "home_all_day",
+   "group_occupancy/school_children_weekday_away_start": "7",
+   "group_occupancy/school_children_weekday_away_end": "16",
+   "group_occupancy/school_children_weekend_same": "no",
+   "group_occupancy/school_children_weekend_away_start": "home_all_day",
+   "group_occupancy/young_children_weekday_away_start": "home_all_day",
+   "group_occupancy/young_children_weekend_same": "yes",
+   "group_occupancy/elderly_weekday_away_start": "9",
+   "group_occupancy/elderly_weekday_away_end": "11",
+   "group_occupancy/elderly_weekend_same": "no",
+   "group_occupancy/elderly_weekend_away_start": "home_all_day",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "3",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "9",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "12"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "16",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "9",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "children_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "12",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "12",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "13"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "17",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "20"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "8",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "10"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "20",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "outside_security",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "10",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/security_mode": "timer",
+     "group_rooms/room/security_light_on": "18",
+     "group_rooms/room/security_light_off": "6"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "100"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "wifi_router",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "10"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "solar_water_heater_pump",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "40",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "15",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "water_pump",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "750",
+     "group_appliances/appliance/duration_typical": "20",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "70",
+     "group_appliances/appliance/duration_typical": "210",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "22",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_pressure_cooker",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1000",
+     "group_appliances/appliance/duration_typical": "40",
+     "group_appliances/appliance/weekday_frequency": "most_weekdays",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1800",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "laptop",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "45",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "most_weekdays",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "17",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "washing_machine",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "500",
+     "group_appliances/appliance/duration_typical": "90",
+     "group_appliances/appliance/weekday_frequency": "never",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "1800",
+   "group_grid/token_kwh": "32.3",
+   "group_grid/token_kes": "1000",
+   "group_grid/blackout_hours": "2",
+   "group_grid/backup": "solar_battery",
+   "group_grid/solar_panel_count": "4",
+   "group_grid/solar_panel_watts": "400",
+   "group_grid/battery_volts": "12",
+   "group_grid/battery_amp_hours": "200",
+   "group_grid/battery_units": "2",
+   "group_grid/backup_kilowatts": "3",
+   "group_grid/backup_loads": "Lights, fridge, TV, Wi-Fi",
+   "group_site/roof_length": "12",
+   "group_site/roof_width": "8",
+   "group_site/orientation": "north_facing",
+   "group_site/tilt": "15",
+   "group_site/shading": "none",
+   "group_site/roof_type": "iron_sheet",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "12",
+   "group_close/logger_willing": "yes",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Family of six with rooftop solar and batteries (4 x 400 W, 2 x 12 V 200 Ah, 3 kW inverter): toddler and grandmother at home (she goes to the clinic 09:00-11:00 on weekdays); grid bill is low because solar covers the day."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H907",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Embakasi South",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.3172 36.8945 1620 5",
+   "group_start/dwelling": "flat",
+   "group_people/number_of_residents": "2",
+   "group_people/adults_working": "1",
+   "group_people/adults_non_working": "1",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "0",
+   "group_people/young_children": "0",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "7",
+   "group_occupancy/adults_working_weekday_away_end": "18",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "home_all_day",
+   "group_occupancy/adults_non_working_weekday_away_start": "18",
+   "group_occupancy/adults_non_working_weekday_away_end": "8",
+   "group_occupancy/adults_non_working_weekend_same": "no",
+   "group_occupancy/adults_non_working_weekend_away_start": "19",
+   "group_occupancy/adults_non_working_weekend_away_end": "7",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "9",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "13"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "10",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "8",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "22",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "23"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "12",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "8",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "14",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "15"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "20"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "90"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "60",
+     "group_appliances/appliance/duration_typical": "150",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "22",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1500",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "11",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_hotplate",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1500",
+     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/weekday_frequency": "most_weekdays",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "15",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "18",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "21",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "iron_box",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1200",
+     "group_appliances/appliance/duration_typical": "20",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "never"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "2200",
+   "group_grid/token_kwh": "32.3",
+   "group_grid/token_kes": "1000",
+   "group_grid/blackout_hours": "3",
+   "group_grid/backup": "none",
+   "group_site/roof_length": "8",
+   "group_site/roof_width": "6",
+   "group_site/orientation": "flat",
+   "group_site/tilt": "0",
+   "group_site/shading": "minimal",
+   "group_site/roof_type": "concrete",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "22",
+   "group_close/logger_willing": "maybe",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Couple in Pipeline: a nurse on night shift (18:00 to 08:00) who is home and asleep in the day, and a partner on day shift."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H908",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Roysambu",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2178 36.8890 1605 5",
+   "group_start/dwelling": "flat",
+   "group_people/number_of_residents": "3",
+   "group_people/adults_working": "3",
+   "group_people/adults_non_working": "0",
+   "group_people/household_helpers": "0",
+   "group_people/school_children": "0",
+   "group_people/young_children": "0",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "8",
+   "group_occupancy/adults_working_weekday_away_end": "17",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "12",
+   "group_occupancy/adults_working_weekend_away_end": "18",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "24"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "9",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "12"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "18",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "24"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "24"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "24"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "23",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "24"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "7",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "8"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "19",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "wifi_router",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "10"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "laptop",
+     "group_appliances/appliance/appliance_count": "3",
+     "group_appliances/appliance/label_watts": "60",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "18",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "24",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "21",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "3",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1500",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_hotplate",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1000",
+     "group_appliances/appliance/duration_typical": "25",
+     "group_appliances/appliance/weekday_frequency": "most_weekdays",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "bluetooth_speaker",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "20",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "iron_box",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1000",
+     "group_appliances/appliance/duration_typical": "15",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "never"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "1500",
+   "group_grid/token_kwh": "32.3",
+   "group_grid/token_kes": "1000",
+   "group_grid/blackout_hours": "3",
+   "group_grid/backup": "none",
+   "group_site/roof_length": "10",
+   "group_site/roof_width": "7",
+   "group_site/orientation": "flat",
+   "group_site/tilt": "0",
+   "group_site/shading": "minimal",
+   "group_site/roof_type": "concrete",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "30",
+   "group_close/logger_willing": "no",
+   "group_close/routine_change": "Campus closes 12 Dec; flat empty until 5 Jan.",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Three university students sharing a three-bedroom flat near USIU, out at lectures in the day."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H909",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Embakasi Central",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2779 36.9135 1615 5",
+   "group_start/dwelling": "other",
+   "group_people/number_of_residents": "9",
+   "group_people/adults_working": "2",
+   "group_people/adults_non_working": "1",
+   "group_people/household_helpers": "1",
+   "group_people/school_children": "3",
+   "group_people/young_children": "1",
+   "group_people/elderly": "1",
+   "group_occupancy/adults_working_weekday_away_start": "6",
+   "group_occupancy/adults_working_weekday_away_end": "19",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "8",
+   "group_occupancy/adults_working_weekend_away_end": "14",
+   "group_occupancy/adults_non_working_weekday_away_start": "home_all_day",
+   "group_occupancy/adults_non_working_weekend_same": "no",
+   "group_occupancy/adults_non_working_weekend_away_start": "10",
+   "group_occupancy/adults_non_working_weekend_away_end": "16",
+   "group_occupancy/household_helpers_weekday_away_start": "13",
+   "group_occupancy/household_helpers_weekday_away_end": "15",
+   "group_occupancy/household_helpers_weekend_same": "no",
+   "group_occupancy/household_helpers_weekend_away_start": "home_all_day",
+   "group_occupancy/school_children_weekday_away_start": "6",
+   "group_occupancy/school_children_weekday_away_end": "17",
+   "group_occupancy/school_children_weekend_same": "yes",
+   "group_occupancy/young_children_weekday_away_start": "8",
+   "group_occupancy/young_children_weekday_away_end": "17",
+   "group_occupancy/young_children_weekend_same": "no",
+   "group_occupancy/young_children_weekend_away_start": "home_all_day",
+   "group_occupancy/elderly_weekday_away_start": "home_all_day",
+   "group_occupancy/elderly_weekend_same": "yes",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "9",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "13"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "16",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "22"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "8",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "22"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_type": "incandescent",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "children_bedroom",
+     "group_rooms/room/bulbs": "0",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "6"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bedroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_type": "fluorescent",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bedroom",
+     "group_rooms/room/bulbs": "0",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_type": "CFL",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "6"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "12",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "13"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "17",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "20"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "other",
+     "group_rooms/room/room_other": "Prayer room",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "2",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "4"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "17",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "18"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "other",
+     "group_rooms/room/room_other": "Prayer room",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "5",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "20",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "21"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "7",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "9"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "20",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "21"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "outside_security",
+     "group_rooms/room/bulbs": "1",
+     "group_rooms/room/bulb_watts": "10",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/security_mode": "manual",
+     "group_rooms/room/security_light_on": "19",
+     "group_rooms/room/security_light_off": "23"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "100"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "60",
+     "group_appliances/appliance/duration_typical": "150",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "2",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "0",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "sometimes"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "rarely"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "15",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "23",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "sometimes"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "dstv_decoder",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "12",
+     "group_appliances/appliance/duration_typical": "150",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "11",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "sometimes"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "22",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "22",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_volts": "230",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "4",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "7",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "7",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "17",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "sewing_machine",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "100",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "smartphone_charger",
+     "group_appliances/appliance/appliance_count": "4",
+     "group_appliances/appliance/label_watts": "10",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "24",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "iron_box",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1000",
+     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "10",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "13",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "other",
+     "group_appliances/appliance/appliance_other": "Electric room heater",
+     "group_appliances/appliance/appliance_other_always_on": "no",
+     "group_appliances/appliance/appliance_other_home": "yes",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1500",
+     "group_appliances/appliance/duration_typical": "60",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "occasionally",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "23",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "21",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "other",
+     "group_appliances/appliance/appliance_other": "Massage chair",
+     "group_appliances/appliance/appliance_other_always_on": "no",
+     "group_appliances/appliance/appliance_other_home": "yes",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/weekday_frequency": "rarely",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "never"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "other",
+     "group_appliances/appliance/appliance_other": "Aquarium light on a timer",
+     "group_appliances/appliance/appliance_other_always_on": "no",
+     "group_appliances/appliance/appliance_other_home": "no",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "20",
+     "group_appliances/appliance/duration_typical": "600",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "washing_machine",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "500",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "never",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "3"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "single",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "2500",
+   "group_grid/blackout_hours": "6",
+   "group_grid/backup": "inverter_battery",
+   "group_grid/battery_volts": "12",
+   "group_grid/battery_amp_hours": "100",
+   "group_grid/battery_units": "1",
+   "group_grid/backup_kilowatts": "1",
+   "group_grid/backup_loads": "Lights, TV, decoder",
+   "group_site/roof_length": "10",
+   "group_site/roof_width": "6",
+   "group_site/orientation": "north_facing",
+   "group_site/tilt": "15",
+   "group_site/shading": "moderate",
+   "group_site/roof_type": "iron_sheet",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "10",
+   "group_close/logger_willing": "yes",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Debugging household, a family of nine in a Kayole stone row house: the aunt is home in the week, the house help is out 13:00-15:00 on weekdays, the children have Saturday and Sunday school, the toddler is at day care on weekdays, and grandmother prays 02:00-04:00 (someone up at 03:00, so no night is taken out). Unreadable bulbs of every type, two rooms with the same name, overlapping living-room times, a TV block across midnight, three 'other' appliances, a kettle label with volts only, and three back-to-back washes on Saturday that the model cannot fit. No token SMS to hand."
+  },
+  {
+   "group_start/consent": "OK",
+   "group_start/household_id": "H910",
+   "group_start/survey_date": "2026-11-20",
+   "group_start/sub_county": "Westlands",
+   "group_start/county": "Nairobi",
+   "group_start/gps": "-1.2641 36.8047 1720 5",
+   "group_start/dwelling": "flat",
+   "group_people/number_of_residents": "3",
+   "group_people/adults_working": "2",
+   "group_people/adults_non_working": "0",
+   "group_people/household_helpers": "1",
+   "group_people/school_children": "0",
+   "group_people/young_children": "0",
+   "group_people/elderly": "0",
+   "group_occupancy/adults_working_weekday_away_start": "home_all_day",
+   "group_occupancy/adults_working_weekend_same": "no",
+   "group_occupancy/adults_working_weekend_away_start": "10",
+   "group_occupancy/adults_working_weekend_away_end": "14",
+   "group_occupancy/household_helpers_weekday_away_start": "14",
+   "group_occupancy/household_helpers_weekday_away_end": "16",
+   "group_occupancy/household_helpers_weekend_same": "yes",
+   "group_rooms/room": [
+    {
+     "group_rooms/room/room_type": "living_room",
+     "group_rooms/room/bulbs": "3",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "23"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "9",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "10"
+      },
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "16",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "23"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "other",
+     "group_rooms/room/room_other": "Home office",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "8",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "17"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "no",
+     "group_rooms/room/room_weekend_grp/room_weekend": [
+      {
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_start": "10",
+       "group_rooms/room/room_weekend_grp/room_weekend/room_weekend_end": "12"
+      }
+     ]
+    },
+    {
+     "group_rooms/room/room_type": "master_bedroom",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "9",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "7"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "22",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "24"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "kitchen",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "12",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "yes",
+     "group_rooms/room/room_weekday_grp/room_weekday": [
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "6",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "8"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "12",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "13"
+      },
+      {
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_start": "18",
+       "group_rooms/room/room_weekday_grp/room_weekday/room_weekday_end": "20"
+      }
+     ],
+     "group_rooms/room/room_weekend_same": "yes"
+    },
+    {
+     "group_rooms/room/room_type": "bathroom",
+     "group_rooms/room/bulbs": "2",
+     "group_rooms/room/bulb_watts": "5",
+     "group_rooms/room/bulb_type": "LED",
+     "group_rooms/room/room_has_pattern": "no"
+    }
+   ],
+   "group_appliances/appliance": [
+    {
+     "group_appliances/appliance/appliance_type": "refrigerator",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "140"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "wifi_router",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "12"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "desktop_computer",
+     "group_appliances/appliance/appliance_count": "2",
+     "group_appliances/appliance/label_watts": "180",
+     "group_appliances/appliance/duration_typical": "480",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "never"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "printer",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "20",
+     "group_appliances/appliance/duration_typical": "10",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "9",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "17",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "spread",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "never"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_kettle",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "2000",
+     "group_appliances/appliance/duration_typical": "4",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "13",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "10",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "usually"
+      },
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "15",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "sometimes"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "2",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      },
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "16",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "19",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "usually"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "2"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "electric_pressure_cooker",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1000",
+     "group_appliances/appliance/duration_typical": "40",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "20",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "18",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "yes",
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "microwave",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "900",
+     "group_appliances/appliance/duration_typical": "3",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "occasionally",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "15",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "television",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "100",
+     "group_appliances/appliance/duration_typical": "180",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "19",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "23",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "21",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "16",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "23",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "washing_machine",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "2000",
+     "group_appliances/appliance/duration_typical": "90",
+     "group_appliances/appliance/weekday_frequency": "never",
+     "group_appliances/appliance/weekend_frequency": "both_days",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "12",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "hair_dryer",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "1800",
+     "group_appliances/appliance/duration_typical": "10",
+     "group_appliances/appliance/weekday_frequency": "every_weekday",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "5",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "8",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "6",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "usually_one_day",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "8",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "11",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "9",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    },
+    {
+     "group_appliances/appliance/appliance_type": "standing_fan",
+     "group_appliances/appliance/appliance_count": "1",
+     "group_appliances/appliance/label_watts": "45",
+     "group_appliances/appliance/duration_typical": "120",
+     "group_appliances/appliance/weekday_frequency": "few_times_a_week",
+     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday": [
+      {
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_start": "12",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_end": "16",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_peak": "14",
+       "group_appliances/appliance/appliance_weekday_grp/appliance_weekday/appliance_weekday_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekday_sessions": "1",
+     "group_appliances/appliance/weekend_frequency": "occasionally",
+     "group_appliances/appliance/weekend_same_as_weekday": "no",
+     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend": [
+      {
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_start": "16",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_end": "20",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_peak": "spread",
+       "group_appliances/appliance/appliance_weekend_grp/appliance_weekend/appliance_weekend_often": "always"
+      }
+     ],
+     "group_appliances/appliance/appliance_weekend_sessions": "1"
+    }
+   ],
+   "group_grid/grid_connected": "yes",
+   "group_grid/phase": "three",
+   "group_grid/metering": "prepaid",
+   "group_grid/tariff": "domestic",
+   "group_grid/monthly_spend": "5000",
+   "group_grid/token_kwh": "64.5",
+   "group_grid/token_kes": "2000",
+   "group_grid/blackout_hours": "1",
+   "group_grid/backup": "none",
+   "group_site/roof_length": "12",
+   "group_site/roof_width": "10",
+   "group_site/orientation": "flat",
+   "group_site/tilt": "0",
+   "group_site/shading": "minimal",
+   "group_site/roof_type": "concrete",
+   "group_site/mounting": "flush",
+   "group_site/cable_length_meters": "35",
+   "group_close/logger_willing": "yes",
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Professional couple in a Westlands apartment who both work from a home office on weekdays and go out 10:00-14:00 at weekends; a day house help is out 14:00-16:00 every day; three-phase supply; no TV decoder (streams on Wi-Fi)."
+  }
+ ]
+}

@@ -5,3 +5,6 @@ households/
 .env
 .vscode/
 .mypy_cache
+questionnaire/test_households/converted/
+questionnaire/test_households/coverage.txt
+questionnaire/test_households/entry_sheets.html

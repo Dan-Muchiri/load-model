@@ -39,7 +39,7 @@ import sys
 from pathlib import Path
 
 import schema
-from calibrate_tou import (APPLIANCE_RESTART_DELAY_MIN, DEFAULT_RESTART_DELAY_MIN, TOU_MAX_BULB,
+from calibrate_tou import (APPLIANCE_RESTART_DELAY_MIN, DEFAULT_RESTART_DELAY_MIN,
                            WEEKDAY_FREQUENCY, WEEKEND_FREQUENCY, calibrate_appliance)
 
 sys.path.insert(0, str(Path(__file__).parent / "questionnaire"))
@@ -342,8 +342,9 @@ def calibrate_unpatterned(pending, s, occ_wd, occ_we, room_occ, warnings, log):
             weekday_days_used=WEEKDAY_FREQUENCY["every_weekday"] if wd_w else 0,
             weekend_days_used=WEEKEND_FREQUENCY["both_days"] if we_w else 0,
             weekday_sessions_per_day=visits, weekend_sessions_per_day=visits,
-            appliance_name=f"{bulb['room']} bulb", restart_delay_min=0, random_seed=42,
-            max_tou=TOU_MAX_BULB)
+            appliance_name=f"{bulb['room']} bulb", restart_delay_min=0, random_seed=42)
+        # (no max_tou=TOU_MAX_BULB: these lights are switched like appliances, one
+        # switch-on per room visit, and a busy shared bathroom needs more than 1/hour)
         log.append(text)
         bulb.update(tou_weekday=res["tou_weekday"], tou_weekend=res["tou_weekend"],
                     mean_duration_min=minutes, std_duration_min=duration_std(minutes),

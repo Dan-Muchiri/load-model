@@ -1,38 +1,149 @@
-"""Converter checks on the made-up households in questionnaire/sample_households.py."""
+"""Converter checks on the test households H901-H910.
+
+The households, and the warnings each one is meant to produce, live in
+questionnaire/test_households/make_test_households.py; the Kobo-style
+export of them is questionnaire/test_households/test_households_kobo.json.
+These tests convert that export with survey_to_schema.py exactly as a real
+KoboToolbox download is converted.
+"""
+import contextlib
 import copy
+import importlib.util
+import io
+import json
+from pathlib import Path
 
 import pytest
 
 import schema
 import survey_to_schema as sts
-from questionnaire.sample_households import SAMPLES
+
+TEST_DIR = Path(__file__).resolve().parents[1] / "questionnaire" / "test_households"
+EXPORT = TEST_DIR / "test_households_kobo.json"
 
 
-def convert(raw):
-    return sts.submission_to_household(sts.clean(copy.deepcopy(raw)))
+def _load_generator():
+    spec = importlib.util.spec_from_file_location("make_test_households",
+                                                  TEST_DIR / "make_test_households.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+MTH = _load_generator()
+EXPECT = {s["household_id"]: s["_expect"] for s in MTH.HOUSEHOLDS}
+IDS = list(EXPECT)
 
 
 @pytest.fixture(scope="module")
 def converted():
-    return {raw["group_start/household_id"]: convert(raw) for raw in SAMPLES}
+    """Every household converted once (a few minutes: calibration)."""
+    out = {}
+    for sub in sts.load_submissions(EXPORT):
+        with contextlib.redirect_stdout(io.StringIO()):
+            h, warnings, follow, log = sts.submission_to_household(sub)
+        out[h["household_id"]] = (h, warnings, follow, log)
+    return out
 
 
-@pytest.mark.parametrize("hid", [s["group_start/household_id"] for s in SAMPLES])
-def test_sample_validates(converted, hid):
-    h, _warnings, _follow, _log = converted[hid]
+def by_name(items, key="name"):
+    return {x[key]: x for x in items}
+
+
+# ---------------------------------------------------------------- the export itself
+def test_export_matches_households_and_form():
+    """The committed JSON is what make_test_households.py builds for the current form."""
+    rows, _choices = MTH.read_form()
+    tree = MTH.tree(rows)
+    rebuilt = {"results": [MTH.kobo_paths(s, tree) for s in MTH.HOUSEHOLDS]}
+    assert json.loads(EXPORT.read_text()) == rebuilt
+
+
+@pytest.mark.parametrize("hid", IDS)
+def test_household_passes_kobo_form_check(hid):
+    rows, choices = MTH.read_form()
+    s = next(s for s in MTH.HOUSEHOLDS if s["household_id"] == hid)
+    assert MTH.kobo_check(s, MTH.tree(rows), choices) == []
+
+
+# ---------------------------------------------------------------- every household
+@pytest.mark.parametrize("hid", IDS)
+def test_household_validates(converted, hid):
+    h, *_ = converted[hid]
     schema.validate_household(h)   # raises ValueError on any schema error
 
 
+@pytest.mark.parametrize("hid", IDS)
+def test_household_gives_exactly_its_expected_warnings(converted, hid):
+    _h, warnings, *_ = converted[hid]
+    assert MTH.warning_check(warnings, EXPECT[hid]) == []
+
+
+def test_warnings_not_duplicated(converted):
+    for _h, warnings, *_ in converted.values():
+        assert len(warnings) == len(set(warnings))
+
+
+# ---------------------------------------------------------------- specific paths
 def test_blank_bulb_watts_uses_bulb_type(converted):
-    h, warnings, _, _ = converted["S105"]
+    h, *_ = converted["H909"]
     watts = {b["room"]: b["wattage_w"] for b in h["bulbs"]}
-    assert watts["living_room"] == 60          # incandescent, blank
-    assert watts["outside_security"] == 15     # CFL, blank
-    assert watts["kitchen"] == 9               # read off the bulb
-    assert any("assumed 60 W (typical incandescent)" in w for w in warnings)
+    assert watts["living_room"] == 9          # LED, blank
+    assert watts["kitchen"] == 15             # CFL, blank
+    assert watts["master_bedroom"] == 60      # incandescent, blank
+    assert watts["bedroom_3"] == 36           # fluorescent, blank
+    assert watts["bathroom"] == 5             # read off the bulb
 
 
+def test_other_appliances(converted):
+    h, *_ = converted["H909"]
+    a = by_name(h["appliances"])
+    assert a["other_appliance_1"]["rated_power_w"] == 1500             # room heater, labelled
+    assert a["other_appliance_2"]["count"] == 0                         # massage chair, no label
+    assert a["other_aquarium_light_on_a_timer"]["needs_occupancy"] is False
+
+
+def test_volts_times_amps_label(converted):
+    h, *_ = converted["H904"]
+    assert by_name(h["appliances"])["toaster"]["rated_power_w"] == 805    # 230 V x 3.5 A
+
+
+def test_several_uses_in_one_hour_calibrate(converted):
+    """Gate motor 6x a weekday and instant shower 4x a morning need tou > 1."""
+    h, warnings, *_ = converted["H904"]
+    a = by_name(h["appliances"])
+    assert max(a["gate_motor"]["tou_weekday"]) > 1.0
+    assert max(a["immersion_water_heater"]["tou_weekday"]) > 1.0
+    assert not any("NOT MODELLED" in w and ("gate_motor" in w or "immersion" in w) for w in warnings)
+
+
+def test_rare_appliance_calibrates(converted):
+    """Tablet charged once a week (0.2 uses a weekday) used to fail the 10% check on noise."""
+    h, *_ = converted["H905"]
+    assert sum(by_name(h["appliances"])["tablet_charger"]["tou_weekday"]) > 0
+
+
+def test_off_grid(converted):
+    g = converted["H905"][0]["grid"]
+    assert g["connected"] is False and g["import_tariff_kes_per_kwh"] == 0.0
+    assert g["existing_backup"] == "solar_only" and g["existing_pv_kw"] == 0.3
+
+
+def test_presence_and_dark_bulb_tou_stays_at_most_one(converted):
+    for h, *_ in converted.values():
+        for b in h["bulbs"]:
+            if b["switching"] != "tou":
+                assert max(b["tou_weekday"] + b["tou_weekend"]) <= 1.0
+
+
+def test_reliability_not_asked_uses_reference_default(converted):
+    h, *_ = converted["H902"]
+    assert h["grid"]["supply_reliability"] == schema.REFERENCE_HOUSEHOLD["grid"]["supply_reliability"]
+
+
+# ---------------------------------------------------------------- converter units
 def test_peak_outside_window_is_spread():
+    """Only older submissions (form v4 and before) can have this; v5 blocks it."""
     warnings = []
     rows = [{"x_start": "6", "x_end": "18", "x_peak": "22", "x_often": "always"}]
     w = sts.to_windows(rows, "x", warnings, "blender weekday")
@@ -46,42 +157,26 @@ def test_peak_inside_midnight_window_kept():
     assert (w[0]["start_hour"], w[0]["end_hour"], w[0]["peak_hour"]) == (20, 25, 24)
 
 
-def test_other_appliance_without_label_not_modelled(converted):
-    h, warnings, _, _ = converted["S106"]
-    names = {a["name"]: a for a in h["appliances"]}
-    assert names["other_appliance_1"]["rated_power_w"] == 15       # aquarium pump, labelled
-    assert names["other_appliance_2"]["count"] == 0                 # hair clipper, no label
-    assert any(w.startswith("NOT MODELLED: other_appliance_2") for w in warnings)
-
-
-def test_reliability_not_asked_uses_reference_default(converted):
-    h, *_ = converted["S102"]
-    assert h["grid"]["supply_reliability"] == schema.REFERENCE_HOUSEHOLD["grid"]["supply_reliability"]
-
-
-def test_warnings_not_duplicated(converted):
-    for h, warnings, *_ in converted.values():
-        assert len(warnings) == len(set(warnings))
+def test_busy_unpatterned_bathroom_calibrates():
+    """12 people sharing a no-pattern bathroom: 24 visits a day need more than
+    one switch-on an hour, which a 1.0 cap made impossible (NOT MODELLED)."""
+    import calibrate_tou
+    w = [{"start_hour": 6, "end_hour": 22, "peak_hour": None, "peak_value": 1.0}]
+    with contextlib.redirect_stdout(io.StringIO()):
+        r = calibrate_tou.calibrate_appliance(w, [], 15, 3.75, 5, 0, weekday_sessions_per_day=24,
+                                              appliance_name="bathroom bulb", restart_delay_min=0,
+                                              random_seed=42)
+    assert max(r["tou_weekday"]) > 1.0
+    h = copy.deepcopy(schema.REFERENCE_HOUSEHOLD)
+    b = h["bulbs"][0]
+    b.update(switching="tou", tou_weekday=r["tou_weekday"], tou_weekend=r["tou_weekday"])
+    schema.validate_household(h)
 
 
 # ---------------------------------------------------------------- tou as a switch-on rate
 def test_tou_max_constants_agree():
     import calibrate_tou
     assert schema.TOU_MAX_APPLIANCE == calibrate_tou.TOU_MAX_APPLIANCE
-
-
-def test_several_uses_in_one_hour_calibrate(converted):
-    """Gate motor 4x/day in two 2-hour windows needs tou > 1 at the peaks."""
-    h, warnings, *_ = converted["S104"]
-    gate = next(a for a in h["appliances"] if a["name"] == "gate_motor")
-    assert max(gate["tou_weekday"]) > 1.0
-    assert not any("gate_motor" in w and "NOT MODELLED" in w for w in warnings)
-
-
-def test_bulb_tou_stays_at_most_one(converted):
-    for h, *_ in converted.values():
-        for b in h["bulbs"]:
-            assert max(b["tou_weekday"] + b["tou_weekend"]) <= 1.0
 
 
 def test_validator_rejects_appliance_tou_above_ceiling():

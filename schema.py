@@ -2435,10 +2435,15 @@ def validate_household(h):
                         f"{prefix}: {tou_field} must have 24 values, got {len(tou)}"
                     )
                 else:
+                    # "tou" lights (rooms with no fixed pattern) are switched
+                    # like appliances: tou is the room-entry rate per hour and
+                    # may exceed 1 (a bathroom shared by many people). For
+                    # "presence"/"dark" lights tou only marks hours, in [0,1].
+                    top = TOU_MAX_APPLIANCE if b.get("switching") == "tou" else 1.0
                     for i, v in enumerate(tou):
-                        if not isinstance(v, (int, float)) or not (0.0 <= v <= 1.0):
+                        if not isinstance(v, (int, float)) or not (0.0 <= v <= top):
                             errors.append(
-                                f"{prefix}: {tou_field}[{i}] = {v} must be float in [0,1]"
+                                f"{prefix}: {tou_field}[{i}] = {v} must be float in [0,{top:g}]"
                             )
 
             for dur_field in ("mean_duration_min", "std_duration_min",
@@ -2625,6 +2630,13 @@ def estimate_daily_energy_kwh(household):
             tou      = bulb[tou_key]
             room     = bulb["room"]
             duration = min(bulb["mean_duration_min"], 60) / 60.0
+            if bulb.get("switching") == "tou":
+                # Visit-switched light: same renewal cycle as an appliance
+                # (tou may exceed 1), expressed per tou unit so the
+                # occupancy filters below apply unchanged.
+                d = bulb["mean_duration_min"]
+                tou = [(d / (60.0 / t + d)) / duration if t > 0 and duration > 0 else 0.0
+                       for t in tou]
             room_occ = room_occ_block.get(room, {}).get(day_type)
 
             if not bulb.get("needs_occupancy"):
