@@ -224,38 +224,53 @@ def q(type_, name="", label="", hint="", required="", constraint="", cmsg="",
                   repeat_count=repeat_count, default=default,
                   parameters=parameters or ("max-pixels=1024" if type_ == "image" else "")))
 
+MAX_TIME_BLOCKS = 4
+
+
 def window_repeat(name, label, relevant, day):
-    """One repeat of usage windows; fields feed calibrate_tou.build_raw_shape().
-    Field names are prefixed with the repeat name because XLSForm names must be unique."""
+    """Usage windows (time blocks) of one appliance for one day type; fields
+    feed calibrate_tou.build_raw_shape(). Field names are prefixed with the
+    block name because XLSForm names must be unique.
+
+    Form v7: no repeat. A count (1-MAX_TIME_BLOCKS) is asked first, then
+    fixed slots {name}_1_* .. {name}_4_*, each shown only when the count
+    reaches it. Repeats inside the appliance repeat broke Enketo's web form
+    twice (v5: first block lost and the rest shifted by one; v6 with
+    repeat_count: the form hung when the count went above 1)."""
     p = name
-    # Relevance sits on a wrapper group, not the repeat: Enketo does not
-    # reliably show a nested repeat that becomes relevant inside a field-list page.
+    # Relevance sits on a wrapper group (kept from earlier versions).
     q("begin_group", f"{p}_grp", "", relevant=relevant)
-    q("begin_repeat", name, label, appearance="field-list")
-    q("select_one hour", f"{p}_start", f"{day}: from what time is it used?",
-      hint="If it is used at more than one time of day, add an entry for each one.",
-      required="yes", appearance="minimal")
-    q("select_one hour_end", f"{p}_end", "Until what time?",
-      hint="The hour it stops. 06:00 to 09:00 means up to 08:59. Times past midnight are allowed.",
-      required="yes", constraint=f". != ${{{p}_start}}", cmsg="Start and end cannot be the same hour.",
-      appearance="minimal")
-    # The peak must sit inside the window (or be "spread"): build_raw_shape()
-    # tapers 0.2 per hour away from it, so a peak outside the window can zero
-    # the whole shape and the appliance is NOT MODELLED.
-    st, en = f"number(${{{p}_start}})", f"number(${{{p}_end}})"
-    q("select_one peak", f"{p}_peak", "Within that time, which hour is it most likely to be on?",
-      required="yes", appearance="minimal",
-      constraint=f". = 'spread' or ({en} > {st} and number(.) >= {st} and number(.) < {en}) "
-                 f"or ({en} <= {st} and (number(.) >= {st} or number(.) < {en}))",
-      cmsg="Pick an hour inside the time given above, or 'spread evenly'.")
-    q("select_one often", f"{p}_often",
-      "How likely is it to actually be used at this particular time of day: always, usually, "
-      "sometimes or rarely?",
-      hint="If this is the only time of day you added, choose 'Always'. If you added more than one "
-           "time of day, compare them: for example, evenings 'Always' and mornings 'Sometimes', if "
-           "evenings are more reliable.",
-      required="yes", appearance="horizontal")
-    q("end_repeat")
+    q("integer", f"{p}_count", f"{day}: at how many separate times of day is it used?",
+      hint="Count the time blocks: for example morning and evening = 2. Each block is asked next.",
+      required="yes", default="1", constraint=f". >= 1 and . <= {MAX_TIME_BLOCKS}",
+      cmsg=f"Between 1 and {MAX_TIME_BLOCKS}.")
+    for n in range(1, MAX_TIME_BLOCKS + 1):
+        b = f"{p}_{n}"
+        q("begin_group", f"{b}_grp", f"{label}: block {n}",
+          relevant="" if n == 1 else f"${{{p}_count}} >= {n}")
+        q("select_one hour", f"{b}_start", f"{day}: from what time is it used?",
+          required="yes", appearance="minimal")
+        q("select_one hour_end", f"{b}_end", "Until what time?",
+          hint="The hour it stops. 06:00 to 09:00 means up to 08:59. Times past midnight are allowed.",
+          required="yes", constraint=f". != ${{{b}_start}}", cmsg="Start and end cannot be the same hour.",
+          appearance="minimal")
+        # The peak must sit inside the window (or be "spread"): build_raw_shape()
+        # tapers 0.2 per hour away from it, so a peak outside the window can zero
+        # the whole shape and the appliance is NOT MODELLED.
+        st, en = f"number(${{{b}_start}})", f"number(${{{b}_end}})"
+        q("select_one peak", f"{b}_peak", "Within that time, which hour is it most likely to be on?",
+          required="yes", appearance="minimal",
+          constraint=f". = 'spread' or ({en} > {st} and number(.) >= {st} and number(.) < {en}) "
+                     f"or ({en} <= {st} and (number(.) >= {st} or number(.) < {en}))",
+          cmsg="Pick an hour inside the time given above, or 'spread evenly'.")
+        q("select_one often", f"{b}_often",
+          "How likely is it to actually be used at this particular time of day: always, usually, "
+          "sometimes or rarely?",
+          hint="If there is only one time block, choose 'Always'. If there is more than one, compare "
+               "them: for example, evenings 'Always' and mornings 'Sometimes', if evenings are more "
+               "reliable.",
+          required="yes", appearance="horizontal")
+        q("end_group")
     q("end_group")
 
 SESSIONS_HINT = ("For example: a kettle boiled once in the morning and once in the evening, every day "
@@ -278,16 +293,22 @@ def presence_repeat(name, label, relevant, day):
     C's daytime counts: a room with no entry at some hour does not mean the
     house is empty then. Treat every block as "typically in use about
     then" -- say so to the interviewer too."""
+    # Form v7: fixed block slots instead of a nested repeat, as in window_repeat().
     p = name
-    # Relevance sits on a wrapper group, not the repeat: Enketo does not
-    # reliably show a nested repeat that becomes relevant inside a field-list page.
     q("begin_group", f"{p}_grp", "", relevant=relevant)
-    q("begin_repeat", name, label, appearance="field-list")
-    q("select_one hour", f"{p}_start", f"{day}: from what time?", required="yes", appearance="minimal")
-    q("select_one hour_end", f"{p}_end", "Until what time?", required="yes",
-      constraint=f". != ${{{p}_start}}", cmsg="Start and end cannot be the same hour.",
-      appearance="minimal")
-    q("end_repeat")
+    q("integer", f"{p}_count", f"{day}: at how many separate times of day is someone in this room?",
+      hint="Count the time blocks: for example morning and evening = 2. Each block is asked next.",
+      required="yes", default="1", constraint=f". >= 1 and . <= {MAX_TIME_BLOCKS}",
+      cmsg=f"Between 1 and {MAX_TIME_BLOCKS}.")
+    for n in range(1, MAX_TIME_BLOCKS + 1):
+        b = f"{p}_{n}"
+        q("begin_group", f"{b}_grp", f"{label}: block {n}",
+          relevant="" if n == 1 else f"${{{p}_count}} >= {n}")
+        q("select_one hour", f"{b}_start", f"{day}: from what time?", required="yes", appearance="minimal")
+        q("select_one hour_end", f"{b}_end", "Until what time?", required="yes",
+          constraint=f". != ${{{b}_start}}", cmsg="Start and end cannot be the same hour.",
+          appearance="minimal")
+        q("end_group")
     q("end_group")
 
 # Whole-household occupancy (Section C) is asked per resident category, not
@@ -586,7 +607,7 @@ def build(out=HERE / "household_survey.xlsx"):
     st = wb.create_sheet("settings")
     st.append(["form_title", "form_id", "version", "default_language", "style"])
     # style "pages": the Kobo web form shows each section (A to H) as its own page.
-    st.append(["Household energy use interview", "household_energy_v1", "5", "English", "pages"])
+    st.append(["Household energy use interview", "household_energy_v1", "7", "English", "pages"])
     for sh in wb.worksheets:
         for c in sh[1]:
             c.font = Font(bold=True)

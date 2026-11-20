@@ -134,6 +134,26 @@ def blocks_to_array(blocks, prefix, warnings, label):
     return arr
 
 
+def time_blocks(item, prefix):
+    """The time blocks of one room or appliance for one day type, as a list
+    of {prefix}_start/_end/... dicts (what blocks_to_array / to_windows read).
+
+    Form v7 asks {prefix}_count and then fixed slots {prefix}_1_start ..
+    {prefix}_4_*; older forms (v6 and before) had a repeat, given here as a
+    list under {prefix}."""
+    if isinstance(item.get(prefix), list):          # v6 and earlier: nested repeat
+        return item[prefix]
+    blocks, n = [], 1
+    count = int(num(item.get(f"{prefix}_count"), 0))
+    while n <= count:
+        slot = {k[len(f"{prefix}_{n}_"):]: v for k, v in item.items()
+                if k.startswith(f"{prefix}_{n}_")}
+        if slot:
+            blocks.append({f"{prefix}_{k}": v for k, v in slot.items()})
+        n += 1
+    return blocks
+
+
 def to_windows(rows, prefix, warnings=None, label=""):
     """Form usage windows -> calibrate_tou.build_raw_shape() window dicts.
     A peak outside its window (older forms allowed it) would taper the whole
@@ -376,8 +396,8 @@ def build_rooms_and_bulbs(s, warnings):
         # no fixed pattern have no times, so no room_occupancy entry
         same = r.get("room_weekend_same") == "yes"
         if rtype != "outside_security" and has_pattern(r):
-            wd = blocks_to_array(r.get("room_weekday"), "room_weekday", warnings, f"{name} weekday")
-            we = wd[:] if same else blocks_to_array(r.get("room_weekend"), "room_weekend",
+            wd = blocks_to_array(time_blocks(r, "room_weekday"), "room_weekday", warnings, f"{name} weekday")
+            we = wd[:] if same else blocks_to_array(time_blocks(r, "room_weekend"), "room_weekend",
                                                      warnings, f"{name} weekend")
             room_occ[name] = {"weekday": wd, "weekend": we}
 
@@ -494,11 +514,11 @@ def build_appliances(s, warnings, log):
             mean = int(num_required(ans["duration_typical"], "duration_typical"))
             std = duration_std(mean)   # form asks only the typical time
             wd_freq, we_freq = ans["weekday_frequency"], ans["weekend_frequency"]
-            wd_w = to_windows(ans.get("appliance_weekday"), "appliance_weekday", warnings, f"{name} weekday")
+            wd_w = to_windows(time_blocks(ans, "appliance_weekday"), "appliance_weekday", warnings, f"{name} weekday")
             if ans.get("weekend_same_as_weekday") == "yes":
                 we_w = wd_w
             else:
-                we_w = to_windows(ans.get("appliance_weekend"), "appliance_weekend", warnings, f"{name} weekend")
+                we_w = to_windows(time_blocks(ans, "appliance_weekend"), "appliance_weekend", warnings, f"{name} weekend")
             res, text = calibrate_quietly(
                 warnings,
                 weekday_windows=wd_w, weekend_windows=we_w,

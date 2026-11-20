@@ -197,3 +197,24 @@ def test_estimate_matches_engine_for_fridge():
     fridge = next(a for a in h["appliances"] if a["name"] == "refrigerator")
     expected = fridge["rated_power_w"] * 24 * 25 / 85 / 1000
     assert schema.estimate_daily_energy_kwh(h)["weekday_kwh"] == pytest.approx(expected, abs=0.01)
+
+
+# ---------------------------------------------------------------- time blocks (form v7 slots)
+def test_time_blocks_from_v7_slots():
+    item = {"appliance_weekday_count": "2",
+            "appliance_weekday_1_start": "5", "appliance_weekday_1_end": "8",
+            "appliance_weekday_1_peak": "6", "appliance_weekday_1_often": "always",
+            "appliance_weekday_2_start": "19", "appliance_weekday_2_end": "22",
+            "appliance_weekday_2_peak": "spread", "appliance_weekday_2_often": "sometimes",
+            "appliance_weekday_sessions": "2"}
+    assert sts.time_blocks(item, "appliance_weekday") == [
+        {"appliance_weekday_start": "5", "appliance_weekday_end": "8",
+         "appliance_weekday_peak": "6", "appliance_weekday_often": "always"},
+        {"appliance_weekday_start": "19", "appliance_weekday_end": "22",
+         "appliance_weekday_peak": "spread", "appliance_weekday_often": "sometimes"}]
+
+
+def test_time_blocks_old_repeat_format_still_read():
+    """Submissions from forms v6 and earlier keep converting."""
+    old = {"room_weekday": [{"room_weekday_start": "6", "room_weekday_end": "7"}]}
+    assert sts.time_blocks(old, "room_weekday") == old["room_weekday"]

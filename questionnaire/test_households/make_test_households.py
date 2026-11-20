@@ -100,13 +100,22 @@ def room(rtype, bulbs, btype="LED", watts=9, weekday=(), weekend="same", pattern
     r["room_has_pattern"] = "yes" if pattern else "no"
     if not pattern:
         return r
-    r["room_weekday"] = [{"room_weekday_start": str(a), "room_weekday_end": str(b)} for a, b in weekday]
+    r.update(slots("room_weekday", [(str(a), str(b)) for a, b in weekday], ("start", "end")))
     if weekend == "same":
         r["room_weekend_same"] = "yes"
     else:
         r["room_weekend_same"] = "no"
-        r["room_weekend"] = [{"room_weekend_start": str(a), "room_weekend_end": str(b)} for a, b in weekend]
+        r.update(slots("room_weekend", [(str(a), str(b)) for a, b in weekend], ("start", "end")))
     return r
+
+
+def slots(prefix, blocks, fields):
+    """Form v7 time blocks: a count, then fixed slots {prefix}_1_* .. {prefix}_4_*."""
+    assert 1 <= len(blocks) <= 4, f"{prefix}: {len(blocks)} blocks (the form allows 1-4)"
+    out = {f"{prefix}_count": str(len(blocks))}
+    for n, values in enumerate(blocks, 1):
+        out.update({f"{prefix}_{n}_{f}": v for f, v in zip(fields, values)})
+    return out
 
 
 ALWAYS_ON = {"refrigerator", "chest_freezer", "wifi_router", "electric_fence_energiser", "cctv_system"}
@@ -135,21 +144,20 @@ def appl(atype, watts, count=1, minutes=None, wd="never", wdw=(), wds=1, we="nev
         return a
 
     def win(day, ws):
-        p = f"appliance_{day}_"
-        return [{p + "start": str(s), p + "end": str(e), p + "peak": str(pk), p + "often": o}
-                for s, e, pk, o in ws]
+        return slots(f"appliance_{day}", [(str(s), str(e), str(pk), o) for s, e, pk, o in ws],
+                     ("start", "end", "peak", "often"))
 
     a["duration_typical"] = str(minutes)
     a["weekday_frequency"] = wd
     if wd != "never":
-        a["appliance_weekday"] = win("weekday", wdw)
+        a.update(win("weekday", wdw))
         a["appliance_weekday_sessions"] = str(wds)
     a["weekend_frequency"] = we
     if we != "never":
         if wd != "never":
             a["weekend_same_as_weekday"] = "yes" if wew == "same" else "no"
         if wew != "same" or wd == "never":
-            a["appliance_weekend"] = win("weekend", wew)
+            a.update(win("weekend", wew))
         a["appliance_weekend_sessions"] = str(wes)
     return a
 
@@ -468,7 +476,7 @@ HOUSEHOLDS = [
         people(adults_working=(2, (6, 19), (8, 14)), adults_non_working=(1, None, (10, 16)),
                household_helpers=(1, (13, 15), None), school_children=(3, (6, 17), "same"),
                young_children=(1, (8, 17), None), elderly=(1, None, "same")),
-        [room("living_room", 2, watts=None, btype="LED", weekday=[(9, 13), (16, 22), (20, 23)],
+        [room("living_room", 2, watts=None, btype="LED", weekday=[(6, 7), (9, 13), (16, 22), (20, 23)],
               weekend=[(8, 22)]),
          room("master_bedroom", 1, watts=None, btype="incandescent", pattern=False),
          room("children_bedroom", 0, weekday=[(5, 6), (20, 21)]),
@@ -477,7 +485,8 @@ HOUSEHOLDS = [
          room("kitchen", 1, watts=None, btype="CFL", weekday=[(5, 6), (12, 13), (17, 20)]),
          room("other", 1, other="Prayer room", weekday=[(2, 4), (17, 18)]),
          room("other", 1, other="Prayer room", pattern=False),
-         room("bathroom", 1, watts=5, weekday=[(5, 7), (20, 21)], weekend=[(7, 9), (20, 21)]),
+         room("bathroom", 1, watts=5, weekday=[(5, 7), (20, 21)],
+              weekend=[(7, 9), (12, 13), (16, 17), (20, 21)]),
          room("outside_security", 1, watts=10, security=("manual", 19, 23))],
         [appl("refrigerator", 100),
          appl("television", 60, minutes=150, wd=EVERY, wdw=[(21, 2, 0, A), (12, 14, "spread", S)], wds=2,
@@ -532,8 +541,9 @@ HOUSEHOLDS = [
          appl("desktop_computer", 180, count=2, minutes=480, wd=EVERY, wdw=[(8, 17, "spread", A)], we="never"),
          appl("printer", 20, minutes=10, wd=FEW, wdw=[(9, 17, "spread", A)], we="never"),
          appl("electric_kettle", 2000, minutes=4, wd=EVERY,
-              wdw=[(5, 8, 6, A), (10, 13, 10, U), (15, 18, 16, S)], wds=2, we=BOTH, wes=2,
-              wew=[(8, 11, 9, A), (16, 19, "spread", U)]),
+              wdw=[(5, 8, 6, A), (10, 13, 10, U), (15, 18, 16, S), (21, 23, "spread", R)], wds=2,
+              we=BOTH, wes=2,
+              wew=[(8, 11, 9, A), (16, 19, "spread", U), (12, 14, "spread", S), (20, 23, 21, R)]),
          appl("electric_pressure_cooker", 1000, minutes=40, wd=EVERY, wdw=[(18, 20, 18, A)], we=BOTH),
          appl("microwave", 900, minutes=3, wd=EVERY, wdw=[(12, 14, 12, A)], we=OCC,
               wew=[(12, 15, "spread", A)]),
@@ -695,6 +705,10 @@ def kobo_check(sub, form_tree, choices, seen_rel=None):
                 if not inst:
                     errors.append(f"{path}{name}: no entries")
                     continue
+                if ch.get("repeat_count"):          # fixed-count repeat: entries must equal the count
+                    want = lk(re.fullmatch(r"\$\{(\w+)\}", ch["repeat_count"].strip()).group(1))
+                    if str(len(inst)) != str(want):
+                        errors.append(f"{path}{name}: {len(inst)} entries but its count says {want}")
                 for i, sc in enumerate(inst, 1):
                     walk(ch, scopes + [sc], True, f"{path}{name}[{i}]/")
                     extra = set(sc) - {c.get("name") for c in iter_fields(ch)}
@@ -856,7 +870,7 @@ def render(households, results, form_tree, choices):
     parts.append(f"<h1>Test procedure: household survey data entry and data checking</h1>")
     parts.append(
         "<h3>1. Purpose</h3>"
-        "<p>To verify, end to end, the path from the KoboToolbox household survey (form version 5) "
+        "<p>To verify, end to end, the path from the KoboToolbox household survey (form version 7) "
         "through fetch_kobo.py to the data checking and conversion in survey_to_schema.py, using "
         f"{len(households)} constructed test households (H901 to {last}) whose answers and expected "
         "data-checking warnings are known in advance.</p>"
@@ -867,7 +881,7 @@ def render(households, results, form_tree, choices):
         "be shown or hidden, and every path through the data checking, including deliberately "
         "inconsistent answers.</p>"
         "<h3>3. Procedure</h3><ol>"
-        "<li>Form version 5 of household_survey.xlsx is deployed in KoboToolbox.</li>"
+        "<li>Form version 7 of household_survey.xlsx is deployed in KoboToolbox.</li>"
         "<li>Each test household is entered as one new submission, following its sheet in form "
         "order. Answers are selected or entered exactly as listed, including those that appear "
         "unusual; these are intentional test conditions.</li>"
@@ -960,6 +974,7 @@ CONVERTER_EXCLUDED = [
     ('warnings.append(f"{label}: overlapping blocks at {h:02d}:00, kept the later answer ({people}).")', 1,
      "only fires when overlapping blocks give different head-counts; v5 no longer asks head-counts "
      "(every block is 1), so overlaps are harmless and silent (H913's living room overlaps)"),
+    ('return item[prefix]', 1, "time blocks as a nested repeat list: forms v6 and before only"),
     ('base["notes"] = ans["appliance_notes"]', 1, "appliance_notes was removed in v5 (older submissions only)"),
     ('warnings.append(f"{name}: {count} bulb(s) but no times anyone is in the room, "', 2,
      "a patterned room always has a time entry (Kobo shows one and its times are required)"),
@@ -1023,6 +1038,13 @@ def parents_of(node, name, chain=()):
         elif ch.get("name") == name:
             return list(chain)
     return None
+
+
+def slot_family(name):
+    """appliance_weekday_3_often -> appliance_weekday_N_often: the four
+    time-block slots are copies of one question, so choices are covered per
+    question, not per slot (every slot must still be shown somewhere)."""
+    return re.sub(r"_(\d)_", "_N_", name)
 
 
 def warning_check(warnings, expect):
@@ -1121,22 +1143,26 @@ def main():
                 for x in v:
                     collect(x, hid)
             else:
-                used.setdefault((k, str(v)), set()).add(hid)
+                used.setdefault((slot_family(k), str(v)), set()).add(hid)
     for s in HOUSEHOLDS:
         collect(s, s["household_id"])
-    choice_rows = []
+    choice_rows, done = [], set()
     for r in rows:
         t = (r["type"] or "").strip()
         if not t.startswith("select_one"):
             continue
         lst = t.split()[1]
+        fam = slot_family(r["name"])        # time-block slots 1-4 share their choices
+        if fam in done:
+            continue
+        done.add(fam)
         for val in choices[lst]:
             if lst in CHOICE_LISTS_NOT_REQUIRED and (lst, val) not in CHOICE_VALUES_REQUIRED:
                 continue
-            who = sorted(used.get((r["name"], val), ()))
-            choice_rows.append((f"{r['name']} = {val}", who))
+            who = sorted(used.get((fam, val), ()))
+            choice_rows.append((f"{fam} = {val}", who))
             if not who:
-                gaps.append(f"choice never picked: {r['name']} = {val}")
+                gaps.append(f"choice never picked: {fam} = {val}")
     # 2. every question shown somewhere; every conditional one also hidden somewhere
     rel_rows = []
     for r in rows:
