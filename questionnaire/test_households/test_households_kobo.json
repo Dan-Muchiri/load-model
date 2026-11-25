@@ -18,6 +18,7 @@
    "group_occupancy/adults_working_weekday_away_start": "7",
    "group_occupancy/adults_working_weekday_away_end": "22",
    "group_occupancy/adults_working_weekend_same": "yes",
+   "group_occupancy/routine_regularity": "very_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "other",
@@ -50,22 +51,6 @@
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_start": "22",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_end": "24",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_peak": "spread",
-     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_often": "always",
-     "group_appliances/appliance/appliance_weekday_sessions": "1",
-     "group_appliances/appliance/weekend_frequency": "both_days",
-     "group_appliances/appliance/weekend_same_as_weekday": "yes",
-     "group_appliances/appliance/appliance_weekend_sessions": "1"
-    },
-    {
-     "group_appliances/appliance/appliance_type": "electric_kettle",
-     "group_appliances/appliance/appliance_count": "1",
-     "group_appliances/appliance/label_watts": "1500",
-     "group_appliances/appliance/duration_typical": "3",
-     "group_appliances/appliance/weekday_frequency": "every_weekday",
-     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_count": "1",
-     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_start": "5",
-     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_end": "8",
-     "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_peak": "6",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_often": "always",
      "group_appliances/appliance/appliance_weekday_sessions": "1",
      "group_appliances/appliance/weekend_frequency": "both_days",
@@ -112,6 +97,7 @@
    "group_occupancy/adults_working_weekday_away_end": "18",
    "group_occupancy/adults_working_weekend_same": "no",
    "group_occupancy/adults_working_weekend_away_start": "home_all_day",
+   "group_occupancy/routine_regularity": "fairly_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -378,6 +364,7 @@
    "group_occupancy/school_children_weekday_away_end": "16",
    "group_occupancy/school_children_weekend_same": "no",
    "group_occupancy/school_children_weekend_away_start": "home_all_day",
+   "group_occupancy/routine_regularity": "fairly_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -648,6 +635,7 @@
    "group_occupancy/young_children_weekend_same": "no",
    "group_occupancy/young_children_weekend_away_start": "10",
    "group_occupancy/young_children_weekend_away_end": "16",
+   "group_occupancy/routine_regularity": "fairly_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -861,7 +849,7 @@
      "group_appliances/appliance/appliance_type": "induction_cooker",
      "group_appliances/appliance/appliance_count": "1",
      "group_appliances/appliance/label_watts": "2000",
-     "group_appliances/appliance/duration_typical": "30",
+     "group_appliances/appliance/duration_typical": "140",
      "group_appliances/appliance/weekday_frequency": "every_weekday",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_count": "2",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_start": "12",
@@ -999,7 +987,7 @@
      "group_appliances/appliance/appliance_type": "television",
      "group_appliances/appliance/appliance_count": "1",
      "group_appliances/appliance/label_watts": "110",
-     "group_appliances/appliance/duration_typical": "300",
+     "group_appliances/appliance/duration_typical": "330",
      "group_appliances/appliance/weekday_frequency": "every_weekday",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_count": "1",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_1_grp/appliance_weekday_1_start": "9",
@@ -1187,7 +1175,7 @@
    "group_grid/phase": "dont_know",
    "group_grid/metering": "postpaid",
    "group_grid/tariff": "dont_know",
-   "group_grid/monthly_spend": "9500",
+   "group_grid/monthly_spend": "13000",
    "group_grid/blackout_hours": "3",
    "group_grid/backup": "generator",
    "group_grid/backup_kilowatts": "7.5",
@@ -1202,7 +1190,7 @@
    "group_site/cable_length_meters": "40",
    "group_close/logger_willing": "yes",
    "group_close/routine_change": "Away 20 Dec to 3 Jan (upcountry for Christmas).",
-   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Large maisonette family with a borehole and generator, on a monthly KPLC bill (tariff and phase not known); live-in house help; toddler at grandmother's on Saturdays; instant showers used four times each morning; three TVs, one with no label."
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Large maisonette family with a borehole and generator, on a monthly KPLC bill (tariff and phase not known); live-in house help; toddler at grandmother's on Saturdays; instant showers used four times each morning; three TVs, one with no label; the living-room TV is on most of the day and githeri is slow-cooked on the induction plate twice a day (both above KNBS norms)."
   },
   {
    "group_start/consent": "OK",
@@ -1232,6 +1220,7 @@
    "group_occupancy/elderly_weekend_same": "no",
    "group_occupancy/elderly_weekend_away_start": "8",
    "group_occupancy/elderly_weekend_away_end": "11",
+   "group_occupancy/routine_regularity": "very_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -1354,9 +1343,7 @@
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_2_grp/appliance_weekday_2_peak": "20",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_2_grp/appliance_weekday_2_often": "usually",
      "group_appliances/appliance/appliance_weekday_sessions": "2",
-     "group_appliances/appliance/weekend_frequency": "both_days",
-     "group_appliances/appliance/weekend_same_as_weekday": "yes",
-     "group_appliances/appliance/appliance_weekend_sessions": "2"
+     "group_appliances/appliance/weekend_frequency": "never"
     },
     {
      "group_appliances/appliance/appliance_type": "television",
@@ -1374,14 +1361,7 @@
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_2_grp/appliance_weekday_2_peak": "spread",
      "group_appliances/appliance/appliance_weekday_grp/appliance_weekday_2_grp/appliance_weekday_2_often": "rarely",
      "group_appliances/appliance/appliance_weekday_sessions": "1",
-     "group_appliances/appliance/weekend_frequency": "both_days",
-     "group_appliances/appliance/weekend_same_as_weekday": "no",
-     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend_count": "1",
-     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend_1_grp/appliance_weekend_1_start": "14",
-     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend_1_grp/appliance_weekend_1_end": "22",
-     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend_1_grp/appliance_weekend_1_peak": "19",
-     "group_appliances/appliance/appliance_weekend_grp/appliance_weekend_1_grp/appliance_weekend_1_often": "always",
-     "group_appliances/appliance/appliance_weekend_sessions": "1"
+     "group_appliances/appliance/weekend_frequency": "never"
     }
    ],
    "group_grid/grid_connected": "no",
@@ -1399,7 +1379,7 @@
    "group_site/mounting": "elevated",
    "group_site/cable_length_meters": "8",
    "group_close/logger_willing": "maybe",
-   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Off-grid retired couple in Kajiado on solar panels only, with their son and two grandchildren: the couple goes to the market on weekdays and church on Sunday morning, the grandchildren do online school at home and Saturday tuition 08:00-12:00, a small shop at the front, old filament bulbs, no fixed times for any room."
+   "group_close/interviewer_notes": "MADE-UP TEST HOUSEHOLD. Off-grid retired couple in Kajiado on solar panels only, with their son and two grandchildren: the couple goes to the market on weekdays and church on Sunday morning, the grandchildren do online school at home and Saturday tuition 08:00-12:00, a small shop at the front, old filament bulbs, no fixed times for any room; the radio and TV are only on during the week (weekends are spent at church and with relatives)."
   },
   {
    "group_start/consent": "OK",
@@ -1430,6 +1410,7 @@
    "group_occupancy/elderly_weekday_away_end": "11",
    "group_occupancy/elderly_weekend_same": "no",
    "group_occupancy/elderly_weekend_away_start": "home_all_day",
+   "group_occupancy/routine_regularity": "fairly_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -1724,6 +1705,7 @@
    "group_occupancy/adults_non_working_weekend_same": "no",
    "group_occupancy/adults_non_working_weekend_away_start": "19",
    "group_occupancy/adults_non_working_weekend_away_end": "7",
+   "group_occupancy/routine_regularity": "varies",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -1933,6 +1915,7 @@
    "group_occupancy/adults_working_weekend_same": "no",
    "group_occupancy/adults_working_weekend_away_start": "12",
    "group_occupancy/adults_working_weekend_away_end": "18",
+   "group_occupancy/routine_regularity": "varies",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -2187,6 +2170,7 @@
    "group_occupancy/young_children_weekend_away_start": "home_all_day",
    "group_occupancy/elderly_weekday_away_start": "home_all_day",
    "group_occupancy/elderly_weekend_same": "yes",
+   "group_occupancy/routine_regularity": "fairly_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",
@@ -2575,6 +2559,7 @@
    "group_occupancy/household_helpers_weekday_away_start": "14",
    "group_occupancy/household_helpers_weekday_away_end": "16",
    "group_occupancy/household_helpers_weekend_same": "yes",
+   "group_occupancy/routine_regularity": "fairly_regular",
    "group_rooms/room": [
     {
      "group_rooms/room/room_type": "living_room",

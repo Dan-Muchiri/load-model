@@ -189,13 +189,14 @@ def site(length, width, orientation="north_facing", tilt=15, shading="minimal",
 
 
 def household(hid, sub_county, gps, dwelling, ppl, rooms, appliances, grd, ste, story,
-              willing="yes", routine="", county="Nairobi", expect=()):
+              willing="yes", routine="", county="Nairobi", expect=(), regularity="fairly_regular"):
     """expect: the warnings this household is MEANT to produce, each a
     substring of exactly one or more report warnings. The checker fails on
     any warning not matched here, and on any expected warning that is missing."""
     s = {"consent": "OK", "household_id": hid, "survey_date": "2026-11-20",
          "sub_county": sub_county, "county": county, "gps": gps, "dwelling": dwelling}
     s.update(ppl)
+    s["routine_regularity"] = regularity          # form v8, Section C
     s["room"] = rooms
     s["appliance"] = appliances
     s.update(grd)
@@ -228,8 +229,9 @@ HOUSEHOLDS = [
         people(adults_working=(1, (7, 22), "same")),
         [room("other", 1, other="Bedsitter main room", weekday=[(8, 9)]),
          room("bathroom", 1, watts=5, pattern=False)],
-        [appl("smartphone_charger", 10, minutes=90, wd=EVERY, wdw=[(22, 24, "spread", A)], we=BOTH),
-         appl("electric_kettle", 1500, minutes=3, wd=EVERY, wdw=[(5, 8, 6, A)], we=BOTH)],
+        # Only the phone charger (not a home-only appliance): a home-only
+        # appliance would itself prove someone awake and undo the error case.
+        [appl("smartphone_charger", 10, minutes=90, wd=EVERY, wdw=[(22, 24, "spread", A)], we=BOTH)],
         grid(200, 200, 16.5, tariff="lifeline", blackout=1),
         site(4, 3, roof="concrete", tilt=0, orientation="flat", cable=15),
         "Interviewer-error case: a security guard in a bedsitter, away 07:00-22:00 every day, whose "
@@ -317,7 +319,7 @@ HOUSEHOLDS = [
          appl("borehole_pump", 1100, minutes=45, wd=EVERY, wdw=[(6, 9, 7, A)], we=BOTH),
          appl("immersion_water_heater", 4500, minutes=8, wd=EVERY, wdw=[(5, 7, 6, A), (19, 21, 20, S)],
               wds=4, we=BOTH, wew=[(7, 10, 8, A)], wes=4),
-         appl("induction_cooker", 2000, minutes=30, wd=EVERY, wdw=[(12, 14, 13, A), (18, 20, 19, A)], wds=2,
+         appl("induction_cooker", 2000, minutes=140, wd=EVERY, wdw=[(12, 14, 13, A), (18, 20, 19, A)], wds=2,
               we=BOTH, wes=2),
          appl("microwave", 900, minutes=4, wd=EVERY, wdw=[(7, 9, "spread", U), (13, 14, "spread", A)], wds=2,
               we=BOTH, wes=2),
@@ -329,7 +331,7 @@ HOUSEHOLDS = [
               wew=[(13, 16, 14, A)]),
          appl("ceiling_fan", 60, count=2, minutes=180, wd=EVERY, wdw=[(13, 17, 15, U), (20, 23, 21, A)],
               wds=2, we=BOTH, wes=2),
-         appl("television", 110, minutes=300, wd=EVERY, wdw=[(9, 22, 20, A)], we=BOTH),
+         appl("television", 110, minutes=330, wd=EVERY, wdw=[(9, 22, 20, A)], we=BOTH),
          appl("dstv_decoder", 18, minutes=300, wd=EVERY, wdw=[(9, 22, 20, A)], we=BOTH),
          appl("television", 60, minutes=60, wd=MOST, wdw=[(20, 24, 21, A)], we=BOTH),
          appl("television", None, minutes=120, wd=MOST, wdw=[(20, 23, 21, A)], we=BOTH),
@@ -345,14 +347,15 @@ HOUSEHOLDS = [
          appl("gate_motor", 250, minutes=1, wd=EVERY, wdw=[(6, 8, 7, A), (17, 20, 19, A)], wds=6,
               we=BOTH, wes=4),
          appl("other", 15, other="Aquarium pump", other_always_on="yes")],
-        grid(9500, None, None, metering="postpaid", tariff="dont_know", phase="dont_know", blackout=3,
+        grid(13000, None, None, metering="postpaid", tariff="dont_know", phase="dont_know", blackout=3,
              backup="generator", backup_kilowatts=7.5,
              backup_loads="Borehole pump, fridge, freezer, lights, gate and CCTV"),
         site(14, 9, orientation="west_facing", roof="clay_tile", tilt=25, shading="severe",
              mounting="ground", cable=40),
         "Large maisonette family with a borehole and generator, on a monthly KPLC bill (tariff and phase "
         "not known); live-in house help; toddler at grandmother's on Saturdays; instant showers used "
-        "four times each morning; three TVs, one with no label.",
+        "four times each morning; three TVs, one with no label; the living-room TV is on most of the "
+        "day and githeri is slow-cooked on the induction plate twice a day (both above KNBS norms).",
         routine="Away 20 Dec to 3 Jan (upcountry for Christmas).",
         expect=["grid.phase unknown, assumed single-phase",
                 "No token reading, import tariff assumed",
@@ -376,10 +379,10 @@ HOUSEHOLDS = [
          appl("power_bank_charging", 10, minutes=180, wd=EVERY, wdw=[(10, 15, 12, A)], we=BOTH),
          appl("tablet_charger", 12, minutes=120, wd=ONCE, wdw=[(16, 19, "spread", A)], we=OCC,
               wew=[(10, 14, "spread", A)]),
-         appl("bluetooth_speaker", 8, minutes=120, wd=EVERY, wdw=[(6, 9, 7, A), (19, 21, 20, U)], wds=2,
-              we=BOTH, wes=2),
-         appl("television", 20, minutes=180, wd=EVERY, wdw=[(18, 22, 19, A), (10, 13, "spread", R)],
-              we=BOTH, wew=[(14, 22, 19, A)])],
+         # Radio and TV on weekdays only: weekday nights are then found from
+         # appliance use, weekend nights cannot be found at all (both paths).
+         appl("bluetooth_speaker", 8, minutes=120, wd=EVERY, wdw=[(6, 9, 7, A), (19, 21, 20, U)], wds=2),
+         appl("television", 20, minutes=180, wd=EVERY, wdw=[(18, 22, 19, A), (10, 13, "spread", R)])],
         off_grid("solar_only", solar_panel_count=2, solar_panel_watts=150, backup_kilowatts=0.3,
                  backup_loads="Everything: lights, phones, radio, small TV"),
         site(9, 7, orientation="south_facing", tilt=20, shading="none", roof="other",
@@ -387,10 +390,12 @@ HOUSEHOLDS = [
         "Off-grid retired couple in Kajiado on solar panels only, with their son and two grandchildren: "
         "the couple goes to the market on weekdays and church on Sunday morning, the grandchildren do "
         "online school at home and Saturday tuition 08:00-12:00, a small shop at the front, old "
-        "filament bulbs, no fixed times for any room.",
+        "filament bulbs, no fixed times for any room; the radio and TV are only on during the week "
+        "(weekends are spent at church and with relatives).",
         county="Kajiado", willing="maybe",
-        expect=["occupancy weekday: no room presence recorded",
-                "occupancy weekend: no room presence recorded"]),
+        expect=["occupancy weekday: no room presence recorded; the night was taken from reported appliance use",
+                "occupancy weekend: no room presence or home-only appliance use recorded, so sleep could "
+                "not be found from the interview; used the KNBS urban median night"]),
 
     # ------------------------------------------------------------ H906
     household(
@@ -559,6 +564,44 @@ HOUSEHOLDS = [
         "and go out 10:00-14:00 at weekends; a day house help is out 14:00-16:00 every day; three-phase "
         "supply; no TV decoder (streams on Wi-Fi).", willing="yes"),
 ]
+
+
+# Warnings from survey_to_schema.py's occupancy cross-check (reported appliance
+# use vs room times vs Section C). These answers were written before the check
+# existed; the conflicts are real in the data, so they are expected here.
+OCCUPANCY_CHECK_EXPECT = {
+    "H902": ["occupancy weekday: 05:00-06:00 counted as awake (reported use of electric_kettle)",
+             "occupancy weekday: electric_kettle reported in use at 07:00-08:00 but Section C has everyone out"],
+    "H904": ["occupancy weekday: 00:00-01:00, 23:00-00:00 counted as awake (reported use of air_conditioner, television)",
+             "occupancy weekend: 23:00-00:00 counted as awake (reported use of television)"],
+    "H906": ["occupancy weekday: 05:00-06:00 counted as awake (reported use of electric_kettle)"],
+    "H907": ["occupancy weekday: 05:00-06:00 counted as awake (reported use of electric_kettle)",
+             "occupancy weekend: 05:00-08:00 counted as awake (reported use of electric_kettle)"],
+    "H908": ["occupancy weekday: electric_kettle, iron_box reported in use at 08:00-09:00 but Section C has everyone out"],
+    "H910": ["occupancy weekday: 05:00-06:00 counted as awake (reported use of electric_kettle, hair_dryer)"],
+}
+# Warnings from the KNBS (KTUS 2021) plausibility checks.
+KNBS_CHECK_EXPECT = {
+    "H901": ["occupancy weekday: the answers imply a 23 h night",           # the interviewer error
+             "occupancy weekend: the answers imply a 23 h night"],
+    "H904": ["KNBS check weekday: television is on about 330 min",
+             "KNBS check weekday: electric cooking appliances run about",
+             "KNBS check weekend: electric cooking appliances run about",
+             "occupancy weekday: the answers imply a 4 h night",              # TV/AC until 01:00, up at 05:00
+             "occupancy weekend: the answers imply a 5 h night"],
+    "H909": ["occupancy weekday: the answers imply a 0 h night",            # grandmother up at 03:00
+             "occupancy weekend: the answers imply a 0 h night"],
+    "H910": ["occupancy weekday: the answers imply a 5 h night"],           # up at 05:00 for the kettle
+}
+# "How regular is the household's daily routine?" (form v8): the guard and
+# the retired couple are very regular, the night-shift nurse and the students
+# vary a lot, everyone else is fairly regular (the default).
+ROUTINE_REGULARITY = {"H901": "very_regular", "H905": "very_regular", "H907": "varies", "H908": "varies"}
+for _s in HOUSEHOLDS:
+    if _s["household_id"] in ROUTINE_REGULARITY:
+        _s["routine_regularity"] = ROUTINE_REGULARITY[_s["household_id"]]
+    _s["_expect"] += OCCUPANCY_CHECK_EXPECT.get(_s["household_id"], [])
+    _s["_expect"] += KNBS_CHECK_EXPECT.get(_s["household_id"], [])
 
 
 # =============================================================================
@@ -870,7 +913,7 @@ def render(households, results, form_tree, choices):
     parts.append(f"<h1>Test procedure: household survey data entry and data checking</h1>")
     parts.append(
         "<h3>1. Purpose</h3>"
-        "<p>To verify, end to end, the path from the KoboToolbox household survey (form version 7) "
+        "<p>To verify, end to end, the path from the KoboToolbox household survey (form version 8) "
         "through fetch_kobo.py to the data checking and conversion in survey_to_schema.py, using "
         f"{len(households)} constructed test households (H901 to {last}) whose answers and expected "
         "data-checking warnings are known in advance.</p>"
@@ -881,7 +924,7 @@ def render(households, results, form_tree, choices):
         "be shown or hidden, and every path through the data checking, including deliberately "
         "inconsistent answers.</p>"
         "<h3>3. Procedure</h3><ol>"
-        "<li>Form version 7 of household_survey.xlsx is deployed in KoboToolbox.</li>"
+        "<li>Form version 8 of household_survey.xlsx is deployed in KoboToolbox.</li>"
         "<li>Each test household is entered as one new submission, following its sheet in form "
         "order. Answers are selected or entered exactly as listed, including those that appear "
         "unusual; these are intentional test conditions.</li>"
@@ -975,6 +1018,8 @@ CONVERTER_EXCLUDED = [
      "only fires when overlapping blocks give different head-counts; v5 no longer asks head-counts "
      "(every block is 1), so overlaps are harmless and silent (H913's living room overlaps)"),
     ('return item[prefix]', 1, "time blocks as a nested repeat list: forms v6 and before only"),
+    ('warnings.append("routine regularity not asked (form older than v8); assumed fairly regular "', 3,
+     "routine regularity is asked (and required) from form v8; older submissions only"),
     ('base["notes"] = ans["appliance_notes"]', 1, "appliance_notes was removed in v5 (older submissions only)"),
     ('warnings.append(f"{name}: {count} bulb(s) but no times anyone is in the room, "', 2,
      "a patterned room always has a time entry (Kobo shows one and its times are required)"),

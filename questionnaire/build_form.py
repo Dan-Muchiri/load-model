@@ -184,6 +184,8 @@ CHOICES = {
     "hour_end": hours(end=True),
     "hour_or_home": [("home_all_day", "Home all day, does not go out")] + hours(),
     "peak": [("spread", "No particular hour, spread evenly")] + hours(),
+    "regularity": [("very_regular", "Very regular"), ("fairly_regular", "Fairly regular"),
+                   ("varies", "Varies a lot")],
     "often": [("always", "Always"), ("usually", "Usually"),
               ("sometimes", "Sometimes"), ("rarely", "Rarely")],
     # keys match calibrate_tou.WEEKDAY_FREQUENCY / WEEKEND_FREQUENCY
@@ -408,6 +410,15 @@ for cat, who in RESIDENT_CATEGORIES:
       f"Is this the same on a normal Saturday and Sunday for {who}?",
       relevant=cond, required="yes")
     category_presence(cat, who, "Weekend", f"{cond} and ${{{cat}_weekend_same}} = 'no'")
+# How much the household's day-to-day timing varies (form v8). Sets the
+# simulator's routine shift for THIS household (survey_to_schema.py
+# ROUTINE_SHIFT_SD_MIN), instead of one generic value for everyone.
+q("select_one regularity", "routine_regularity",
+  "How regular is the household's daily routine (getting up, leaving, coming home, meals, bedtime)?",
+  hint="Very regular: the same times almost every day, within about 15 minutes. "
+       "Fairly regular: usually within half an hour. Varies a lot: shift work, irregular hours, "
+       "or times often an hour or more apart.",
+  required="yes")
 q("end_group")
 
 # ---------------------------------------------------------------- D. Rooms and lights
@@ -607,7 +618,7 @@ def build(out=HERE / "household_survey.xlsx"):
     st = wb.create_sheet("settings")
     st.append(["form_title", "form_id", "version", "default_language", "style"])
     # style "pages": the Kobo web form shows each section (A to H) as its own page.
-    st.append(["Household energy use interview", "household_energy_v1", "7", "English", "pages"])
+    st.append(["Household energy use interview", "household_energy_v1", "8", "English", "pages"])
     for sh in wb.worksheets:
         for c in sh[1]:
             c.font = Font(bold=True)

@@ -38,6 +38,7 @@ import re
 import sys
 from pathlib import Path
 
+import knbs_baseline as knbs
 import schema
 from calibrate_tou import (APPLIANCE_RESTART_DELAY_MIN, DEFAULT_RESTART_DELAY_MIN,
                            WEEKDAY_FREQUENCY, WEEKEND_FREQUENCY, calibrate_appliance)
@@ -55,6 +56,20 @@ BULB_TYPE_FALLBACK_W = {"LED": 9, "CFL": 15, "fluorescent": 36, "incandescent": 
 # Relative height of a usage window versus the household's other windows
 # (calibrate_tou.py, field d. peak_value).
 OFTEN_TO_PEAK = {"always": 1.0, "usually": 0.7, "sometimes": 0.4, "rarely": 0.2}
+
+# Household-specific day-to-day variation (simulate.py behavioural layer).
+# Routine shift sd (minutes, weekday) from "How regular is the household's
+# daily routine?" -- the answer's own definitions: very regular = within
+# about 15 min, fairly regular = within about 30 min, varies a lot = an hour
+# or more apart. Weekends are looser: x1.5. Capped here (not in the
+# simulator) by knbs_baseline.ROUTINE_SHIFT_SD_CAP_MIN.
+ROUTINE_SHIFT_SD_MIN = {"very_regular": 15.0, "fairly_regular": 30.0, "varies": 45.0}
+WEEKEND_ROUTINE_FACTOR = 1.5
+# Busy/light-day spread per appliance (log-normal sd of the daily use factor)
+# from its own "how likely is it to be used at this time" answers: the less
+# certain the use, the more it varies from day to day. Averaged over the
+# appliance's time blocks.
+OFTEN_TO_INTENSITY_SD = {"always": 0.15, "usually": 0.3, "sometimes": 0.45, "rarely": 0.6}
 
 # Researcher-set values, not asked in the interview. Check before each batch.
 DEFAULT_IMPORT_TARIFF_KES = 25.0
@@ -253,29 +268,120 @@ def build_occupancy(s):
     return wd, we
 
 
-def active_occupancy(home, room_occ, day, warnings):
+def hour_ranges(hours):
+    """[5, 6, 7, 21] -> "05:00-08:00, 21:00-22:00" (end exclusive)."""
+    hours, out = sorted(hours), []
+    for h in hours:
+        if out and out[-1][1] == h:
+            out[-1][1] = h + 1
+        else:
+            out.append([h, h + 1])
+    return ", ".join(f"{a:02d}:00-{b % 24:02d}:00" for a, b in out)
+
+
+def reported_use_hours(s, day):
+    """Hours in which the household reports using an appliance that needs
+    someone at home (APPLIANCE_NEEDS_OCCUPANCY; "other" appliances answered
+    home-only), per day type: {hour: {appliance, ...}}. Someone using the
+    kettle at 05:00 is awake at 05:00, whatever the room answers say."""
+    used = {}
+    for ans in s.get("appliance", []):
+        atype = ans.get("appliance_type")
+        if atype == "other":
+            if ans.get("appliance_other_always_on") == "yes" or ans.get("appliance_other_home") != "yes":
+                continue
+            name = ans.get("appliance_other") or "other appliance"
+        else:
+            if atype in ALWAYS_ON or not lookup(APPLIANCE_NEEDS_OCCUPANCY, atype, True):
+                continue
+            name = atype
+        weekday_never = ans.get("weekday_frequency") == "never"
+        if day == "weekday":
+            if weekday_never or not ans.get("weekday_frequency"):
+                continue
+            prefix = "appliance_weekday"
+        else:
+            if ans.get("weekend_frequency") in (None, "", "never"):
+                continue
+            same = not weekday_never and ans.get("weekend_same_as_weekday") == "yes"
+            prefix = "appliance_weekday" if same else "appliance_weekend"
+        for blk in time_blocks(ans, prefix):
+            for h in hour_span(blk[f"{prefix}_start"], blk[f"{prefix}_end"]):
+                used.setdefault(h, set()).add(name)
+    return used
+
+
+def active_occupancy(home, room_occ, day, warnings, used=None):
     """Active occupants per hour from Section C's home count, with the night
     taken out. Room presence (Section D) is awake, active use only, but it
     cannot place every person all day, so it is only used to find the night:
-    the unbroken run of hours with nobody in any indoor room that contains
-    03:00 counts as asleep (0). Every other hour keeps the home count, so a
+    the unbroken run of hours around 03:00 with nobody in any indoor room
+    counts as asleep (0). Every other hour keeps the home count, so a
     daytime gap in the room answers does not erase people who are home.
     If someone is in a room at 03:00 (e.g. night shift), nothing is zeroed.
     The anchor matters: the longest empty run is often the working day
     (07-18), not the night, when the rooms are only answered for mornings
-    and evenings."""
+    and evenings.
+
+    Reported appliance use is evidence of being awake too (`used`, from
+    reported_use_hours()): the night also stops at any hour where an
+    appliance that needs someone home is reported in use, so a 05:00 kettle
+    keeps its 05:00 timing even when no room is answered before 06:00. Each
+    such hour is reported, and so is any use reported while Section C has
+    everyone out (a genuine conflict, left as it is)."""
+    used = used or {}
     in_rooms = [sum(r[day][h] for r in room_occ.values()) for h in range(24)]
-    asleep = set()
-    h = NIGHT_ANCHOR_HOUR
-    while in_rooms[h % 24] == 0 and len(asleep) < 24:     # forwards to waking
-        asleep.add(h % 24); h += 1
-    h = NIGHT_ANCHOR_HOUR - 1
-    while in_rooms[h % 24] == 0 and len(asleep) < 24:     # backwards to bedtime
-        asleep.add(h % 24); h -= 1
-    if len(asleep) == 24:                                 # no room answers at all
-        warnings.append(f"occupancy {day}: no room presence recorded, so sleep could not be "
-                        f"separated; Section C home counts used for every hour.")
+
+    def night(active):
         asleep = set()
+        h = NIGHT_ANCHOR_HOUR
+        while not active(h % 24) and len(asleep) < 24:        # forwards to waking
+            asleep.add(h % 24); h += 1
+        h = NIGHT_ANCHOR_HOUR - 1
+        while not active(h % 24) and len(asleep) < 24:        # backwards to bedtime
+            asleep.add(h % 24); h -= 1
+        return asleep
+
+    rooms_only = night(lambda h: in_rooms[h] > 0)
+    asleep = night(lambda h: in_rooms[h] > 0 or h in used)
+    if len(asleep) == 24:                                 # nothing at all marks waking hours
+        # KNBS baseline: the urban median night (KTUS 2021, 9 h), ending at
+        # knbs.DEFAULT_WAKE_HOUR, instead of nobody ever sleeping.
+        n = knbs.median_sleep_hours(day)
+        wake = knbs.DEFAULT_WAKE_HOUR
+        asleep = {(wake - 1 - k) % 24 for k in range(n)}
+        warnings.append(f"occupancy {day}: no room presence or home-only appliance use recorded, so "
+                        f"sleep could not be found from the interview; used the KNBS urban median "
+                        f"night of {n} h ({hour_ranges(asleep)}).")
+        return [0 if h in asleep else home[h] for h in range(24)]
+    elif len(rooms_only) == 24:                           # no rooms, but appliance use does
+        warnings.append(f"occupancy {day}: no room presence recorded; the night was taken from "
+                        f"reported appliance use (asleep {hour_ranges(asleep)}).")
+    else:
+        woken = sorted(h for h in rooms_only - asleep if home[h] > 0)
+        if woken:
+            names = sorted({n for h in woken for n in used.get(h, ())})
+            warnings.append(f"occupancy {day}: {hour_ranges(woken)} counted as awake (reported use "
+                            f"of {', '.join(names)}), though no room is in use then. "
+                            f"Check with the household.")
+    # KNBS check on the night length. The interview night is whole hours
+    # between the last and first room/appliance use, so it can understate
+    # "sleep and related" time (KTUS 2021, which includes time in bed) by up
+    # to an hour: only nights clearly outside the urban 5th-95th percentile
+    # range, allowing that hour, are flagged.
+    lo, hi = knbs.sleep_bounds_min(day)
+    night_min = 60 * len(asleep)
+    if night_min + 60 < lo or night_min - 60 > hi:
+        warnings.append(f"occupancy {day}: the answers imply a {len(asleep)} h night "
+                        f"({hour_ranges(asleep) or 'none'}), outside the KNBS urban range of "
+                        f"{lo / 60:.1f}-{hi / 60:.1f} h (KTUS 2021, 5th-95th percentile). "
+                        f"Check the room times with the household.")
+    out_hours = sorted(h for h in used if home[h] == 0)
+    if out_hours:
+        names = sorted({n for h in out_hours for n in used[h]})
+        warnings.append(f"occupancy {day}: {', '.join(names)} reported in use at {hour_ranges(out_hours)} "
+                        f"but Section C has everyone out then; that use is mostly blocked. "
+                        f"Check with the household.")
     return [0 if h in asleep else home[h] for h in range(24)]
 
 
@@ -458,6 +564,7 @@ def build_appliances(s, warnings, log):
         out[e["name"]] = e
     filled = set()
     extra_n = 0
+    cooking = {"weekday": 0.0, "weekend": 0.0}       # electric cooking minutes on a day of use
 
     for ans in s.get("appliance", []):
         atype = ans["appliance_type"]
@@ -519,6 +626,7 @@ def build_appliances(s, warnings, log):
                 we_w = wd_w
             else:
                 we_w = to_windows(time_blocks(ans, "appliance_weekend"), "appliance_weekend", warnings, f"{name} weekend")
+            base["use_intensity_sd"] = use_intensity_sd(ans, wd_freq, we_freq)
             res, text = calibrate_quietly(
                 warnings,
                 weekday_windows=wd_w, weekend_windows=we_w,
@@ -532,13 +640,71 @@ def build_appliances(s, warnings, log):
             log.append(text)
             base.update(tou_weekday=res["tou_weekday"], tou_weekend=res["tou_weekend"],
                         mean_duration_min=mean, std_duration_min=std)
+            knbs_use_checks(name, atype, mean, ans, wd_freq, we_freq, cooking, warnings)
         out[name] = base
+
+    for day, minutes in cooking.items():
+        limit = knbs.URBAN[day]["food_preparation"]["participants_p95"]
+        if minutes > limit:
+            warnings.append(f"KNBS check {day}: electric cooking appliances run about {minutes:.0f} min "
+                            f"on a day they are used, more than the {limit} min that 95% of urban "
+                            f"cooks spend on all food preparation (KTUS 2021). Check durations and "
+                            f"sessions with the household.")
 
     for a in out.values():          # unused entries: zero profile, clearly off
         if a["count"] == 0:
             a["tou_weekday"] = [0.0] * 24
             a["tou_weekend"] = [0.0] * 24
     return list(out.values())
+
+
+def use_intensity_sd(ans, wd_freq, we_freq):
+    """This appliance's busy/light-day spread from its own "how likely"
+    answers (OFTEN_TO_INTENSITY_SD), averaged over its time blocks."""
+    vals = []
+    for day, freq in (("weekday", wd_freq), ("weekend", we_freq)):
+        if freq == "never":
+            continue
+        prefix = f"appliance_{day}"
+        if day == "weekend" and ans.get("weekend_same_as_weekday") == "yes":
+            prefix = "appliance_weekday"
+        vals += [OFTEN_TO_INTENSITY_SD[b.get(f"{prefix}_often", "always")]
+                 for b in time_blocks(ans, prefix)]
+    sd = sum(vals) / len(vals) if vals else OFTEN_TO_INTENSITY_SD["usually"]
+    return round(min(sd, knbs.USE_INTENSITY_SD_CAP), 3)      # KNBS cap (data check, not simulation)
+
+
+def routine_variation(s, warnings):
+    """Routine-shift sd (min) per day type from the interview's regularity answer."""
+    answer = s.get("routine_regularity")
+    if answer not in ROUTINE_SHIFT_SD_MIN:
+        warnings.append("routine regularity not asked (form older than v8); assumed fairly regular "
+                        f"({ROUTINE_SHIFT_SD_MIN['fairly_regular']:.0f} min day-to-day shift).")
+        answer = "fairly_regular"
+    sd = ROUTINE_SHIFT_SD_MIN[answer]
+    cap = knbs.ROUTINE_SHIFT_SD_CAP_MIN          # KNBS cap (data check, not simulation)
+    return {"routine_shift_sd_min_weekday": min(sd, cap),
+            "routine_shift_sd_min_weekend": min(sd * WEEKEND_ROUTINE_FACTOR, cap)}
+
+
+def knbs_use_checks(name, atype, mean, ans, wd_freq, we_freq, cooking, warnings):
+    """Plausibility of reported daily use against KTUS 2021 (knbs_baseline):
+    a TV / decoder / radio / console on longer, on a day it is used, than 95%
+    of urban people spend on mass media is flagged; electric cooking minutes
+    are summed per day type and checked after all appliances (food
+    preparation). Flags only -- the interview answer is kept."""
+    for day, freq in (("weekday", wd_freq), ("weekend", we_freq)):
+        if freq == "never":
+            continue
+        minutes = mean * sessions(ans.get(f"appliance_{day}_sessions"))
+        if atype in knbs.COOKING_APPLIANCES:
+            cooking[day] += minutes
+        if atype in knbs.MASS_MEDIA_APPLIANCES:
+            limit = knbs.URBAN[day]["mass_media"]["participants_p95"]
+            if minutes > limit:
+                warnings.append(f"KNBS check {day}: {name} is on about {minutes:.0f} min on a day it is "
+                                f"used, more than the {limit} min that 95% of urban viewers/listeners "
+                                f"spend on TV and radio (KTUS 2021). Check with the household.")
 
 
 def build_grid(s, warnings):
@@ -611,8 +777,8 @@ def submission_to_household(s):
 
     home_wd, home_we = build_occupancy(s)
     room_occ, bulbs, pending = build_rooms_and_bulbs(s, warnings)
-    occ_wd = active_occupancy(home_wd, room_occ, "weekday", warnings)
-    occ_we = active_occupancy(home_we, room_occ, "weekend", warnings)
+    occ_wd = active_occupancy(home_wd, room_occ, "weekday", warnings, reported_use_hours(s, "weekday"))
+    occ_we = active_occupancy(home_we, room_occ, "weekend", warnings, reported_use_hours(s, "weekend"))
     calibrate_unpatterned(pending, s, occ_wd, occ_we, room_occ, warnings, log)
 
     h = {
@@ -630,7 +796,7 @@ def submission_to_household(s):
         "grid": build_grid(s, warnings),
         "site": build_site(s),
         "costs": copy.deepcopy(REF["costs"]),
-        "model_parameters": copy.deepcopy(REF["model_parameters"]),
+        "model_parameters": dict(copy.deepcopy(REF["model_parameters"]), **routine_variation(s, warnings)),
     }
     for line in "".join(log).splitlines():
         if "WARN" in line:

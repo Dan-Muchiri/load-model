@@ -218,3 +218,62 @@ def test_time_blocks_old_repeat_format_still_read():
     """Submissions from forms v6 and earlier keep converting."""
     old = {"room_weekday": [{"room_weekday_start": "6", "room_weekday_end": "7"}]}
     assert sts.time_blocks(old, "room_weekday") == old["room_weekday"]
+
+
+# ---------------------------------------------------------------- KNBS checks
+def test_knbs_night_fallback_when_nothing_marks_waking_hours():
+    warnings = []
+    home = [2] * 24
+    occ = sts.active_occupancy(home, {}, "weekend", warnings, used={})
+    asleep = [h for h in range(24) if occ[h] == 0]
+    assert len(asleep) == 9 and 5 in asleep and 6 not in asleep and 21 in asleep
+    assert "KNBS urban median night of 9 h" in warnings[0]
+
+
+def test_knbs_flags_implausible_night():
+    warnings = []
+    room = {"r": {"weekday": [0 if h in (1, 2, 3) else 1 for h in range(24)]}}  # 3 h night, 01-04
+    sts.active_occupancy([1] * 24, room, "weekday", warnings, used={})
+    assert any("3 h night" in w and "KNBS urban range" in w for w in warnings)
+    warnings = []
+    room = {"r": {"weekday": [1 if 6 <= h < 23 else 0 for h in range(24)]}}    # 7 h night: fine
+    sts.active_occupancy([1] * 24, room, "weekday", warnings, used={})
+    assert not warnings
+
+
+# ---------------------------------------------------------------- household-specific variability
+def test_routine_regularity_sets_the_households_routine_shift(converted):
+    sd = {hid: converted[hid][0]["model_parameters"]["routine_shift_sd_min_weekday"] for hid in converted}
+    assert sd["H901"] == sd["H905"] == 15         # very regular
+    assert sd["H907"] == sd["H908"] == 45         # varies a lot
+    assert sd["H902"] == 30                       # fairly regular
+    mp = converted["H902"][0]["model_parameters"]
+    assert mp["routine_shift_sd_min_weekend"] == 1.5 * mp["routine_shift_sd_min_weekday"]   # 45
+    # "varies": 45 x 1.5 = 67.5 at weekends, capped by the converter at the KNBS limit (60)
+    assert converted["H907"][0]["model_parameters"]["routine_shift_sd_min_weekend"] == 60
+
+
+def test_routine_regularity_missing_on_older_forms():
+    warnings = []
+    assert sts.routine_variation({}, warnings)["routine_shift_sd_min_weekday"] == 30
+    assert "form older than v8" in warnings[0]
+
+
+def test_each_appliance_gets_its_own_day_to_day_spread(converted):
+    h, *_ = converted["H902"]
+    a = by_name(h["appliances"])
+    # kettle: always / sometimes / always / usually -> mean of 0.15, 0.45, 0.15, 0.3
+    assert a["electric_kettle"]["use_intensity_sd"] == pytest.approx((0.15 + 0.45 + 0.15 + 0.3) / 4, abs=1e-3)
+    assert a["television"]["use_intensity_sd"] == pytest.approx(0.15)      # always
+    assert "use_intensity_sd" not in a["refrigerator"]                      # always-on: no daily factor
+
+
+def test_knbs_caps_are_applied_by_the_converter(monkeypatch):
+    import knbs_baseline
+    monkeypatch.setattr(knbs_baseline, "ROUTINE_SHIFT_SD_CAP_MIN", 40.0)
+    v = sts.routine_variation({"routine_regularity": "varies"}, [])
+    assert v["routine_shift_sd_min_weekday"] == 40 and v["routine_shift_sd_min_weekend"] == 40
+    monkeypatch.setattr(knbs_baseline, "USE_INTENSITY_SD_CAP", 0.2)
+    ans = {"appliance_weekday_count": "1", "appliance_weekday_1_start": "6", "appliance_weekday_1_end": "8",
+           "appliance_weekday_1_peak": "spread", "appliance_weekday_1_often": "rarely"}
+    assert sts.use_intensity_sd(ans, "every_weekday", "never") == 0.2

@@ -1535,10 +1535,11 @@ REFERENCE_HOUSEHOLD = {
     #
     # NAIROBI DAYLIGHT NOTE:
     #   Sunrise ~06:30, Sunset ~18:30 year-round.
-    #   The lighting model uses a sinusoidal daylight proxy
-    #   scaled by the daily CSI value.
-    #   Lights are considered necessary when effective_light < 0.3.
-    #   This threshold is tunable in lighting_model.py.
+    #   The lighting model (simulate.py) uses real NASA POWER hourly
+    #   irradiance: a light is needed when outdoor GHI < threshold
+    #   (model_parameters.daylight_threshold_wm2, CREST 60 +/- 10 W/m2).
+    #   Without the NASA cache it falls back to a sinusoidal daylight
+    #   proxy x daily CSI < daylight_threshold_csi (0.3).
 
     "bulbs": [
 
@@ -2164,11 +2165,19 @@ REFERENCE_HOUSEHOLD = {
         # Set explicitly if you want to allow occasional
         # guest occupancy above n_residents.
 
+        "daylight_threshold_wm2":    60.0,
+        "daylight_threshold_wm2_sd": 10.0,
+        # Outdoor global horizontal irradiance (W/m2) below which artificial
+        # light is needed (CREST lighting model: Normal(60, 10), drawn per
+        # simulated day). Used with NASA POWER hourly irradiance
+        # (nasa_power.py): each simulated day is a real historical day of
+        # the same calendar month. A fixed published value (CREST); the
+        # power logger only tests the model and never sets it.
+
         "daylight_threshold_csi": 0.3,
-        # CSI value below which artificial lighting is considered
-        # necessary regardless of clock time.
+        # FALLBACK ONLY (no NASA POWER cache): CSI x daylight-curve value
+        # below which artificial lighting is considered necessary.
         # 0.3 ≈ overcast conditions.
-        # Tunable during model validation.
 
         "nairobi_sunrise_hour":  6.5,
         # Fractional hour of approximate sunrise (06:30).
@@ -2184,6 +2193,29 @@ REFERENCE_HOUSEHOLD = {
 
         "csi_fixed_value":       0.7,
         # Used only if csi_source = "fixed". Ignored otherwise.
+
+        "routine_shift_sd_min_weekday": 30.0,
+        "routine_shift_sd_min_weekend": 45.0,
+        "appliance_jitter_sd_min":      None,
+        "use_intensity_sd":             0.3,
+        "guest_day_prob":               0.0,
+        "away_day_prob":                0.0,
+        # Behavioural day-to-day variation (simulate.py). Every simulated day
+        # shifts the whole household's routine by Normal(0, sd) minutes
+        # (occupancy, room times and home-only appliance windows together),
+        # each home-only appliance by a further Normal(0, jitter) minutes,
+        # and scales its use by a log-normal "busy/light day" factor with
+        # mean 1 (so mean energy is unchanged). guest_day_prob /
+        # away_day_prob add rare guest days (+2 people, home-only use x1.5)
+        # and away days (nobody home 09:00-18:00); 0 = off. Sizes sit well
+        # inside the KNBS KTUS 2021 between-person spreads (sleep sd 107
+        # min; cooking / TV CV 0.57 / 0.74), which cap them. These defaults
+        # are only used when the household gives nothing: survey_to_schema.py
+        # sets routine_shift_sd_min_* from the "how regular is your routine?"
+        # answer (jitter = half of it when None) and a per-appliance
+        # "use_intensity_sd" from the appliance's own "how likely" answers.
+        # The power logger never sets them (it only tests the model). Set all
+        # to 0 for no behavioural variation.
 
         "appliance_occupancy_scale_zero": 0.02,
         # When no one is home (occupancy = 0) and needs_occupancy = True,
