@@ -8,3 +8,5 @@ households/
 questionnaire/test_households/converted/
 questionnaire/test_households/coverage.txt
 questionnaire/test_households/entry_sheets.html
+!data/nasa_power_nairobi_hourly.csv
+results/
